@@ -10,7 +10,7 @@ namespace WebApiSgsElavon.Services
 {
     public interface IOdtService
     {
-        Task<totalODT> totalODTS(int idusuario);
+        totalODT totalODTS(int idusuario);
     }
 
     public class OdtServices : IOdtService
@@ -22,10 +22,16 @@ namespace WebApiSgsElavon.Services
             _context = context;
         }
 
-        public async Task<totalODT> totalODTS(int idusuario)
+        public totalODT totalODTS(int idusuario)
         {
-            var total = _context.BdAr.Where(x => x.IdTecnico == idusuario && x.IdStatusAr == 3).GroupBy(x => x.IdTecnico).Select(x => new { nuevas = x.Count() }).FirstOrDefaultAsync();
-            throw new NotImplementedException();
+            int tnuevas = _context.BdAr
+                .Where(x => x.IdTecnico == idusuario && x.IdStatusAr == 3)
+                .GroupBy(x => x.IdTecnico)
+                .Count();
+            return new totalODT
+            {
+                nuevas = tnuevas
+            };
         }
     }
 }
