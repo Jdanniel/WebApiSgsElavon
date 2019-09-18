@@ -25,8 +25,7 @@ namespace WebApiSgsElavon.Services
         public totalODT totalODTS(int idusuario)
         {
             int tnuevas = _context.BdAr
-                .Where(x => x.IdTecnico == idusuario && x.IdStatusAr == 3)
-                .GroupBy(x => x.IdTecnico)
+                .Where(x => x.IdTecnico == idusuario && x.IdStatusAr == 3 && x.Status == "PROCESADO")
                 .Count();
             return new totalODT
             {
