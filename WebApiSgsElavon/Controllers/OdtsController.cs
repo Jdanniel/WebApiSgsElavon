@@ -25,5 +25,19 @@ namespace WebApiSgsElavon.Controllers
         {
             return _odtService.totalODTS(idusuario);
         }
+
+        [HttpGet("getOdtsTecnico/{idusuario}")]
+        public async Task<ActionResult<IEnumerable<ODT>>> getOdts(int idusuario)
+        {
+            try
+            {
+                return Ok(await _odtService.getOdts(idusuario));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+            
+        }
     }
 }

@@ -27660,6 +27660,7 @@ namespace WebApiSgsElavon.ModelsTest
             });
 
             modelBuilder.Query<SpGetPassword>();
+            modelBuilder.Query<ODT>();
         }
     }
 }
