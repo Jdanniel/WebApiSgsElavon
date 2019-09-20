@@ -17,7 +17,7 @@ namespace WebApiSgsElavon.Entities
         [JsonProperty(PropertyName = "NO_AFILIACION")]
         public string NO_AFILIACION { get; set; }
         [JsonProperty(PropertyName = "ESTADO")]
-        public string ESTADO { get; set;
+        public string ESTADO { get; set; }
         [JsonProperty(PropertyName = "COLONIA")]
         public string COLONIA { get; set; }
         [JsonProperty(PropertyName = "FEC_GARANTIA")]

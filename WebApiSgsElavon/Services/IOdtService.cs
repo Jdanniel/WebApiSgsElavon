@@ -44,7 +44,7 @@ namespace WebApiSgsElavon.Services
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0", idusuario).ToListAsync();
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'", idusuario).ToListAsync();
             return odt;
         }
     }
