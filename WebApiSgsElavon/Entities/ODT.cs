@@ -10,6 +10,8 @@ namespace WebApiSgsElavon.Entities
     {
         [JsonProperty(PropertyName = "ID_AR")]
         public int ID_AR { get; set; }
+        [JsonProperty(PropertyName = "ID_NEGOCIO")]
+        public int ID_NEGOCIO { get; set; }
         [JsonProperty(PropertyName = "NO_AR")]
         public string NO_ODT { get; set; }
         [JsonProperty(PropertyName = "NEGOCIO")]        
@@ -22,5 +24,9 @@ namespace WebApiSgsElavon.Entities
         public string COLONIA { get; set; }
         [JsonProperty(PropertyName = "FEC_GARANTIA")]
         public string FEC_GARANTIA { get; set; }
+        [JsonProperty(PropertyName = "LATITUD")]
+        public double? LATITUD { get; set; }
+        [JsonProperty(PropertyName = "LONGITUD")]
+        public double? LONGITUD { get; set; }
     }
 }
