@@ -28,5 +28,15 @@ namespace WebApiSgsElavon.Entities
         public double? LATITUD { get; set; }
         [JsonProperty(PropertyName = "LONGITUD")]
         public double? LONGITUD { get; set; }
+        [JsonProperty(PropertyName = "DIA")]
+        public int? DIA { get; set; }
+        [JsonProperty(PropertyName = "MES")]
+        public int? MES { get; set; }
+        [JsonProperty(PropertyName = "AA")]
+        public int? AA { get; set; }
+        [JsonProperty(PropertyName = "ID_TIPO_SERVICIO")]
+        public int ID_TIPO_SERVICIO { get; set; }
+        [JsonProperty(PropertyName = "NUMBER")]
+        public long? NUMBER { get; set; }
     }
 }

@@ -36,6 +36,7 @@ namespace WebApiSgsElavon.Services
 
         public async Task<IEnumerable<ODT>> getOdts(int idusuario)
         {
+
             List<ODT> odt = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO AS NEGOCIO, " +
                 "BD_NEGOCIOS.NO_AFILIACION, " +
@@ -43,10 +44,16 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.COLONIA, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "BD_NEGOCIOS.LATITUD, " +
-                "BD_NEGOCIOS.LONGITUD " +
+                "BD_NEGOCIOS.LONGITUD, " +
+                "CONVERT(INT,DAY(FEC_GARANTIA)) AS DIA, " +
+                "CONVERT(INT,MONTH(FEC_GARANTIA)) AS MES, " +
+                "CONVERT(INT,YEAR(FEC_GARANTIA)) AS AA, " +
+                "BD_AR.ID_TIPO_SERVICIO, " +
+                "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'", idusuario).ToListAsync();
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'" +
+                " ORDER BY BD_AR.FEC_GARANTIA ASC", idusuario).ToListAsync();
             return odt;
         }
     }
