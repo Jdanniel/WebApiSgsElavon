@@ -6,7 +6,24 @@ using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities
 {
-    public class ODT
+    public class OdtEvent
+    {
+        [JsonProperty(PropertyName = "ANNO")]
+        public int year { get; set; }
+        [JsonProperty(PropertyName = "MES")]
+        public OdtGroup[] odtGroup { get; set; }
+
+    }
+
+    public class OdtGroup
+    {
+        [JsonProperty(PropertyName = "MES")]
+        public int month { get; set; }
+        [JsonProperty(PropertyName = "DETALLE")]
+        public OdtDetalle[] odtDetalle { get; set; }
+    }
+
+    public class OdtDetalle
     {
         [JsonProperty(PropertyName = "ID_AR")]
         public int ID_AR { get; set; }
@@ -14,7 +31,7 @@ namespace WebApiSgsElavon.Entities
         public int ID_NEGOCIO { get; set; }
         [JsonProperty(PropertyName = "NO_AR")]
         public string NO_ODT { get; set; }
-        [JsonProperty(PropertyName = "NEGOCIO")]        
+        [JsonProperty(PropertyName = "NEGOCIO")]
         public string NEGOCIO { get; set; }
         [JsonProperty(PropertyName = "NO_AFILIACION")]
         public string NO_AFILIACION { get; set; }
@@ -36,7 +53,5 @@ namespace WebApiSgsElavon.Entities
         public int AA { get; set; }
         [JsonProperty(PropertyName = "ID_TIPO_SERVICIO")]
         public int? ID_TIPO_SERVICIO { get; set; }
-        [JsonProperty(PropertyName = "NUMBER")]
-        public long? NUMBER { get; set; }
     }
 }
