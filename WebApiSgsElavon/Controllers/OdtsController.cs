@@ -39,5 +39,18 @@ namespace WebApiSgsElavon.Controllers
             }
             
         }
+
+        [HttpGet("getNewOdts/{idusuario}")]
+        public async Task<ActionResult<string>> getNewOdts(int idusuario)
+        {
+            try
+            {
+                return Ok(await _odtService.GetNewOdts(idusuario));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
     }
 }
