@@ -43,6 +43,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
                 "BD_NEGOCIOS.COLONIA, " +
+                "BD_NEGOCIOS.POBLACION, " +
+                "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +

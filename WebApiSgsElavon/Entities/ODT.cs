@@ -22,6 +22,10 @@ namespace WebApiSgsElavon.Entities
         public string ESTADO { get; set; }
         [JsonProperty(PropertyName = "COLONIA")]
         public string COLONIA { get; set; }
+        [JsonProperty(PropertyName = "POBLACION")]
+        public string POBLACION { get; set; }
+        [JsonProperty(PropertyName = "DIRECCION")]
+        public string DIRECCION { get; set; }
         [JsonProperty(PropertyName = "FEC_GARANTIA")]
         public string FEC_GARANTIA { get; set; }
         [JsonProperty(PropertyName = "LATITUD")]
