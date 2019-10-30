@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
+using WebApiSgsElavon.Entities.Requests;
 using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
@@ -13,6 +14,7 @@ namespace WebApiSgsElavon.Services
         totalODT totalODTS(int idusuario);
         Task<IEnumerable<ODT>> getOdts(int idusuario);
         Task<string> GetNewOdts(int idusuario);
+        Task<int> UpdateStatusAr(UpdateStatusBdArRequest model);
     }
 
     public class OdtServices : IOdtService
@@ -52,15 +54,44 @@ namespace WebApiSgsElavon.Services
                 "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
                 "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
                 "BD_AR.ID_TIPO_SERVICIO, " +
-                "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER " +
+                "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER, " +
+                "BD_AR.ID_STATUS_AR " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO'" +
                 " ORDER BY BD_AR.FEC_GARANTIA ASC", idusuario).ToListAsync();
 
             //var totalYears = odt.GroupBy(x => x.AA).Count();
 
             return odt;
+        }
+
+        public async Task<int> UpdateStatusAr(UpdateStatusBdArRequest model)
+        {
+            try
+            {
+                var ar = await _context.BdAr.Where(x => x.IdAr == model.ID_AR).FirstOrDefaultAsync();
+                ar.IdStatusAr = model.ID_STATUS_AR_P;
+                _context.SaveChanges();
+                BdBitacoraAr bitacora = new BdBitacoraAr()
+                {
+                    IdAr = model.ID_AR,
+                    IdStatusArIni = model.ID_STATUS_AR_A,
+                    IdStatusArFin = model.ID_STATUS_AR_P,
+                    Comentario = "Solicitud actualizada por aplicacion movil",
+                    IsCambioValido = 1,
+                    IsPda = 1,
+                    IdUsuarioAlta = model.ID_USUARIO,
+                    FecAlta = DateTime.Now
+                };
+                _context.BdBitacoraAr.Add(bitacora);
+                _context.SaveChanges();
+                return 1;
+            }catch(Exception ex)
+            {
+                return 0;
+            }
+
         }
 
         public async Task<string> GetNewOdts(int idusuario)

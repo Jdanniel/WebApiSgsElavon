@@ -42,5 +42,7 @@ namespace WebApiSgsElavon.Entities
         public int? ID_TIPO_SERVICIO { get; set; }
         [JsonProperty(PropertyName = "NUMBER")]
         public long? NUMBER { get; set; }
+        [JsonProperty(PropertyName = "ID_STATUS_AR")]
+        public int ID_STATUS_AR { get; set; }
     }
 }

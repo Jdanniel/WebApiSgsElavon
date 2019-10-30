@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSgsElavon.Entities;
+using WebApiSgsElavon.Entities.Requests;
 using WebApiSgsElavon.Services;
 
 namespace WebApiSgsElavon.Controllers
@@ -46,6 +47,19 @@ namespace WebApiSgsElavon.Controllers
             try
             {
                 return Ok(await _odtService.GetNewOdts(idusuario));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpPut("UpdateStatusAr")]
+        public async Task<ActionResult<int>> UpdateStatusAr(UpdateStatusBdArRequest model)
+        {
+            try
+            {
+                return Ok(await _odtService.UpdateStatusAr(model));
             }
             catch (Exception ex)
             {
