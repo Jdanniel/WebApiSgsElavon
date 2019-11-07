@@ -66,5 +66,17 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(ex.ToString());
             }
         }
+
+        [HttpPost("AgregarComentario")]
+        public ActionResult<int> AgregarComentario(AgregarComentarioRequest request)
+        {
+            try
+            {
+                return Ok(_odtService.AgregarComentario(request));
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
     }
 }

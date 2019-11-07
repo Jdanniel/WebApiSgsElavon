@@ -15,6 +15,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<ODT>> getOdts(int idusuario);
         Task<string> GetNewOdts(int idusuario);
         Task<int> UpdateStatusAr(UpdateStatusBdArRequest model);
+        int AgregarComentario(AgregarComentarioRequest request);
     }
 
     public class OdtServices : IOdtService
@@ -126,6 +127,28 @@ namespace WebApiSgsElavon.Services
             }
 
             return "";
+
+        }
+
+        public int AgregarComentario(AgregarComentarioRequest request)
+        {
+            try
+            {
+                BdComentarioAr ar = new BdComentarioAr()
+                {
+                    IdAr = request.ID_AR,
+                    DescComentarioAr = request.COMENTARIO,
+                    IdUsuarioAlta = request.ID_USUARIO,
+                    FecAlta = DateTime.Now
+                };
+                _context.BdComentarioAr.Add(ar);
+                _context.SaveChanges();
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
 
         }
     }

@@ -64,5 +64,6 @@ namespace WebApiSgsElavon.ModelsTest
         public string TelefonoComercio1 { get; set; }
         public string TelefonoComercio2 { get; set; }
         public string IsComercioNotifado { get; set; }
+        public int? IsSmc { get; set; }
     }
 }
