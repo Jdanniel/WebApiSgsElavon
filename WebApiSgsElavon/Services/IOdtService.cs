@@ -16,6 +16,7 @@ namespace WebApiSgsElavon.Services
         Task<string> GetNewOdts(int idusuario);
         Task<int> UpdateStatusAr(UpdateStatusBdArRequest model);
         int AgregarComentario(AgregarComentarioRequest request);
+        Task<IEnumerable<OdtEvent2>> prueba2();
     }
 
     public class OdtServices : IOdtService
@@ -102,6 +103,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
                 "BD_NEGOCIOS.COLONIA, " +
+                "BD_NEGOCIOS.POBLACION, " +
+                "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +
@@ -150,6 +153,149 @@ namespace WebApiSgsElavon.Services
                 return 0;
             }
 
+        }
+
+        public async Task<IEnumerable<OdtEvent>> prueba()
+        {
+            List<OdtEvent> eventos = new List<OdtEvent>();
+
+            List<ODT> odts = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+                "BD_NEGOCIOS.DESC_NEGOCIO, " +
+                "BD_NEGOCIOS.NO_AFILIACION, " +
+                "BD_NEGOCIOS.ESTADO, " +
+                "BD_NEGOCIOS.COLONIA, " +
+                "BD_NEGOCIOS.POBLACION, " +
+                "BD_NEGOCIOS.DIRECCION, " +
+                "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "BD_NEGOCIOS.LATITUD, " +
+                "BD_NEGOCIOS.LONGITUD, " +
+                "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
+                "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
+                "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
+                "BD_AR.ID_TIPO_SERVICIO, " +
+                "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER, " +
+                "BD_AR.ID_STATUS_AR " +
+                "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
+                "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO'" +
+                " ORDER BY BD_AR.FEC_GARANTIA ASC", 34).ToListAsync();
+
+            var years = odts.GroupBy(x => new { x.YEARS }).Select(x => x.Key).ToList();
+            var yMonth = odts.GroupBy(x => new { x.YEARS, x.MONTHS }).Select(x => x.Key).ToList();
+
+            for (int i = 0; i < years.Count(); i++)
+            {
+                OdtEvent evento = new OdtEvent();
+                evento.year = years[i].YEARS;
+                eventos.Add(evento);
+            }
+
+            OdtEvent evento1 = new OdtEvent();
+            evento1.year = 2020;
+            eventos.Add(evento1);
+
+
+
+            var totalA = eventos.Count();
+
+            for (int i = 0; i < totalA; i++)
+            {
+                List<OdtGroup> groups = new List<OdtGroup>();
+
+                for (int x = 0; x < yMonth.Count(); x++)
+                {
+                    List<OdtDetalle> detalles = new List<OdtDetalle>();
+
+                    OdtGroup group = new OdtGroup();
+                    group.month = yMonth[x].MONTHS;
+                    groups.Add(group);
+                    if(eventos[i].year == yMonth[x].YEARS)
+                    {
+                        eventos[i].odtGroup = groups;
+                        
+                        var o = odts.Where(a => a.YEARS == yMonth[x].YEARS && a.MONTHS == yMonth[x].MONTHS).ToList();
+                        for (int y = 0; y < o.Count(); y++)
+                        {
+                            OdtDetalle detalle = new OdtDetalle();
+                            detalle.AA = o[y].YEARS;
+                            detalle.MES = o[y].MONTHS;
+                            detalle.DIA = o[y].DAYS;
+                            detalle.NO_ODT = o[y].NO_ODT;
+                            detalle.NO_AFILIACION = o[y].NO_AFILIACION;
+                            detalle.NEGOCIO = o[y].DESC_NEGOCIO;
+                            detalle.ID_AR = o[y].ID_AR;
+                            detalle.ESTADO = o[y].ESTADO;
+                            detalles.Add(detalle);
+                        }
+                        eventos[i].odtGroup[x].odtDetalle = detalles;
+                        
+                    }
+                }
+            }
+
+            return eventos;
+        }
+        public async Task<IEnumerable<OdtEvent2>> prueba2()
+        {
+            List<OdtEvent2> eventos = new List<OdtEvent2>();
+
+            List<ODT> odts = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+                "BD_NEGOCIOS.DESC_NEGOCIO, " +
+                "BD_NEGOCIOS.NO_AFILIACION, " +
+                "BD_NEGOCIOS.ESTADO, " +
+                "BD_NEGOCIOS.COLONIA, " +
+                "BD_NEGOCIOS.POBLACION, " +
+                "BD_NEGOCIOS.DIRECCION, " +
+                "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "BD_NEGOCIOS.LATITUD, " +
+                "BD_NEGOCIOS.LONGITUD, " +
+                "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
+                "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
+                "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
+                "BD_AR.ID_TIPO_SERVICIO, " +
+                "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER, " +
+                "BD_AR.ID_STATUS_AR " +
+                "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
+                "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO'" +
+                " ORDER BY BD_AR.FEC_GARANTIA ASC", 34).ToListAsync();
+
+            var years = odts.GroupBy(x => new { x.YEARS }).Select(x => x.Key).ToList();
+            var yMonth = odts.GroupBy(x => new { x.YEARS, x.MONTHS }).Select(x => x.Key).ToList();
+
+            for (int i = 0; i < years.Count(); i++)
+            {
+                OdtEvent2 evento = new OdtEvent2();
+                evento.year = years[i].YEARS;
+                for (int x = 0; x < yMonth.Count(); x++)
+                {
+                    //List<int> meses = new List<int>();
+                    if(years[i].YEARS == yMonth[x].YEARS)
+                    {
+                        List<OdtDetalle2> detalles = new List<OdtDetalle2>();
+                        //meses.Add(yMonth[x].MONTHS);
+                        evento.month = yMonth[x].MONTHS;
+                        var o = odts.Where(a => a.YEARS == yMonth[x].YEARS && a.MONTHS == yMonth[x].MONTHS).ToList();
+                        for (int y = 0; y < o.Count(); y++)
+                        {
+                            OdtDetalle2 detalle = new OdtDetalle2();
+                            detalle.AA = o[y].YEARS;
+                            detalle.MES = o[y].MONTHS;
+                            detalle.DIA = o[y].DAYS;
+                            detalle.NO_ODT = o[y].NO_ODT;
+                            detalle.NO_AFILIACION = o[y].NO_AFILIACION;
+                            detalle.NEGOCIO = o[y].DESC_NEGOCIO;
+                            detalle.ID_AR = o[y].ID_AR;
+                            detalle.ESTADO = o[y].ESTADO;
+                            detalles.Add(detalle);
+                        }
+                        evento.odtDetalle = detalles;
+                    }
+                    //evento.month = meses;
+                }
+                eventos.Add(evento);
+            }
+            return eventos;
         }
     }
 }

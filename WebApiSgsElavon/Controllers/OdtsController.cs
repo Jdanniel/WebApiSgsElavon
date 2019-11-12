@@ -78,5 +78,11 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(ex.ToString());
             }
         }
+        
+        [HttpGet("PRUEBA")]
+        public async Task<ActionResult<IEnumerable<OdtEvent>>> Prueba()
+        {
+            return Ok(await _odtService.prueba2());
+        }
     }
 }
