@@ -58,5 +58,10 @@ namespace WebApiSgsElavon.Controllers
         {
             return await _Catalogosservices.GetUnidades(idusuario);
         }
+        [HttpGet("movinventariosf")]
+        public async Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas()
+        {
+            return await _Catalogosservices.GetMovimientoInventarioServicioFallas();
+        }
     }
 }

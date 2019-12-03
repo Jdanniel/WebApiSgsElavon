@@ -16,6 +16,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<Conectividades>> GetConectividades();
         Task<IEnumerable<Software>> GetSoftwares();
         Task<IEnumerable<Unidades>> GetUnidades(int idusuario);
+        Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -54,6 +55,16 @@ namespace WebApiSgsElavon.Services
                 .Select(x => new Modelos { ID_MODELO = x.IdModelo, DESC_MODELO = x.DescModelo })
                 .ToListAsync();
             return modelos;
+        }
+
+        public async Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas()
+        {
+            List<MovimientoInventarioServicioFalla> movs = await context
+                .BdValMovimientosInvServicioFalla
+                .Where(x => x.Status == "ACTIVO")
+                .Select(x => new MovimientoInventarioServicioFalla { ID_VAL_MOVIMIENTOS_INV_SERVICIO_FALLA = x.IdValMovimientosInvServicioFalla, ID_SERVICIO = x.IdServicio, ID_FALLA = x.IdFalla, ID_MOV_INVENTARIO = x.IdMovInventario, STATUS = x.Status})
+                .ToListAsync();
+            return movs;
         }
 
         public async Task<IEnumerable<Servicios>> GetServicios()
