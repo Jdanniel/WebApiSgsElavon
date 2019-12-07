@@ -17,6 +17,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<Software>> GetSoftwares();
         Task<IEnumerable<Unidades>> GetUnidades(int idusuario);
         Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas();
+        Task<IEnumerable<CCausas>> GetCausas();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -26,6 +27,15 @@ namespace WebApiSgsElavon.Services
         public CatalogosServices(ELAVONTESTContext _context)
         {
             context = _context;
+        }
+
+        public async Task<IEnumerable<CCausas>> GetCausas()
+        {
+            List<CCausas> causas = await context
+                .CCausas
+                .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
+                .ToListAsync();
+            return causas;
         }
 
         public async Task<IEnumerable<Conectividades>> GetConectividades()

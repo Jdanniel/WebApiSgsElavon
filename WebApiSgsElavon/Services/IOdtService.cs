@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
@@ -16,6 +17,7 @@ namespace WebApiSgsElavon.Services
         Task<string> GetNewOdts(int idusuario);
         Task<int> UpdateStatusAr(UpdateStatusBdArRequest model);
         int AgregarComentario(AgregarComentarioRequest request);
+        Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request);
         Task<IEnumerable<OdtEvent2>> prueba2();
     }
 
@@ -302,6 +304,50 @@ namespace WebApiSgsElavon.Services
                 eventos.Add(evento);
             }
             return eventos;
+        }
+
+        public async Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request)
+        {
+            List<ODT> odts;
+            var parametros = new []{
+                new SqlParameter("@p0", System.Data.SqlDbType.Int){Value = request.ID_USUARIO},
+                new SqlParameter("@p1", System.Data.SqlDbType.VarChar,50){ Value = request.FEC_UPDATE}
+            };
+            try {
+                odts = await _context
+                    .Query<ODT>()
+                    .FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+                    "BD_NEGOCIOS.DESC_NEGOCIO, " +
+                    "BD_NEGOCIOS.NO_AFILIACION, " +
+                    "BD_NEGOCIOS.ESTADO, " +
+                    "BD_NEGOCIOS.COLONIA, " +
+                    "BD_NEGOCIOS.POBLACION, " +
+                    "BD_NEGOCIOS.DIRECCION, " +
+                    "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                    "BD_NEGOCIOS.LATITUD, " +
+                    "BD_NEGOCIOS.LONGITUD, " +
+                    "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
+                    "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
+                    "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
+                    "BD_AR.ID_TIPO_SERVICIO, " +
+                    "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER, " +
+                    "BD_AR.ID_STATUS_AR, " +
+                    "BD_AR.ID_SERVICIO, " +
+                    "BD_AR.ID_FALLA " +
+                    "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
+                    "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
+                    "WHERE ID_TECNICO = @p0 " +
+                    "AND ID_STATUS_AR IN(3,4,5,6,7,13) " +
+                    "AND BD_AR.STATUS='PROCESADO' " +
+                    "AND BD_AR.FEC_ALTA > @p1" +
+                    " ORDER BY BD_AR.FEC_GARANTIA ASC",parametros)
+                    .ToListAsync();
+                return odts;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }
