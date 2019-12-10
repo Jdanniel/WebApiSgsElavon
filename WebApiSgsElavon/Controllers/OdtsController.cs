@@ -80,7 +80,7 @@ namespace WebApiSgsElavon.Controllers
         }
 
         [HttpPost("GetNuevasOdts")]
-        public async Task<ActionResult<IEnumerable<ODT>>> GetActualizacionesOdt(GetNuevasOdts request)
+        public async Task<ActionResult<IEnumerable<ODT>>> GetNuevasOdts(GetNuevasOdts request)
         {
             try
             {

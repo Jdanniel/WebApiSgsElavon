@@ -76,7 +76,10 @@ namespace WebApiSgsElavon.Services
         {
             try
             {
-                var ar = await _context.BdAr.Where(x => x.IdAr == model.ID_AR).FirstOrDefaultAsync();
+                var ar = await _context.BdAr.Where(x => x.IdAr == model.ID_AR && x.IdStatusAr != model.ID_STATUS_AR_P).FirstOrDefaultAsync();
+                
+                if (ar == null) return 2;
+
                 ar.IdStatusAr = model.ID_STATUS_AR_P;
                 _context.SaveChanges();
                 BdBitacoraAr bitacora = new BdBitacoraAr()

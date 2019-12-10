@@ -17,7 +17,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<Software>> GetSoftwares();
         Task<IEnumerable<Unidades>> GetUnidades(int idusuario);
         Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas();
-        Task<IEnumerable<CCausas>> GetCausas();
+        Task<IEnumerable<Causas>> GetCausas();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -29,11 +29,16 @@ namespace WebApiSgsElavon.Services
             context = _context;
         }
 
-        public async Task<IEnumerable<CCausas>> GetCausas()
+        public async Task<IEnumerable<Causas>> GetCausas()
         {
-            List<CCausas> causas = await context
+            List<Causas> causas = await context
                 .CCausas
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
+                .Select(x => new Causas { 
+                    ID_CAUSA = x.IdCausa,
+                    DESC_CAUSA = x.DescCausa,
+                    DESCRIPCION = x.Descripcion
+                })
                 .ToListAsync();
             return causas;
         }
@@ -81,7 +86,7 @@ namespace WebApiSgsElavon.Services
         {
             List<Servicios> servicios = await context
                 .CServicios
-                .Where(x => x.Status == "ACTIVO")
+                .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new Servicios { ID_SERVICIO = x.IdServicio, DESC_SERVICIO = x.DescServicio })
                 .ToListAsync();
             return servicios;
@@ -91,7 +96,7 @@ namespace WebApiSgsElavon.Services
         {
             List<Software> softwares = await context
                 .CSoftware
-                .Where(x => x.Status == "ACTIVO")
+                .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new Software { ID_APLICATIVO = x.IdSoftware, DESC_APLICATIVO = x.DescSoftware })
                 .ToListAsync();
             return softwares;
@@ -99,9 +104,12 @@ namespace WebApiSgsElavon.Services
 
         public async Task<IEnumerable<Unidades>> GetUnidades(int idusuario)
         {
+            List<int> status = new List<int>();
+            status.Add(13);
+            status.Add(15);
             List<Unidades> unidades = await context
                 .BdUnidades
-                .Where(x => x.Status == "ACTIVO" && x.IdResponsable == idusuario && x.IdTipoResponsable == 2)
+                .Where(x => status.Contains(x.IdStatusUnidad) && x.Status == "ACTIVO" && x.IdResponsable == idusuario && x.IdTipoResponsable == 2 && x.IdCliente == 4)
                 .Select(x => new Unidades { ID_UNIDAD = x.IdUnidad, ID_APLICATIVO = x.IdAplicativo, ID_CONECTIVIDAD = x.IdConectividad, ID_MARCA = x.IdMarca, ID_MODELO = x.IdModelo, NO_SERIE = x.NoSerie })
                 .ToListAsync();
             return unidades;
