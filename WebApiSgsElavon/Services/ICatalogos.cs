@@ -19,6 +19,8 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas();
         Task<IEnumerable<Causas>> GetCausas();
         Task<IEnumerable<Fallas>> GetFallas();
+        Task<IEnumerable<StatusAr>> GetStatusAr();
+        Task<IEnumerable<CambioStatusAr>> GetCambioStatusAr();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -28,6 +30,20 @@ namespace WebApiSgsElavon.Services
         public CatalogosServices(ELAVONTESTContext _context)
         {
             context = _context;
+        }
+
+        public async Task<IEnumerable<CambioStatusAr>> GetCambioStatusAr()
+        {
+            List<CambioStatusAr> cambio = await context
+                .BdCambioStatusAr
+                .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
+                .Select(x => new CambioStatusAr { 
+                    ID_CAMBIO_STATUS_AR = x.IdCambioStatusAr,
+                    ID_STATUS_AR_INI = x.IdStatusArIni,
+                    ID_STATUS_AR_FIN = x.IdStatusArFin
+                })
+                .ToListAsync();
+            return cambio;
         }
 
         public async Task<IEnumerable<Causas>> GetCausas()
@@ -110,6 +126,16 @@ namespace WebApiSgsElavon.Services
                 .Select(x => new Software { ID_APLICATIVO = x.IdSoftware, DESC_APLICATIVO = x.DescSoftware })
                 .ToListAsync();
             return softwares;
+        }
+
+        public async Task<IEnumerable<StatusAr>> GetStatusAr()
+        {
+            List<StatusAr> status = await context
+                .CStatusAr
+                .Where(x => x.Status == "ACTIVO")
+                .Select(x => new StatusAr { ID_STATUS_AR = x.IdStatusAr, DESC_STATUS_AR = x.DescStatusAr })
+                .ToListAsync();
+            return status;
         }
 
         public async Task<IEnumerable<Unidades>> GetUnidades(int idusuario)

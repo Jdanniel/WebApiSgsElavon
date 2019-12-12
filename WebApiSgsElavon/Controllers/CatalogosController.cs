@@ -73,5 +73,19 @@ namespace WebApiSgsElavon.Controllers
         {
             return await _Catalogosservices.GetFallas();
         }
+        [HttpGet("cambiostatusar")]
+        public async Task<ActionResult<IEnumerable<CambioStatusAr>>> GetCambioStatusArs()
+        {
+            var lista = await _Catalogosservices.GetCambioStatusAr();
+            if(lista.Any()) return Ok(lista);
+            return NotFound();
+        }
+        [HttpGet("statusar")]
+        public async Task<ActionResult<IEnumerable<StatusAr>>> GetStatusAr()
+        {
+            var lista = await _Catalogosservices.GetStatusAr();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
     }
 }

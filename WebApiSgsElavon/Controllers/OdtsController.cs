@@ -82,14 +82,9 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("GetNuevasOdts")]
         public async Task<ActionResult<IEnumerable<ODT>>> GetNuevasOdts(GetNuevasOdts request)
         {
-            try
-            {
-                return Ok(await _odtService.GetNuevasOdts(request));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            var lista = await _odtService.GetNuevasOdts(request);
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
         }
         
         [HttpGet("PRUEBA")]
