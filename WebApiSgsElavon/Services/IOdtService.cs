@@ -18,6 +18,7 @@ namespace WebApiSgsElavon.Services
         Task<int> UpdateStatusAr(UpdateStatusBdArRequest model);
         int AgregarComentario(AgregarComentarioRequest request);
         Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request);
+        int AceptarRechazarOdt(AgregarRechazarOdtRequest request);
         Task<IEnumerable<OdtEvent2>> prueba2();
     }
 
@@ -52,6 +53,7 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.POBLACION, " +
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
@@ -67,7 +69,7 @@ namespace WebApiSgsElavon.Services
                 "AS DESC_STATUS_AR " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO'" +
                 " ORDER BY BD_AR.FEC_GARANTIA ASC", idusuario).ToListAsync();
 
             //var totalYears = odt.GroupBy(x => x.AA).Count();
@@ -125,7 +127,7 @@ namespace WebApiSgsElavon.Services
                 "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,35) AND BD_AR.STATUS='PROCESADO'" +
                 " ORDER BY BD_AR.FEC_GARANTIA ASC", idusuario).ToListAsync();
 
             OdtEvent evento;
@@ -330,6 +332,7 @@ namespace WebApiSgsElavon.Services
                     "BD_NEGOCIOS.POBLACION, " +
                     "BD_NEGOCIOS.DIRECCION, " +
                     "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                    "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                     "BD_NEGOCIOS.LATITUD, " +
                     "BD_NEGOCIOS.LONGITUD, " +
                     "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
@@ -357,6 +360,23 @@ namespace WebApiSgsElavon.Services
             {
                 return null;
             }
+        }
+
+        public int AceptarRechazarOdt(AgregarRechazarOdtRequest request)
+        {
+            var odt = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
+            int r = 0;
+            odt.IdStatusAr = request.ID_STATUS_AR;
+            odt.IdTecnico = 0;
+            _context.SaveChanges();
+            if (request.ID_STATUS_AR == 35)
+            {
+                r = 1;
+            }else if (request.ID_STATUS_AR == 36)
+            {
+                r = 2;
+            }
+            return r;
         }
     }
 }

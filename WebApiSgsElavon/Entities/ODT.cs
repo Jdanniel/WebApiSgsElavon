@@ -28,6 +28,8 @@ namespace WebApiSgsElavon.Entities
         public string DIRECCION { get; set; }
         [JsonProperty(PropertyName = "FEC_GARANTIA")]
         public string FEC_GARANTIA { get; set; }
+        [JsonProperty(PropertyName = "FEC_ATENCION")]
+        public string FEC_ATENCION { get; set; }
         [JsonProperty(PropertyName = "LATITUD")]
         public decimal? LATITUD { get; set; }
         [JsonProperty(PropertyName = "LONGITUD")]
