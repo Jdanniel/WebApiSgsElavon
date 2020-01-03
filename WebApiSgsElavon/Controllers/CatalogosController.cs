@@ -87,5 +87,19 @@ namespace WebApiSgsElavon.Controllers
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
+        [HttpGet("subrechazos")]
+        public async Task<ActionResult<IEnumerable<Subrechazos>>> GetSubrechazos()
+        {
+            var lista = await _Catalogosservices.GetSubrechazos();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
+        [HttpGet("causasrechazos")]
+        public async Task<ActionResult<IEnumerable<Causasrechazos>>> GetCausasRechazos()
+        {
+            var lista = await _Catalogosservices.GetCausasrechazos();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
     }
 }

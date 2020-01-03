@@ -106,6 +106,7 @@ namespace WebApiSgsElavon.ModelsTest
         public int? IdDatosFiscales { get; set; }
         public int? IsAdiministrarUsuarios { get; set; }
         public int? IsCallCenterContacto { get; set; }
+        public int? IsCambioStatusUnidadInstaladas { get; set; }
 
         public virtual CTipoUsuario IdTipoUsuarioNavigation { get; set; }
         public virtual ICollection<BdAuditorias> BdAuditorias { get; set; }

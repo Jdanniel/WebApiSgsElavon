@@ -14,7 +14,7 @@ namespace WebApiSgsElavon.Controllers
     [ApiController]
     public class OdtsController : ControllerBase
     {
-        private IOdtService _odtService; 
+        private IOdtService _odtService;
 
         public OdtsController(IOdtService service)
         {
@@ -38,7 +38,7 @@ namespace WebApiSgsElavon.Controllers
             {
                 return BadRequest(ex.ToString());
             }
-            
+
         }
 
         [HttpGet("getNewOdts/{idusuario}")]
@@ -73,7 +73,7 @@ namespace WebApiSgsElavon.Controllers
             try
             {
                 return Ok(_odtService.AgregarComentario(request));
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ex.ToString());
             }
@@ -86,7 +86,90 @@ namespace WebApiSgsElavon.Controllers
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
-        
+
+        [HttpPut("AceptarRechazarOdt")]
+        public async Task<ActionResult<ODT>> AceptarRechazarOdt(AceptarRechazarOdtRequest request)
+        {
+            var i =_odtService.AceptarRechazarOdt(request);
+            if(i == 1)
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("CierreSustitucion")]
+        public async Task<ActionResult<ODT>> CierreSustitucion(SustitucionesRequest request)
+        {
+            if (_odtService.CierreSustitucion(request))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("CierreInstalacion")]
+        public async Task<ActionResult<ODT>> CierreInstalacion(CierreInstalacionRequest request)
+        {
+            if (_odtService.cierreInstalacion(request))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("CierreRetiro")]
+        public async Task<ActionResult<ODT>> CierreRetiro(CierresRetiroRequest request)
+        {
+            if (_odtService.CierreRetiro(request))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost("CierreRechazo")]
+        public async Task<ActionResult<ODT>> CierreRechazo(CierreRechazoRequest request)
+        {
+            if (_odtService.CierreRechazo(request))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("GetByIdar/{idAr}")]
+        public async Task<ActionResult<ODT>> GetByIdar(int idAr)
+        {
+            var odt = await _odtService.GetOdtbyId(idAr);
+
+            if(odt == null)
+            {
+                return NotFound();
+            }
+            return Ok(odt);
+
+        }
+
         [HttpGet("PRUEBA")]
         public async Task<ActionResult<IEnumerable<OdtEvent>>> Prueba()
         {
@@ -94,7 +177,7 @@ namespace WebApiSgsElavon.Controllers
         }
 
         [HttpPut("AceptarRechazarOdt")]
-        public async Task<ActionResult> UpdateAceptarRechazarOdt(AgregarRechazarOdtRequest request)
+        public async Task<ActionResult> UpdateAceptarRechazarOdt(AceptarRechazarOdtRequest request)
         {
             var r = _odtService.AceptarRechazarOdt(request);
             if(r == 1)

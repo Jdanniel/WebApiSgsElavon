@@ -37,7 +37,7 @@ namespace WebApiSgsElavon.ModelsTest
         public int? HorasGarantia { get; set; }
         public decimal? PrecioExito { get; set; }
         public decimal? Precio { get; set; }
-        public int? IdNegocio { get; set; }
+        public int IdNegocio { get; set; }
         public int? IdEstado { get; set; }
         public int? IdRegion { get; set; }
         public int? IdZona { get; set; }

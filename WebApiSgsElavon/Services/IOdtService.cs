@@ -18,8 +18,13 @@ namespace WebApiSgsElavon.Services
         Task<int> UpdateStatusAr(UpdateStatusBdArRequest model);
         int AgregarComentario(AgregarComentarioRequest request);
         Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request);
-        int AceptarRechazarOdt(AgregarRechazarOdtRequest request);
+        int AceptarRechazarOdt(AceptarRechazarOdtRequest request);
         Task<IEnumerable<OdtEvent2>> prueba2();
+        bool cierreInstalacion(CierreInstalacionRequest request);
+        bool CierreSustitucion(SustitucionesRequest request);
+        bool CierreRetiro(CierresRetiroRequest request);
+        bool CierreRechazo(CierreRechazoRequest request);
+        Task<ODT> GetOdtbyId(int idAr);
     }
 
     public class OdtServices : IOdtService
@@ -41,7 +46,6 @@ namespace WebApiSgsElavon.Services
                 nuevas = tnuevas
             };
         }
-
         public async Task<IEnumerable<ODT>> getOdts(int idusuario)
         {
 
@@ -56,11 +60,11 @@ namespace WebApiSgsElavon.Services
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +
-                "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
-                "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
-                "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
+                "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
+                "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
+                "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
                 "BD_AR.ID_TIPO_SERVICIO, " +
-                "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER, " +
+                "ROW_NUMBER() OVER(ORDER BY FEC_ATENCION ASC) AS NUMBER, " +
                 "BD_AR.ID_STATUS_AR, " +
                 "BD_AR.ID_SERVICIO, " +
                 "BD_AR.ID_FALLA, " +
@@ -70,13 +74,12 @@ namespace WebApiSgsElavon.Services
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO'" +
-                " ORDER BY BD_AR.FEC_GARANTIA ASC", idusuario).ToListAsync();
+                " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario).ToListAsync();
 
             //var totalYears = odt.GroupBy(x => x.AA).Count();
 
             return odt;
         }
-
         public async Task<int> UpdateStatusAr(UpdateStatusBdArRequest model)
         {
             try
@@ -101,13 +104,12 @@ namespace WebApiSgsElavon.Services
                 _context.BdBitacoraAr.Add(bitacora);
                 _context.SaveChanges();
                 return 1;
-            }catch(Exception ex)
+            }catch(SqlException ex)
             {
                 return 0;
             }
 
         }
-
         public async Task<string> GetNewOdts(int idusuario)
         {
             List<ODT> odts = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
@@ -118,17 +120,18 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.POBLACION, " +
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +
-                "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
-                "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
-                "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
+                "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
+                "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
+                "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
                 "BD_AR.ID_TIPO_SERVICIO, " +
                 "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,35) AND BD_AR.STATUS='PROCESADO'" +
-                " ORDER BY BD_AR.FEC_GARANTIA ASC", idusuario).ToListAsync();
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'" +
+                " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario).ToListAsync();
 
             OdtEvent evento;
             var years = odts.GroupBy(x => new { x.YEARS}).Select(x => x.Key);
@@ -144,7 +147,6 @@ namespace WebApiSgsElavon.Services
             return "";
 
         }
-
         public int AgregarComentario(AgregarComentarioRequest request)
         {
             try
@@ -160,13 +162,12 @@ namespace WebApiSgsElavon.Services
                 _context.SaveChanges();
                 return 1;
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 return 0;
             }
 
         }
-
         public async Task<IEnumerable<OdtEvent>> prueba()
         {
             List<OdtEvent> eventos = new List<OdtEvent>();
@@ -179,6 +180,7 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.POBLACION, " +
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
@@ -261,6 +263,7 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.POBLACION, " +
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                 "BD_NEGOCIOS.LATITUD, " +
                 "BD_NEGOCIOS.LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
@@ -313,7 +316,6 @@ namespace WebApiSgsElavon.Services
             }
             return eventos;
         }
-
         public async Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request)
         {
             List<ODT> odts;
@@ -335,9 +337,9 @@ namespace WebApiSgsElavon.Services
                     "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
                     "BD_NEGOCIOS.LATITUD, " +
                     "BD_NEGOCIOS.LONGITUD, " +
-                    "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
-                    "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
-                    "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
+                    "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
+                    "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
+                    "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
                     "BD_AR.ID_TIPO_SERVICIO, " +
                     "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER, " +
                     "BD_AR.ID_STATUS_AR, " +
@@ -349,34 +351,694 @@ namespace WebApiSgsElavon.Services
                     "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                     "WHERE ID_TECNICO = @p0 " +
-                    "AND ID_STATUS_AR IN(3,4,5,6,7,13) " +
+                    "AND ID_STATUS_AR IN(3,4,5,6,7,13,35) " +
                     "AND BD_AR.STATUS='PROCESADO' " +
                     "AND BD_AR.FEC_ALTA > @p1" +
-                    " ORDER BY BD_AR.FEC_GARANTIA ASC",parametros)
+                    " ORDER BY BD_AR.FEC_ATENCION ASC", parametros)
                     .ToListAsync();
                 return odts;
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 return null;
             }
         }
+        public bool CierreRechazo(CierreRechazoRequest request)
+        {
+            if(request != null)
+            {
+                int idAr = request.ID_AR;
+                var odt = _context.BdAr.Where(x => x.IdAr == idAr).FirstOrDefault();
+                int? idstatusini = odt.IdStatusAr;
+                try
+                {
+                    BdBitacoraAr bitacora = new BdBitacoraAr()
+                    {
+                        IdAr = idAr,
+                        IdStatusArIni = odt.IdStatusAr,
+                        IdStatusArFin = 7,
+                        Comentario = "Solicitud de Servicio Rechazada desde Aplicacion Movil",
+                        IsPda = 0,
+                        IdUsuarioAlta = request.ID_TECNICO,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdBitacoraAr.Add(bitacora);
+                    _context.SaveChanges();
 
-        public int AceptarRechazarOdt(AgregarRechazarOdtRequest request)
+                    odt.FecCierre = Convert.ToDateTime(request.FEC_CIERRE);
+                    odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && x.DescCausaRechazo == request.CAUSA_RECHAZO).Select(x => x.IdTrechazo).FirstOrDefault());
+                    odt.CausaRechazo = (_context.CSubrechazo.Where(x => x.Status == "ACTIVO" && x.Subrechazo == request.SUBRECHAZO).Select(x => x.Id).FirstOrDefault()).ToString();
+                    odt.IdSolucion = (_context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion == request.TIPO_ATENCION).Select(x => x.IdSolucion).FirstOrDefault());
+                    odt.IdTecnico = request.ID_TECNICO;
+                    odt.Atiende = request.ATIENDE;
+                    odt.DescripcionTrabajo = request.CONCLUSIONES;
+                    odt.IdStatusAr = 7;
+                    _context.SaveChanges();
+
+                    insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public int AceptarRechazarOdt(AceptarRechazarOdtRequest request)
         {
             var odt = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
-            int r = 0;
-            odt.IdStatusAr = request.ID_STATUS_AR;
-            odt.IdTecnico = 0;
-            _context.SaveChanges();
-            if (request.ID_STATUS_AR == 35)
+            int? idstatusini = odt.IdStatusAr;
+            try
             {
-                r = 1;
-            }else if (request.ID_STATUS_AR == 36)
-            {
-                r = 2;
+                if (request.ID_STATUS_AR == 35)
+                {
+                    odt.IdStatusAr = 35;
+                    insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 35, "Aceptado por tecnico");
+                    _context.SaveChanges();
+                }
+                else if (request.ID_STATUS_AR == 36)
+                {
+                    odt.IdStatusAr = 36;
+                    odt.IdTecnico = 0;
+                    insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 36, "Rechazado por tecnico");
+                    _context.SaveChanges();
+                }
+                return 1;
             }
-            return r;
+            catch (SqlException ex)
+            {
+                return 0;
+            }
+
+        }
+        public bool CierreRetiro(CierresRetiroRequest request)
+        {
+            if(request != null)
+            {
+                try
+                {
+                    int ID_AR = request.ID_AR;
+                    int ID_TECNICO = request.ID_TECNICO;
+                    var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                    int? idstatusini = bdar.IdStatusAr;
+                    var bdunidadRetirada = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+                    int idconectividadretirada = _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IdConectividad).FirstOrDefault();
+                    int idaplicativoretirada = _context.CSoftware.Where(x => x.DescSoftware == request.APLICATIVO.Trim()).Select(x => x.IdSoftware).FirstOrDefault();
+                    int idmarcaretiro = _context.CMarcas.Where(x => x.DescMarca == request.MARCA.Trim()).Select(x => x.IdMarca).FirstOrDefault();
+                    int idmodeloretiro = _context.CModelos.Where(x => x.DescModelo == request.MODELO.Trim()).Select(x => x.IdModelo).FirstOrDefault();
+                    int? idstatusunidadiniretirar = null;
+                    int idunidadretirar = 0;
+
+                    if (bdunidadRetirada == null)
+                    {
+                        var bdunidadretiradaUniverso = _context.BdUniversoUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+                        if(bdunidadretiradaUniverso != null)
+                        {
+                            BdUnidades unidad = new BdUnidades()
+                            {
+                                NoSerie = request.NO_SERIE,
+                                IdCliente = 4,
+                                IdModelo = idmodeloretiro,
+                                IdMarca = idmarcaretiro,
+                                IdAplicativo = idaplicativoretirada,
+                                IdConectividad = idconectividadretirada,
+                                Status = "ACTIVO",
+                                IdStatusUnidad = 30
+                            };
+                            _context.BdUnidades.Add(unidad);
+                            _context.SaveChanges();
+                            idunidadretirar = unidad.IdUnidad;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        idstatusunidadiniretirar = bdunidadRetirada.IdStatusUnidad;
+                        idunidadretirar = bdunidadRetirada.IdUnidad;
+
+                        bdunidadRetirada.IdConectividad = idconectividadretirada;
+                        bdunidadRetirada.IdAplicativo = idaplicativoretirada;
+                        bdunidadRetirada.IdMarca = idmarcaretiro;
+                        bdunidadRetirada.IdModelo = idmodeloretiro;
+                        bdunidadRetirada.IdStatusUnidad = 30;
+                        _context.SaveChanges();
+                    }
+
+                    BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                    {
+                        IdStatusUnidadIni = idstatusunidadiniretirar,
+                        IdStatusUnidadFin = 15,
+                        IdUnidad = idunidadretirar,
+                        IdTipoResponsable = 2,
+                        IdResponsable = ID_TECNICO,
+                        IdUsuarioAlta = ID_TECNICO,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                    _context.SaveChanges();
+
+                    BdRetiros retiros = new BdRetiros()
+                    {
+                        IdAr = ID_AR,
+                        IdTecnico = ID_TECNICO,
+                        IdNegocio = bdar.IdNegocio,
+                        IdUnidad = bdunidadRetirada.IdUnidad,
+                        IsDaniada = 0,
+                        IsNueva = 0,
+                        IdUsuarioAlta = ID_TECNICO,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdRetiros.Add(retiros);
+                    _context.SaveChanges();
+
+                    bdar.Atiende = request.ATIENDE;
+                    bdar.IdSolucion = 9;
+                    bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                    bdar.NoEquipo = request.VERSION;
+                    bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                    bdar.DigitoVerificador = request.DISCOVER.ToString();
+                    bdar.Caja = request.CAJA.ToString();
+                    bdar.DescripcionTrabajo = request.COMENTARIO;
+                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                    bdar.IdStatusAr = 6;
+                    _context.SaveChanges();
+
+                    insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Retiro Aplicación");
+
+                    BdArAccesorios accesoriosRetirados = new BdArAccesorios()
+                    {
+                        IdAr = ID_AR,
+                        Bateria = (request.BATERIA ? "SI" : "NO"),
+                        Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
+                        Base = (request.BASE ? "SI" : "NO"),
+                        Tapa = (request.TAPA ? "SI" : "NO"),
+                        CableAc = (request.CABLE_AC ? "SI" : "NO")
+                    };
+
+                    _context.BdArAccesorios.Add(accesoriosRetirados);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool cierreInstalacion(CierreInstalacionRequest request)
+        {
+            if(request != null)
+            {
+                try
+                {
+                    int ID_AR = request.ID_AR;
+                    int ID_TECNICO = request.ID_TECNICO;
+                    
+                    var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                    
+                    int? idstatusini = bdar.IdStatusAr;
+                    
+                    int idnegocio = _context
+                        .BdNegocios
+                        .Where(x => x.NoAfiliacion == bdar.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
+                        .Select(x => x.IdNegocio)
+                        .FirstOrDefault();
+
+                    var bdunidad = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+                    int idstatusunidadInstalar = bdunidad.IdStatusUnidad;
+                    int idunidadInstalar = bdunidad.IdUnidad;
+
+                    BdInstalaciones instalaciones = new BdInstalaciones()
+                    {
+                        IdAr = ID_AR,
+                        IdTecnico = ID_TECNICO,
+                        IdNegocio = bdar.IdNegocio,
+                        IdUnidad = bdunidad.IdUnidad,
+                        IsNueva = 0,
+                        IdClienteIni = 4,
+                        IdUsuarioAlta = ID_TECNICO,
+                        FecAlta = DateTime.Now,
+                    };
+                    _context.BdInstalaciones.Add(instalaciones);
+                    _context.SaveChanges();
+
+                    int idconectividadinstalada = _context
+                        .CConectividad
+                        .Where(x => x.DescConectividad == request.CONECTIVIDAD)
+                        .Select(x => x.IdConectividad)
+                        .FirstOrDefault();
+                    
+                    int idaplicativoinstalado = _context
+                        .CSoftware
+                        .Where(x => x.DescSoftware == request.APLICATIVO)
+                        .Select(x => x.IdSoftware)
+                        .FirstOrDefault();
+
+                    bdunidad.IdConectividad = idconectividadinstalada;
+                    bdunidad.IdAplicativo = idaplicativoinstalado;
+                    bdunidad.IdStatusUnidad = 17;
+                    bdunidad.IdTipoResponsable = 4;
+                    bdunidad.IdResponsable = idnegocio;
+                    _context.SaveChanges();
+
+                    BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                    {
+                        IdStatusUnidadIni = idstatusunidadInstalar,
+                        IdStatusUnidadFin = 17,
+                        IdUnidad = idunidadInstalar,
+                        IdTipoResponsable = 4,
+                        IdResponsable = idnegocio,
+                        IdUsuarioAlta = ID_TECNICO,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                    _context.SaveChanges();
+
+                    string notificado = request.NOTIFICADO ? "SI" : "NO";
+                    string promociones = request.PROMOCIONES ? "SI" : "NO";
+                    string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+
+                    bdar.NoInventario = request.VERSION;
+                    bdar.Atiende = request.ATIENDE;
+                    bdar.IdSolucion = 9;
+                    bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                    bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                    bdar.DigitoVerificador = request.DISCOVER.ToString();
+                    bdar.Caja = request.CAJA.ToString();
+                    bdar.DescripcionTrabajo = request.COMENTARIO;
+                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                    bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                                        + notificado
+                                        + " / PROMOCIONES: "
+                                        + promociones
+                                        + " / SE BAJO APP: "
+                                        + descargarApp
+                                        + " / "
+                                        + request.TELEFONO_1
+                                        + " / "
+                                        + request.TELEFONO_2;
+                    bdar.CadenaCierre += request.CONCLUSIONES_AMEX;
+                    bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
+                    bdar.IdStatusAr = 6;
+                    _context.SaveChanges();
+
+                    insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
+
+                    BdArMiComercio micomercio = new BdArMiComercio()
+                    {
+                        IdAr = ID_AR,
+                        Notificado = request.NOTIFICADO ? 1 : 0,
+                        Promociones = request.PROMOCIONES ? 1 : 0,
+                        DescargarApp = request.DESCARGA_APP ? 1 : 0,
+                        Telefono1 = request.TELEFONO_1,
+                        Telefono2 = request.TELEFONO_2,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdArMiComercio.Add(micomercio);
+                    _context.SaveChanges();
+
+                    BdArAccesorios accesoriosInstalados = new BdArAccesorios()
+                    {
+                        IdAr = ID_AR,
+                        Bateria = (request.BATERIA ? "SI" : "NO"),
+                        Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
+                        Base = (request.BASE ? "SI" : "NO"),
+                        Tapa = (request.TAPA ? "SI" : "NO"),
+                        CableAc = (request.CABLE_AC ? "SI" : "NO")
+                    };
+
+                    _context.BdArAccesorios.Add(accesoriosInstalados);
+                    _context.SaveChanges();
+
+                    if (request.IS_AMEX)
+                    {
+                        BdArTerminalAsociadaAmex terminal = new BdArTerminalAsociadaAmex()
+                        {
+                            IdAr = request.ID_AR,
+                            IdTerminalAmex = request.ID_AMEX,
+                            AfiliacionTerminalAmex = request.AFILIACION_AMEX,
+                            IdUsuarioAlta = ID_TECNICO,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdArTerminalAsociadaAmex.Add(terminal);
+                        _context.SaveChanges();
+                    }
+                    return true;
+                }
+                catch(Exception ex){
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool CierreSustitucion(SustitucionesRequest request)
+        {
+            if(request != null)
+            {
+                try
+                {
+                    /*INFORMACION DEL AR*/
+                    int ID_AR = request.ID_AR;
+                    int ID_TECNICO = request.ID_TECNICO;
+                    var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                    int? idstatusini = bdar.IdStatusAr;
+                    int idnegocioar = _context
+                        .BdNegocios
+                        .Where(x => x.NoAfiliacion == bdar.NoAfiliacion)
+                        .Select(x => x.IdNegocio)
+                        .FirstOrDefault();
+
+                    string notificado = request.NOTIFICADO ? "SI" : "NO";
+                    string promociones = request.PROMOCIONES ? "SI" : "NO";
+                    string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+
+                    bdar.NoInventario = request.VERSION;
+                    bdar.Atiende = request.ATIENDE;
+                    bdar.IdSolucion = 9;
+                    bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                    bdar.NoEquipo = request.VERSION_RETIRO;
+                    bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                    bdar.DigitoVerificador = request.DISCOVER.ToString();
+                    bdar.Caja = request.CAJA.ToString();
+                    bdar.DescripcionTrabajo = request.COMENTARIO;
+                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                    bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                                        + notificado
+                                        + " / PROMOCIONES: "
+                                        + promociones
+                                        + " / SE BAJO APP: "
+                                        + descargarApp
+                                        + " / "
+                                        + request.TELEFONO_1
+                                        + " / "
+                                        + request.TELEFONO_2;
+                    bdar.CadenaCierre += request.CONCLUSIONES_AMEX;
+                    bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
+                    bdar.IdStatusAr = 6;
+                    _context.SaveChanges();
+
+                    insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sustitucion Aplicación");
+
+                    BdArMiComercio micomercio = new BdArMiComercio()
+                    {
+                        IdAr = ID_AR,
+                        Notificado = request.NOTIFICADO ? 1 : 0,
+                        Promociones = request.PROMOCIONES ? 1 : 0,
+                        DescargarApp = request.DESCARGA_APP ? 1 : 0,
+                        Telefono1 = request.TELEFONO_1,
+                        Telefono2 = request.TELEFONO_2,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdArMiComercio.Add(micomercio);
+                    _context.SaveChanges();
+
+                    BdArAccesorios accesoriosInstalados = new BdArAccesorios()
+                    {
+                        IdAr = ID_AR,
+                        Bateria = (request.BATERIA ? "SI" : "NO"),
+                        Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
+                        Base = (request.BASE ? "SI" : "NO"),
+                        Tapa = (request.TAPA ? "SI" : "NO"),
+                        CableAc = (request.CABLE_AC ? "SI" : "NO")
+                    };
+
+                    _context.BdArAccesorios.Add(accesoriosInstalados);
+                    _context.SaveChanges();
+
+                    BdArAccesorios accesoriosRetirados = new BdArAccesorios()
+                    {
+                        IdAr = ID_AR,
+                        Bateria = (request.BATERIA_RETIRO ? "SI" : "NO"),
+                        Eliminador = (request.ELIMINADOR_RETIRO ? "SI" : "NO"),
+                        Base = (request.BASE_RETIRO ? "SI" : "NO"),
+                        Tapa = (request.TAPA_RETIRO ? "SI" : "NO"),
+                        CableAc = (request.CABLE_AC_RETIRO ? "SI" : "NO")
+                    };
+
+                    _context.BdArAccesorios.Add(accesoriosRetirados);
+                    _context.SaveChanges();
+
+                    if (request.IS_AMEX)
+                    {
+                        BdArTerminalAsociadaAmex terminal = new BdArTerminalAsociadaAmex()
+                        {
+                            IdAr = ID_AR,
+                            IdTerminalAmex = request.ID_AMEX,
+                            AfiliacionTerminalAmex = request.AFILIACION_AMEX,
+                            IdUsuarioAlta = ID_TECNICO,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdArTerminalAsociadaAmex.Add(terminal);
+                        _context.SaveChanges();
+                    }
+                    /*FIN DE INFORMACION DE AR*/
+
+                    /*INFORMACION UNIDAD INSTALADA*/
+                    var bdunidad = _context
+                        .BdUnidades
+                        .Where(x => x.NoSerie == request.NO_SERIE.Trim())
+                        .FirstOrDefault();
+                    int idstatusunidadiniinstalada = bdunidad.IdStatusUnidad;
+
+                    BdInstalaciones instalaciones = new BdInstalaciones()
+                    {
+                        IdAr = ID_AR,
+                        IdTecnico = ID_TECNICO,
+                        IdNegocio = idnegocioar,
+                        IdUnidad = bdunidad.IdUnidad,
+                        IsNueva = 0,
+                        IdClienteIni = 4,
+                        IdUsuarioAlta = ID_TECNICO,
+                        FecAlta = DateTime.Now,
+                    };
+                    _context.BdInstalaciones.Add(instalaciones);
+                    _context.SaveChanges();
+
+
+                    int idconectividadinstalada = _context
+                        .CConectividad
+                        .Where(x => x.DescConectividad == request.CONECTIVIDAD)
+                        .Select(x => x.IdConectividad)
+                        .FirstOrDefault();
+                    int idaplicativoinstalado = _context
+                        .CSoftware
+                        .Where(x => x.DescSoftware == request.APLICATIVO)
+                        .Select(x => x.IdSoftware)
+                        .FirstOrDefault();
+                    bdunidad.IdConectividad = idconectividadinstalada;
+                    bdunidad.IdAplicativo = idaplicativoinstalado;
+                    bdunidad.IdStatusUnidad = 17;
+                    bdunidad.IdTipoResponsable = 4;
+                    bdunidad.IdResponsable = idnegocioar;
+                    _context.SaveChanges();
+
+                    BdBitacoraUnidad bitacoraunidadindstalada = new BdBitacoraUnidad()
+                    {
+                        IdUnidad = bdunidad.IdUnidad,
+                        IdStatusUnidadIni = idstatusunidadiniinstalada,
+                        IdStatusUnidadFin = 17,
+                        IdResponsable = idnegocioar,
+                        IdTipoResponsable = 4,
+                        FecAlta = DateTime.Now,
+                        IdUsuarioAlta = ID_TECNICO
+                    };
+                    _context.BdBitacoraUnidad.Add(bitacoraunidadindstalada);
+                    _context.SaveChanges();
+
+                    /*FIN UNIDAD INSTALADA*/
+
+                    /*INFORMACION UNIDAD RETIRADA*/
+                    var bdunidadRetirada = _context
+                        .BdUnidades
+                        .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim())
+                        .FirstOrDefault();
+                    int idconectividadretirada = _context
+                        .CConectividad
+                        .Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim())
+                        .Select(x => x.IdConectividad)
+                        .FirstOrDefault();
+                    int idaplicativoretirada = _context
+                        .CSoftware
+                        .Where(x => x.DescSoftware == request.APLICATIVO_RETIRO.Trim())
+                        .Select(x => x.IdSoftware)
+                        .FirstOrDefault();
+                    int idmarcaretiro = _context
+                        .CMarcas
+                        .Where(x => x.DescMarca == request.MARCA_RETIRO.Trim())
+                        .Select(x => x.IdMarca)
+                        .FirstOrDefault();
+                    int idmodeloretiro = _context
+                        .CModelos
+                        .Where(x => x.DescModelo == request.MODELO_RETIRO.Trim())
+                        .Select(x => x.IdModelo)
+                        .FirstOrDefault();
+                    
+                    int idunidadRetirada = 0;
+                    int? idstatusunidadretirada = null;
+
+                    if (bdunidadRetirada == null)
+                    {
+                        var bdunidadretiradaUniverso = _context
+                            .BdUniversoUnidades
+                            .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim())
+                            .FirstOrDefault();
+
+                        if (bdunidadretiradaUniverso != null)
+                        {
+                            BdUnidades unidad = new BdUnidades()
+                            {
+                                NoSerie = request.NO_SERIE_RETIRO,
+                                IdCliente = 4,
+                                IdModelo = idmodeloretiro,
+                                IdMarca = idmarcaretiro,
+                                IdAplicativo = idaplicativoretirada,
+                                IdConectividad = idconectividadretirada,
+                                Status = "ACTIVO",
+                                IdStatusUnidad = 30
+                            };
+                            _context.BdUnidades.Add(unidad);
+                            _context.SaveChanges();
+
+                            idunidadRetirada = unidad.IdUnidad;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        idunidadRetirada = bdunidadRetirada.IdUnidad;
+                        idstatusunidadretirada = bdunidadRetirada.IdStatusUnidad;
+
+                        bdunidadRetirada.IdConectividad = idconectividadretirada;
+                        bdunidadRetirada.IdAplicativo = idaplicativoretirada;
+                        bdunidadRetirada.IdMarca = idmarcaretiro;
+                        bdunidadRetirada.IdModelo = idmodeloretiro;
+                        bdunidadRetirada.IdStatusUnidad = 30;
+                        _context.SaveChanges();
+                    }
+
+                    BdRetiros retiros = new BdRetiros()
+                    {
+                        IdAr = ID_AR,
+                        IdTecnico = ID_TECNICO,
+                        IdNegocio = bdar.IdNegocio,
+                        IdUnidad = idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada,
+                        IsDaniada = 0,
+                        IsNueva = 0,
+                        IdUsuarioAlta = ID_TECNICO,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdRetiros.Add(retiros);
+                    _context.SaveChanges();
+
+                    BdBitacoraUnidad bitacoraunidadRetirada = new BdBitacoraUnidad()
+                    {
+                        IdUnidad = idunidadRetirada,
+                        IdStatusUnidadIni = idstatusunidadretirada,
+                        IdStatusUnidadFin = 15,
+                        IdResponsable = ID_TECNICO,
+                        IdTipoResponsable = 2,
+                        FecAlta = DateTime.Now,
+                        IdUsuarioAlta = ID_TECNICO
+                    };
+                    _context.BdBitacoraUnidad.Add(bitacoraunidadRetirada);
+                    _context.SaveChanges();
+
+                    /*FIN DE INFORMACION UNIDAD RETIRADA*/
+
+                    return true;
+                }catch(Exception ex)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public int insertBitacoraAr(int idar, int idusuario, int? idstatusini, int idstatusfin, string msg)
+        {
+            try
+            {
+                BdBitacoraAr bitacora = new BdBitacoraAr()
+                {
+                    IdAr = idar,
+                    IdStatusArIni = idstatusini,
+                    IdStatusArFin = idstatusfin,
+                    IsPda = 1,
+                    Comentario = msg,
+                    IdUsuarioAlta = idusuario,
+                    FecAlta = DateTime.Now
+                };
+                _context.BdBitacoraAr.Add(bitacora);
+                _context.SaveChanges();
+                return 1;
+            }
+            catch(Exception ex)
+            {
+                return 0;
+            }
+
+        }
+        public async Task<ODT> GetOdtbyId(int idAr)
+        {
+            var parametros = new[]{
+                new SqlParameter("@p0", System.Data.SqlDbType.Int){Value = idAr}
+            };
+            var newodt = _context
+                .Query<ODT>()
+                .FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+                "BD_NEGOCIOS.DESC_NEGOCIO, " +
+                "BD_NEGOCIOS.NO_AFILIACION, " +
+                "BD_NEGOCIOS.ESTADO, " +
+                "BD_NEGOCIOS.COLONIA, " +
+                "BD_NEGOCIOS.POBLACION, " +
+                "BD_NEGOCIOS.DIRECCION, " +
+                "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
+                "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
+                "BD_NEGOCIOS.LATITUD, " +
+                "BD_NEGOCIOS.LONGITUD, " +
+                "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
+                "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
+                "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
+                "BD_AR.ID_TIPO_SERVICIO, " +
+                "ROW_NUMBER() OVER(ORDER BY FEC_ATENCION ASC) AS NUMBER, " +
+                "BD_AR.ID_STATUS_AR, " +
+                "BD_AR.ID_SERVICIO, " +
+                "BD_AR.ID_FALLA, " +
+                "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
+                "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
+                "AS DESC_STATUS_AR " +
+                "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
+                "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
+                "WHERE ID_AR = @p0 " +
+                "AND BD_AR.STATUS='PROCESADO' ", parametros)
+                .FirstOrDefault();
+            return newodt;
         }
     }
 }

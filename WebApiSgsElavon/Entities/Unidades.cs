@@ -20,5 +20,11 @@ namespace WebApiSgsElavon.Entities
         public int? ID_CONECTIVIDAD { get; set; }
         [JsonProperty(PropertyName = "ID_APLICATIVO")]
         public int? ID_APLICATIVO { get; set; }
+        [JsonProperty(PropertyName = "ID_STATUS_UNIDAD")]
+        public int ID_STATUS_UNIDAD { get; set; }
+        [JsonProperty(PropertyName = "IS_NUEVA")]
+        public int? IS_NUEVA { get; set; }
+        [JsonProperty(PropertyName = "DESC_STATUS_UNIDAD")]
+        public string DESC_STATUS_UNIDAD { get; set; }
     }
 }

@@ -33,8 +33,11 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdArFecGarantia> BdArFecGarantia { get; set; }
         public virtual DbSet<BdArInsumo> BdArInsumo { get; set; }
         public virtual DbSet<BdArLogWs> BdArLogWs { get; set; }
+        public virtual DbSet<BdArMiComercio> BdArMiComercio { get; set; }
         public virtual DbSet<BdArPaso> BdArPaso { get; set; }
         public virtual DbSet<BdArPrefacturacion> BdArPrefacturacion { get; set; }
+        public virtual DbSet<BdArSegmento> BdArSegmento { get; set; }
+        public virtual DbSet<BdArSegmentoFail> BdArSegmentoFail { get; set; }
         public virtual DbSet<BdArSparePart> BdArSparePart { get; set; }
         public virtual DbSet<BdArTerminalAsociadaAmex> BdArTerminalAsociadaAmex { get; set; }
         public virtual DbSet<BdArViatico> BdArViatico { get; set; }
@@ -61,6 +64,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdBitacoraAplicativoUnidad> BdBitacoraAplicativoUnidad { get; set; }
         public virtual DbSet<BdBitacoraAr> BdBitacoraAr { get; set; }
         public virtual DbSet<BdBitacoraArAlta> BdBitacoraArAlta { get; set; }
+        public virtual DbSet<BdBitacoraBdNegocios> BdBitacoraBdNegocios { get; set; }
         public virtual DbSet<BdBitacoraBorrarUnidad> BdBitacoraBorrarUnidad { get; set; }
         public virtual DbSet<BdBitacoraCambioFecGarantia> BdBitacoraCambioFecGarantia { get; set; }
         public virtual DbSet<BdBitacoraCambioMensajeria> BdBitacoraCambioMensajeria { get; set; }
@@ -73,6 +77,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdBitacoraCompromisos> BdBitacoraCompromisos { get; set; }
         public virtual DbSet<BdBitacoraConectividadUnidad> BdBitacoraConectividadUnidad { get; set; }
         public virtual DbSet<BdBitacoraDiagnostico> BdBitacoraDiagnostico { get; set; }
+        public virtual DbSet<BdBitacoraDiasFestivos> BdBitacoraDiasFestivos { get; set; }
         public virtual DbSet<BdBitacoraDoctosPrefacturacion> BdBitacoraDoctosPrefacturacion { get; set; }
         public virtual DbSet<BdBitacoraEnvio> BdBitacoraEnvio { get; set; }
         public virtual DbSet<BdBitacoraIgualas> BdBitacoraIgualas { get; set; }
@@ -136,6 +141,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdCargaChangeStatus> BdCargaChangeStatus { get; set; }
         public virtual DbSet<BdCargaCierresMasivos> BdCargaCierresMasivos { get; set; }
         public virtual DbSet<BdCargaCierresMasivosTexto> BdCargaCierresMasivosTexto { get; set; }
+        public virtual DbSet<BdCargaCierresMasivosTextoMit> BdCargaCierresMasivosTextoMit { get; set; }
         public virtual DbSet<BdCargaCodigoRechazo> BdCargaCodigoRechazo { get; set; }
         public virtual DbSet<BdCargaEnviosDhlErrores> BdCargaEnviosDhlErrores { get; set; }
         public virtual DbSet<BdCargaEnviosDhlPaso> BdCargaEnviosDhlPaso { get; set; }
@@ -206,6 +212,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdEquivalenciaEstados> BdEquivalenciaEstados { get; set; }
         public virtual DbSet<BdEspecificacionCausaRechazo> BdEspecificacionCausaRechazo { get; set; }
         public virtual DbSet<BdEspecificacionTipoFalla> BdEspecificacionTipoFalla { get; set; }
+        public virtual DbSet<BdEstadosProveedores> BdEstadosProveedores { get; set; }
         public virtual DbSet<BdEtiquetaInformacionUnidadCliente> BdEtiquetaInformacionUnidadCliente { get; set; }
         public virtual DbSet<BdExistenciasConsumiblesTecnicos> BdExistenciasConsumiblesTecnicos { get; set; }
         public virtual DbSet<BdExitoLayoutLog> BdExitoLayoutLog { get; set; }
@@ -270,6 +277,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdNegociosServiciosDobles> BdNegociosServiciosDobles { get; set; }
         public virtual DbSet<BdOnbaseInbox> BdOnbaseInbox { get; set; }
         public virtual DbSet<BdOnbaseInboxConfirmacion> BdOnbaseInboxConfirmacion { get; set; }
+        public virtual DbSet<BdOpcionesReingenieriaTipoUsuario> BdOpcionesReingenieriaTipoUsuario { get; set; }
         public virtual DbSet<BdOrdenCompra> BdOrdenCompra { get; set; }
         public virtual DbSet<BdOrdenCompraInsumos> BdOrdenCompraInsumos { get; set; }
         public virtual DbSet<BdOrdenCompraNoFactura> BdOrdenCompraNoFactura { get; set; }
@@ -289,6 +297,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdProactivas> BdProactivas { get; set; }
         public virtual DbSet<BdProductoStatusAr> BdProductoStatusAr { get; set; }
         public virtual DbSet<BdPruebasUnitarias> BdPruebasUnitarias { get; set; }
+        public virtual DbSet<BdReCalculoDeFechasEstatus> BdReCalculoDeFechasEstatus { get; set; }
         public virtual DbSet<BdRecepcionElavon> BdRecepcionElavon { get; set; }
         public virtual DbSet<BdRecepcionInsumos> BdRecepcionInsumos { get; set; }
         public virtual DbSet<BdRecoverPassword> BdRecoverPassword { get; set; }
@@ -483,6 +492,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<CResponsablesAgendados> CResponsablesAgendados { get; set; }
         public virtual DbSet<CSedeCurso> CSedeCurso { get; set; }
         public virtual DbSet<CSegmentos> CSegmentos { get; set; }
+        public virtual DbSet<CSegmentosElavon> CSegmentosElavon { get; set; }
         public virtual DbSet<CServicioMensajeria> CServicioMensajeria { get; set; }
         public virtual DbSet<CServicios> CServicios { get; set; }
         public virtual DbSet<CServiciosBancomer> CServiciosBancomer { get; set; }
@@ -513,6 +523,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<CStatusUsuario> CStatusUsuario { get; set; }
         public virtual DbSet<CStatusValidacionPrefacturacion> CStatusValidacionPrefacturacion { get; set; }
         public virtual DbSet<CSubAlmacenes> CSubAlmacenes { get; set; }
+        public virtual DbSet<CSubrechazo> CSubrechazo { get; set; }
         public virtual DbSet<CTecnicos> CTecnicos { get; set; }
         public virtual DbSet<CTiempoMedicion> CTiempoMedicion { get; set; }
         public virtual DbSet<CTiempoReferencia> CTiempoReferencia { get; set; }
@@ -690,6 +701,7 @@ namespace WebApiSgsElavon.ModelsTest
         // Unable to generate entity type for table 'dbo.BD_AR_SLA_INVENTARIOS'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.PRODUCTOS'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.NOMINA'. Please see the warning messages.
+        // Unable to generate entity type for table 'dbo.BD_OPCIONES_REINGENIERIA'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_ERRORES_MASIVOS'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FILL_RATE'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_UNIDADES_POR_RECIBIR_ALMACEN2'. Please see the warning messages.
@@ -714,6 +726,7 @@ namespace WebApiSgsElavon.ModelsTest
         // Unable to generate entity type for table 'dbo.GASOLINA_AVION'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_QUESTS_CALLCENTER'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_cARGAS_ARCHIVO'. Please see the warning messages.
+        // Unable to generate entity type for table 'dbo.BD_CARGAS_MOV_RENGENIERIA'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_ARCHIVO1'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.ENVIOS_REGION'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.C_RESPONSABLE_CANCELACION_PROGRAMADO'. Please see the warning messages.
@@ -870,7 +883,6 @@ namespace WebApiSgsElavon.ModelsTest
         // Unable to generate entity type for table 'dbo.BD_SOLICITUDES_VIATICOS_CONCEPTOS_TEMP'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_BITACORA_STATUS_USUARIO'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_BITACORA_SURTIDO_MENSAJERIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_SUBRECHAZO'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_MODELOS_HOMOLOGADOS_SANTANDER'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.C_BANCOS'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_MODELOS_MODIFICADOS'. Please see the warning messages.
@@ -1187,22 +1199,22 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdAr, e.DescNegocio, e.Poblacion, e.Estado, e.Cp, e.IdSegmento, e.IdServicio, e.IdCliente, e.NoAr, e.NoAfiliacion, e.IdFalla, e.HorasGarantia, e.IdTecnico, e.IdCarga, e.Status })
                     .HasName("missing_index_192_191");
 
-                entity.HasIndex(e => new { e.IdAr, e.IdCliente, e.Estado, e.IdProyecto, e.Telefono, e.DescNegocio, e.Direccion, e.Colonia, e.Poblacion, e.NoAr, e.NoAfiliacion, e.Cp, e.Segmento, e.TipoServicio, e.TipoFalla, e.IdCarga, e.Status })
+                entity.HasIndex(e => new { e.Estado, e.IdAr, e.IdCliente, e.IdProyecto, e.Telefono, e.DescNegocio, e.Direccion, e.Colonia, e.Poblacion, e.NoAr, e.NoAfiliacion, e.Cp, e.Segmento, e.TipoServicio, e.TipoFalla, e.IdCarga, e.Status })
                     .HasName("missing_index_157_156");
 
-                entity.HasIndex(e => new { e.Cp, e.Segmento, e.PrecioExito, e.IdEstado, e.IdRegion, e.IdZona, e.IdFalla, e.HorasGarantia, e.IdAr, e.IdCliente, e.NoAr, e.NoAfiliacion, e.IdTecnico, e.IdProyecto, e.TipoServicio, e.TipoFalla, e.IdSegmento, e.IdServicio, e.IdCarga, e.Status })
+                entity.HasIndex(e => new { e.IdFalla, e.HorasGarantia, e.IdAr, e.IdCliente, e.NoAr, e.NoAfiliacion, e.IdTecnico, e.IdProyecto, e.TipoServicio, e.TipoFalla, e.IdSegmento, e.IdServicio, e.Cp, e.Segmento, e.PrecioExito, e.IdEstado, e.IdRegion, e.IdZona, e.IdCarga, e.Status })
                     .HasName("missing_index_198_197");
 
                 entity.HasIndex(e => new { e.IdAr, e.IdCarga, e.Bitacora, e.NoAfiliacion, e.IdRegion, e.IdZona, e.NoAr, e.Concepto, e.DescCorta, e.Sintoma, e.IsExito, e.IdProducto, e.DescNegocio, e.FecInicio, e.IdServicio, e.IdFalla, e.IdCliente, e.ClaveRechazo, e.IdTecnico, e.FecGarantia, e.FecCierre, e.DescripcionTrabajo, e.IdStatusAr, e.Status, e.IdProveedor })
                     .HasName("missing_index_4101_4100");
 
-                entity.HasIndex(e => new { e.NoAr, e.Concepto, e.DescCorta, e.Sintoma, e.Bitacora, e.NoAfiliacion, e.DescNegocio, e.FecInicio, e.IdServicio, e.IdFalla, e.IdRegion, e.IdZona, e.IdTecnico, e.FecGarantia, e.FecCierre, e.DescripcionTrabajo, e.IsExito, e.IdProducto, e.IdAr, e.IdCarga, e.IdCliente, e.ClaveRechazo, e.Status, e.IdProveedor, e.IdStatusAr })
+                entity.HasIndex(e => new { e.IdAr, e.IdCarga, e.IdCliente, e.ClaveRechazo, e.NoAr, e.Concepto, e.DescCorta, e.Sintoma, e.Bitacora, e.NoAfiliacion, e.DescNegocio, e.FecInicio, e.IdServicio, e.IdFalla, e.IdRegion, e.IdZona, e.IdTecnico, e.FecGarantia, e.FecCierre, e.DescripcionTrabajo, e.IsExito, e.IdProducto, e.Status, e.IdProveedor, e.IdStatusAr })
                     .HasName("missing_index_4098_4097");
 
                 entity.HasIndex(e => new { e.Concepto, e.DescCorta, e.Sintoma, e.Bitacora, e.NoAfiliacion, e.FecInicio, e.IdServicio, e.IdFalla, e.IdRegion, e.IdZona, e.NoAr, e.FecAlta, e.FecGarantia, e.FecCierre, e.DescripcionTrabajo, e.IsExito, e.DescNegocio, e.IdAr, e.IdCarga, e.IdCliente, e.IdProducto, e.ClaveRechazo, e.IdTecnico, e.Status, e.IdProveedor, e.IdStatusAr })
                     .HasName("missing_index_4007_4006");
 
-                entity.HasIndex(e => new { e.IdServicio, e.IdFalla, e.IdRegion, e.IdZona, e.IdTecnico, e.Concepto, e.FecGarantia, e.FecCierre, e.DescripcionTrabajo, e.IsExito, e.IdProducto, e.FecInicio, e.IdCarga, e.IdCliente, e.NoAr, e.ClaveRechazo, e.IdProveedor, e.FecAlta, e.IdAr, e.DescCorta, e.Sintoma, e.Bitacora, e.NoAfiliacion, e.DescNegocio, e.IdStatusAr, e.Status })
+                entity.HasIndex(e => new { e.DescCorta, e.Sintoma, e.Bitacora, e.NoAfiliacion, e.DescNegocio, e.IdServicio, e.IdFalla, e.IdRegion, e.IdZona, e.IdTecnico, e.Concepto, e.FecGarantia, e.FecCierre, e.DescripcionTrabajo, e.IsExito, e.IdProducto, e.FecInicio, e.IdCarga, e.IdCliente, e.NoAr, e.ClaveRechazo, e.IdProveedor, e.FecAlta, e.IdAr, e.IdStatusAr, e.Status })
                     .HasName("missing_index_3806_3805");
 
                 entity.HasIndex(e => new { e.IdAr, e.Colonia, e.FecInicio, e.Bitacora, e.NoAfiliacion, e.Telefono, e.DescNegocio, e.Direccion, e.FecGarantia, e.Poblacion, e.Estado, e.Cp, e.Equipo, e.DescEquipo, e.IdProyecto, e.IdSegmento, e.IdServicio, e.IdFalla, e.IdTecnico, e.FecAtencion, e.ClaveRechazo, e.FecCierre, e.IntensidadSenial, e.DescripcionTrabajo, e.Atiende, e.IdCausaRechazo, e.IdProveedor, e.IdProducto, e.MotivoRetipificado, e.DigitoVerificador, e.Insumos, e.Caja, e.NoAr, e.Sintoma, e.IdTipoEquipo, e.CorreoEjecutivo, e.TerminalAmex, e.DireccionAlternaComercio, e.IdRegion, e.Status, e.IdStatusAr })
@@ -2348,6 +2360,38 @@ namespace WebApiSgsElavon.ModelsTest
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<BdArMiComercio>(entity =>
+            {
+                entity.HasKey(e => e.IdArMiComercio)
+                    .HasName("PK__BD_AR_MI__75E1F5CA36CC9253");
+
+                entity.ToTable("BD_AR_MI_COMERCIO");
+
+                entity.Property(e => e.IdArMiComercio).HasColumnName("ID_AR_MI_COMERCIO");
+
+                entity.Property(e => e.DescargarApp).HasColumnName("DESCARGAR_APP");
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdAr).HasColumnName("ID_AR");
+
+                entity.Property(e => e.Notificado).HasColumnName("NOTIFICADO");
+
+                entity.Property(e => e.Promociones).HasColumnName("PROMOCIONES");
+
+                entity.Property(e => e.Telefono1)
+                    .HasColumnName("TELEFONO_1")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Telefono2)
+                    .HasColumnName("TELEFONO_2")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<BdArPaso>(entity =>
             {
                 entity.HasKey(e => e.IdArPaso)
@@ -2590,6 +2634,9 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdArPrefacturacion, e.IdAr, e.IdTipoResponsableDoctoPrefacturacionFisico, e.IdStatusDoctoPrefacturacionFisico, e.IdTipoResponsableDoctoPrefacturacionDigital, e.IdStatusDoctoPrefacturacionDigital, e.Status })
                     .HasName("IX_MI_BD_AR_PREFACTURACION_6509_6508");
 
+                entity.HasIndex(e => new { e.IdAr, e.IdTipoResponsableDoctoPrefacturacionFisico, e.IdResponsableDoctoPrefacturacionFisico, e.IdStatusDoctoPrefacturacionFisico, e.IdTipoResponsableDoctoPrefacturacionDigital, e.IdStatusDoctoPrefacturacionDigital, e.IdArPrefacturacion, e.Status })
+                    .HasName("IX_MI_BD_AR_PREFACTURACION_122_121");
+
                 entity.HasIndex(e => new { e.IdArPrefacturacion, e.IdAr, e.IdTipoResponsableDoctoPrefacturacionFisico, e.IdResponsableDoctoPrefacturacionFisico, e.IdStatusDoctoPrefacturacionFisico, e.IdTipoResponsableDoctoPrefacturacionDigital, e.IdStatusDoctoPrefacturacionDigital, e.Status })
                     .HasName("IX_MI_BD_AR_PREFACTURACION_13804_13803");
 
@@ -2638,6 +2685,53 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasColumnName("STATUS")
                     .HasMaxLength(10)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<BdArSegmento>(entity =>
+            {
+                entity.HasKey(e => e.IdArSegmento)
+                    .HasName("PK_BD_AR_SEGMENTO_");
+
+                entity.ToTable("BD_AR_SEGMENTO");
+
+                entity.Property(e => e.IdArSegmento).HasColumnName("ID_AR_SEGMENTO");
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdAr).HasColumnName("ID_AR");
+
+                entity.Property(e => e.IdSegmentoElavon).HasColumnName("ID_SEGMENTO_ELAVON");
+
+                entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
+            });
+
+            modelBuilder.Entity<BdArSegmentoFail>(entity =>
+            {
+                entity.HasKey(e => e.IdArSegmento)
+                    .HasName("PK_BD_AR_SEGMENTO");
+
+                entity.ToTable("BD_AR_SEGMENTO_FAIL");
+
+                entity.HasIndex(e => e.IdAr)
+                    .HasName("IX_BD_AR_SEGMENTO");
+
+                entity.HasIndex(e => e.IdSegmentoElavon)
+                    .HasName("IX_BD_AR_SEGMENTO_2");
+
+                entity.HasIndex(e => new { e.IdAr, e.IdArSegmento })
+                    .HasName("IX_BD_AR_SEGMENTO_1");
+
+                entity.Property(e => e.IdArSegmento).HasColumnName("ID_AR_SEGMENTO");
+
+                entity.Property(e => e.FecAlta).HasColumnName("FEC_ALTA");
+
+                entity.Property(e => e.IdAr).HasColumnName("ID_AR");
+
+                entity.Property(e => e.IdSegmentoElavon).HasColumnName("ID_SEGMENTO_ELAVON");
+
+                entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
             });
 
             modelBuilder.Entity<BdArSparePart>(entity =>
@@ -3537,6 +3631,172 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.IdUsuario).HasColumnName("ID_USUARIO");
             });
 
+            modelBuilder.Entity<BdBitacoraBdNegocios>(entity =>
+            {
+                entity.HasKey(e => e.IdBitacoraBdNegocios)
+                    .HasName("PK__BD_BITAC__0E4591F62EB46A76");
+
+                entity.ToTable("BD_BITACORA_BD_NEGOCIOS");
+
+                entity.Property(e => e.IdBitacoraBdNegocios).HasColumnName("ID_BITACORA_BD_NEGOCIOS");
+
+                entity.Property(e => e.ColoniaActual)
+                    .HasColumnName("COLONIA_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ColoniaAnterior)
+                    .HasColumnName("COLONIA_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CpActual)
+                    .HasColumnName("CP_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CpAnterior)
+                    .HasColumnName("CP_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DescNegocioActual)
+                    .HasColumnName("DESC_NEGOCIO_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DescNegocioAnterior)
+                    .HasColumnName("DESC_NEGOCIO_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DireccionActual)
+                    .HasColumnName("DIRECCION_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DireccionAnterior)
+                    .HasColumnName("DIRECCION_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EstadoActual)
+                    .HasColumnName("ESTADO_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EstadoAnterior)
+                    .HasColumnName("ESTADO_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FecAltaIgualaActual)
+                    .HasColumnName("FEC_ALTA_IGUALA_ACTUAL")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FecAltaIgualaAnterior)
+                    .HasColumnName("FEC_ALTA_IGUALA_ANTERIOR")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FecBajaIgualaActual)
+                    .HasColumnName("FEC_BAJA_IGUALA_ACTUAL")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FecBajaIgualaAnterior)
+                    .HasColumnName("FEC_BAJA_IGUALA_ANTERIOR")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdClienteActual).HasColumnName("ID_CLIENTE_ACTUAL");
+
+                entity.Property(e => e.IdClienteAnterior).HasColumnName("ID_CLIENTE_ANTERIOR");
+
+                entity.Property(e => e.IdEstadoActual).HasColumnName("ID_ESTADO_ACTUAL");
+
+                entity.Property(e => e.IdEstadoAnterior).HasColumnName("ID_ESTADO_ANTERIOR");
+
+                entity.Property(e => e.IdHorarioAccesoActual).HasColumnName("ID_HORARIO_ACCESO_ACTUAL");
+
+                entity.Property(e => e.IdHorarioAccesoAnterior).HasColumnName("ID_HORARIO_ACCESO_ANTERIOR");
+
+                entity.Property(e => e.IdHorarioUptimeActual).HasColumnName("ID_HORARIO_UPTIME_ACTUAL");
+
+                entity.Property(e => e.IdHorarioUptimeAnterior).HasColumnName("ID_HORARIO_UPTIME_ANTERIOR");
+
+                entity.Property(e => e.IdMonedaActual).HasColumnName("ID_MONEDA_ACTUAL");
+
+                entity.Property(e => e.IdMonedaAnterior).HasColumnName("ID_MONEDA_ANTERIOR");
+
+                entity.Property(e => e.IdNegocio).HasColumnName("ID_NEGOCIO");
+
+                entity.Property(e => e.IdRegionActual).HasColumnName("ID_REGION_ACTUAL");
+
+                entity.Property(e => e.IdRegionAnterior).HasColumnName("ID_REGION_ANTERIOR");
+
+                entity.Property(e => e.IdSegmentoActual).HasColumnName("ID_SEGMENTO_ACTUAL");
+
+                entity.Property(e => e.IdSegmentoAnterior).HasColumnName("ID_SEGMENTO_ANTERIOR");
+
+                entity.Property(e => e.IdTipoCobroNegocioActual).HasColumnName("ID_TIPO_COBRO_NEGOCIO_ACTUAL");
+
+                entity.Property(e => e.IdTipoCobroNegocioAnterior).HasColumnName("ID_TIPO_COBRO_NEGOCIO_ANTERIOR");
+
+                entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
+
+                entity.Property(e => e.IdZonaActual).HasColumnName("ID_ZONA_ACTUAL");
+
+                entity.Property(e => e.IdZonaAnterior).HasColumnName("ID_ZONA_ANTERIOR");
+
+                entity.Property(e => e.LatitudActual)
+                    .HasColumnName("LATITUD_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LatitudAnterior)
+                    .HasColumnName("LATITUD_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LongitudActual)
+                    .HasColumnName("LONGITUD_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LongitudAnterior)
+                    .HasColumnName("LONGITUD_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NoAfiliacionActual)
+                    .HasColumnName("NO_AFILIACION_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NoAfiliacionAnterior)
+                    .HasColumnName("NO_AFILIACION_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PoblacionActual)
+                    .HasColumnName("POBLACION_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PoblacionAnterior)
+                    .HasColumnName("POBLACION_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PrecioActual)
+                    .HasColumnName("PRECIO_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PrecioAnterior)
+                    .HasColumnName("PRECIO_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StatusActual)
+                    .HasColumnName("STATUS_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StatusAnterior)
+                    .HasColumnName("STATUS_ANTERIOR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TelefonoActual)
+                    .HasColumnName("TELEFONO_ACTUAL")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TelefonoAnterior)
+                    .HasColumnName("TELEFONO_ANTERIOR")
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<BdBitacoraBorrarUnidad>(entity =>
             {
                 entity.HasKey(e => e.IdBitacoraBorrarUnidad);
@@ -3829,6 +4089,28 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.IdTecnicoCambio).HasColumnName("ID_TECNICO_CAMBIO");
 
                 entity.Property(e => e.IdUnidad).HasColumnName("ID_UNIDAD");
+            });
+
+            modelBuilder.Entity<BdBitacoraDiasFestivos>(entity =>
+            {
+                entity.HasKey(e => e.IdBitacoraDiasFestivos)
+                    .HasName("PK__BD_BITAC__0DD961F7C4B90030");
+
+                entity.ToTable("BD_BITACORA_DIAS_FESTIVOS");
+
+                entity.Property(e => e.IdBitacoraDiasFestivos).HasColumnName("ID_BITACORA_DIAS_FESTIVOS");
+
+                entity.Property(e => e.Comentario)
+                    .HasColumnName("COMENTARIO")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdFestivos).HasColumnName("ID_FESTIVOS");
+
+                entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
             });
 
             modelBuilder.Entity<BdBitacoraDoctosPrefacturacion>(entity =>
@@ -8041,6 +8323,250 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasMaxLength(10);
             });
 
+            modelBuilder.Entity<BdCargaCierresMasivosTextoMit>(entity =>
+            {
+                entity.HasKey(e => e.IdCierreMasivo);
+
+                entity.ToTable("BD_CARGA_CIERRES_MASIVOS_TEXTO_MIT");
+
+                entity.Property(e => e.IdCierreMasivo).HasColumnName("ID_CIERRE_MASIVO");
+
+                entity.Property(e => e.AfiliacionAmex)
+                    .HasColumnName("AFILIACION_AMEX")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Atiende)
+                    .IsRequired()
+                    .HasColumnName("ATIENDE")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.BaseInstalacion)
+                    .HasColumnName("BASE_INSTALACION")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.BaseRetiro)
+                    .HasColumnName("BASE_RETIRO")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.BateriaInstalacion)
+                    .HasColumnName("BATERIA_INSTALACION")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.BateriaRetiro)
+                    .HasColumnName("BATERIA_RETIRO")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.CableAcInstalacion)
+                    .HasColumnName("CABLE_AC_INSTALACION")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.CableAcRetiro)
+                    .HasColumnName("CABLE_AC_RETIRO")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.Caja)
+                    .IsRequired()
+                    .HasColumnName("CAJA")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Comentarios)
+                    .IsRequired()
+                    .HasColumnName("COMENTARIOS")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ConclusionesAmex)
+                    .HasColumnName("CONCLUSIONES_AMEX")
+                    .HasMaxLength(300);
+
+                entity.Property(e => e.DayCierre)
+                    .IsRequired()
+                    .HasColumnName("DAY_CIERRE")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Discover)
+                    .IsRequired()
+                    .HasColumnName("DISCOVER")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.EliminadorInstalacion)
+                    .HasColumnName("ELIMINADOR_INSTALACION")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.EliminadorRetiro)
+                    .HasColumnName("ELIMINADOR_RETIRO")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.EsAmex)
+                    .HasColumnName("ES_AMEX")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.EstatusOdt).HasColumnName("ESTATUS_ODT");
+
+                entity.Property(e => e.EstatusProceso)
+                    .HasColumnName("ESTATUS_PROCESO")
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.FechaCarga)
+                    .HasColumnName("FECHA_CARGA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasColumnName("FILE_NAME")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.HourCierre)
+                    .IsRequired()
+                    .HasColumnName("HOUR_CIERRE")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.IdAmex)
+                    .HasColumnName("ID_AMEX")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IdAplicativoInstalacion)
+                    .HasColumnName("ID_APLICATIVO_INSTALACION")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.IdAplicativoRetiro)
+                    .HasColumnName("ID_APLICATIVO_RETIRO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.IdCancelacion)
+                    .HasColumnName("ID_CANCELACION")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.IdConectiidadRetiro)
+                    .HasColumnName("ID_CONECTIIDAD_RETIRO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.IdConectividadInstalacion)
+                    .HasColumnName("ID_CONECTIVIDAD_INSTALACION")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.IdCriterioCambio)
+                    .HasColumnName("ID_CRITERIO_CAMBIO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.IdMarcaRetiro)
+                    .HasColumnName("ID_MARCA_RETIRO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.IdModeloRetiro)
+                    .HasColumnName("ID_MODELO_RETIRO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.IdProceso)
+                    .IsRequired()
+                    .HasColumnName("ID_PROCESO")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.IdRechazo)
+                    .HasColumnName("ID_RECHAZO")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.IdSubRechazo)
+                    .HasColumnName("ID_SUB_RECHAZO")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.IdUsuarioCarga).HasColumnName("ID_USUARIO_CARGA");
+
+                entity.Property(e => e.MensajeError)
+                    .HasColumnName("MENSAJE_ERROR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MinuteCierre)
+                    .IsRequired()
+                    .HasColumnName("MINUTE_CIERRE")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.MonthCierre)
+                    .IsRequired()
+                    .HasColumnName("MONTH_CIERRE")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.NoSeRetiraSim)
+                    .HasColumnName("NO_SE_RETIRA_SIM")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.NoSerieInstalacion)
+                    .HasColumnName("NO_SERIE_INSTALACION")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.NoSerieRetiro)
+                    .HasColumnName("NO_SERIE_RETIRO")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Odt)
+                    .IsRequired()
+                    .HasColumnName("ODT")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.OtorgaVobo)
+                    .IsRequired()
+                    .HasColumnName("OTORGA_VOBO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.RollosInstalados)
+                    .IsRequired()
+                    .HasColumnName("ROLLOS_INSTALADOS")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Ruta)
+                    .IsRequired()
+                    .HasColumnName("RUTA")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.SeDejaMismoSim)
+                    .HasColumnName("SE_DEJA_MISMO_SIM")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.SimInstalacion)
+                    .HasColumnName("SIM_INSTALACION")
+                    .HasMaxLength(21);
+
+                entity.Property(e => e.SimRetiro)
+                    .HasColumnName("SIM_RETIRO")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.TapaInstalacion)
+                    .HasColumnName("TAPA_INSTALACION")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.TapaRetiro)
+                    .HasColumnName("TAPA_RETIRO")
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.Tecnico)
+                    .IsRequired()
+                    .HasColumnName("TECNICO")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Tipo)
+                    .HasColumnName("TIPO")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.TipoAtencion)
+                    .IsRequired()
+                    .HasColumnName("TIPO_ATENCION")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.VersionInstalacion)
+                    .HasColumnName("VERSION_INSTALACION")
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.VersionRetiro)
+                    .HasColumnName("VERSION_RETIRO")
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.YearCierre)
+                    .IsRequired()
+                    .HasColumnName("YEAR_CIERRE")
+                    .HasMaxLength(10);
+            });
+
             modelBuilder.Entity<BdCargaCodigoRechazo>(entity =>
             {
                 entity.HasKey(e => e.IdCargaCodigoRechazo)
@@ -8347,6 +8873,9 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasName("IX_MI_BD_CARGAS_4850_4849");
 
                 entity.HasIndex(e => new { e.IdCarga, e.IdUsuarioAlta, e.IdCliente, e.Status, e.IdStatusCarga })
+                    .HasName("IX_MI_BD_CARGAS_3330_3329");
+
+                entity.HasIndex(e => new { e.IdUsuarioAlta, e.IdCarga, e.IdCliente, e.Status, e.IdStatusCarga })
                     .HasName("IX_MI_BD_CARGAS_8_7");
 
                 entity.Property(e => e.IdCarga).HasColumnName("ID_CARGA");
@@ -8491,17 +9020,17 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.Bitacora, e.Afiliacion, e.Cp, e.Producto, e.Estatus, e.Mensaje, e.IdCarga, e.Ar, e.Concepto, e.DescCorta, e.IdProceso })
                     .HasName("missing_index_4082_4081");
 
-                entity.HasIndex(e => new { e.Bitacora, e.IdSegmento, e.FechaInicio, e.Vip, e.Afiliacion, e.Telefono, e.Poblacion, e.Idproyecto, e.EmailChgb, e.Rollos, e.DescCorta, e.Sintoma, e.DescEquipo, e.Contacto2, e.TAfiliacion, e.Ejecutivo, e.Direccion, e.Colonia, e.Producto, e.Sucursal, e.Estatus, e.Mensaje, e.Rfc, e.IdEquipo, e.Concepto, e.Caja, e.Correo, e.Contacto1, e.AfiliacionAmex, e.FolioTelecargaAmex, e.Negocio, e.Estado, e.Cp, e.NotasRemedy, e.IdCarga, e.FileName, e.Ruta, e.Ar, e.IdProceso })
+                entity.HasIndex(e => new { e.Negocio, e.Estado, e.Cp, e.NotasRemedy, e.Bitacora, e.IdSegmento, e.FechaInicio, e.Vip, e.Afiliacion, e.Telefono, e.Poblacion, e.Idproyecto, e.EmailChgb, e.Rollos, e.DescCorta, e.Sintoma, e.DescEquipo, e.Contacto2, e.TAfiliacion, e.Ejecutivo, e.Direccion, e.Colonia, e.Producto, e.Sucursal, e.Estatus, e.Mensaje, e.Rfc, e.IdEquipo, e.Concepto, e.Caja, e.Correo, e.Contacto1, e.AfiliacionAmex, e.FolioTelecargaAmex, e.IdCarga, e.FileName, e.Ruta, e.Ar, e.IdProceso })
                     .HasName("missing_index_3658_3657");
-
-                entity.HasIndex(e => new { e.Concepto, e.IdEquipo, e.Sintoma, e.Bitacora, e.Afiliacion, e.Telefono, e.Direccion, e.FolioTelecargaAmex, e.Poblacion, e.Estado, e.Cp, e.NotasRemedy, e.Rfc, e.Correo, e.DescEquipo, e.IdSegmento, e.FechaInicio, e.Vip, e.AfiliacionAmex, e.Ejecutivo, e.Producto, e.Idproyecto, e.EmailChgb, e.Rollos, e.IdUsuario, e.Caja, e.Extra, e.Contacto1, e.Contacto2, e.TAfiliacion, e.FileName, e.Ruta, e.Ar, e.Sucursal, e.Estatus, e.Mensaje, e.Negocio, e.Colonia, e.IdCarga, e.IdProceso, e.DescCorta })
-                    .HasName("missing_index_3829_3828");
 
                 entity.HasIndex(e => new { e.IdCarga, e.IdProceso, e.FileName, e.Direccion, e.Rfc, e.DescCorta, e.Sintoma, e.Bitacora, e.Afiliacion, e.Telefono, e.FolioTelecargaAmex, e.Colonia, e.Poblacion, e.Estado, e.Cp, e.Concepto, e.Correo, e.IdEquipo, e.DescEquipo, e.FechaInicio, e.Vip, e.Negocio, e.Ejecutivo, e.Producto, e.Idproyecto, e.EmailChgb, e.Rollos, e.NotasRemedy, e.Caja, e.Extra, e.Contacto1, e.Contacto2, e.TAfiliacion, e.AfiliacionAmex, e.Ruta, e.Ar, e.Sucursal, e.Estatus, e.Mensaje, e.IdUsuario, e.IdSegmento })
                     .HasName("missing_index_3899_3898");
 
-                entity.HasIndex(e => new { e.IdEquipo, e.Sintoma, e.Bitacora, e.Afiliacion, e.Telefono, e.Negocio, e.FolioTelecargaAmex, e.Poblacion, e.Estado, e.Cp, e.NotasRemedy, e.DescCorta, e.Correo, e.DescEquipo, e.IdSegmento, e.FechaInicio, e.Vip, e.Direccion, e.Ejecutivo, e.Producto, e.Idproyecto, e.EmailChgb, e.Rollos, e.Rfc, e.Caja, e.Extra, e.Contacto1, e.Contacto2, e.TAfiliacion, e.AfiliacionAmex, e.Ruta, e.Ar, e.Sucursal, e.Estatus, e.Mensaje, e.IdUsuario, e.IdCarga, e.IdProceso, e.FileName, e.Colonia, e.Concepto })
+                entity.HasIndex(e => new { e.IdCarga, e.IdProceso, e.FileName, e.IdEquipo, e.Sintoma, e.Bitacora, e.Afiliacion, e.Telefono, e.Negocio, e.FolioTelecargaAmex, e.Poblacion, e.Estado, e.Cp, e.NotasRemedy, e.DescCorta, e.Correo, e.DescEquipo, e.IdSegmento, e.FechaInicio, e.Vip, e.Direccion, e.Ejecutivo, e.Producto, e.Idproyecto, e.EmailChgb, e.Rollos, e.Rfc, e.Caja, e.Extra, e.Contacto1, e.Contacto2, e.TAfiliacion, e.AfiliacionAmex, e.Ruta, e.Ar, e.Sucursal, e.Estatus, e.Mensaje, e.IdUsuario, e.Colonia, e.Concepto })
                     .HasName("missing_index_3831_3830");
+
+                entity.HasIndex(e => new { e.Negocio, e.Colonia, e.Concepto, e.IdEquipo, e.Sintoma, e.Bitacora, e.Afiliacion, e.Telefono, e.Direccion, e.FolioTelecargaAmex, e.Poblacion, e.Estado, e.Cp, e.NotasRemedy, e.Rfc, e.Correo, e.DescEquipo, e.IdSegmento, e.FechaInicio, e.Vip, e.AfiliacionAmex, e.Ejecutivo, e.Producto, e.Idproyecto, e.EmailChgb, e.Rollos, e.IdUsuario, e.Caja, e.Extra, e.Contacto1, e.Contacto2, e.TAfiliacion, e.FileName, e.Ruta, e.Ar, e.Sucursal, e.Estatus, e.Mensaje, e.IdCarga, e.IdProceso, e.DescCorta })
+                    .HasName("missing_index_3829_3828");
 
                 entity.HasIndex(e => new { e.Poblacion, e.Estado, e.Cp, e.Concepto, e.Rfc, e.DescCorta, e.DescEquipo, e.IdSegmento, e.FechaInicio, e.Negocio, e.AfiliacionAmex, e.Colonia, e.Producto, e.Idproyecto, e.EmailChgb, e.NotasRemedy, e.Caja, e.IdEquipo, e.Extra, e.Contacto1, e.Contacto2, e.Vip, e.TAfiliacion, e.FolioTelecargaAmex, e.Ejecutivo, e.Sucursal, e.Mensaje, e.IdUsuario, e.Rollos, e.Correo, e.IdCarga, e.IdProceso, e.FileName, e.Ruta, e.Ar, e.Sintoma, e.Bitacora, e.Afiliacion, e.Telefono, e.Direccion, e.Estatus })
                     .HasName("missing_index_3632_3631");
@@ -8620,6 +9149,10 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.Ruta)
                     .HasColumnName("RUTA")
                     .HasMaxLength(200);
+
+                entity.Property(e => e.SegmentoElavon)
+                    .HasColumnName("SEGMENTO_ELAVON")
+                    .HasMaxLength(70);
 
                 entity.Property(e => e.Sintoma).HasColumnType("nvarchar(max)");
 
@@ -10488,25 +11021,22 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdEnvio, e.IdResponsableDestino, e.IdUrgenciaEnvio, e.FecEnvio, e.IdTipoResponsableDestino, e.IdStatusEnvio })
                     .HasName("IX_BD_ENVIOS_ID_TIPO_RESPONSABLE_DESTINO, ID_STATUS_ENVIO");
 
+                entity.HasIndex(e => new { e.IdEnvio, e.IdResponsableOrigen, e.IdTipoResponsableOrigen, e.IdStatusEnvio, e.Status, e.FecEnvio })
+                    .HasName("IX_MI_BD_ENVIOS_30334_30333");
+
                 entity.HasIndex(e => new { e.IdEnvio, e.IdTipoResponsableOrigen, e.IdResponsableOrigen, e.IdStatusEnvio, e.Status, e.FecEnvio })
                     .HasName("IX_MI_BD_ENVIOS_30381_30380");
 
-                entity.HasIndex(e => new { e.IdResponsableOrigen, e.IdEnvio, e.IdTipoResponsableOrigen, e.IdStatusEnvio, e.Status, e.FecEnvio })
-                    .HasName("IX_MI_BD_ENVIOS_30334_30333");
-
                 entity.HasIndex(e => new { e.IdEnvio, e.IdResponsableDestino, e.IdUrgenciaEnvio, e.FecEnvio, e.IdTipoResponsableDestino, e.IdStatusEnvio, e.Status })
-                    .HasName("IX_MI_BD_ENVIOS_155_154");
-
-                entity.HasIndex(e => new { e.IdUrgenciaEnvio, e.FecEnvio, e.IdEnvio, e.IdResponsableDestino, e.IdTipoResponsableDestino, e.IdStatusEnvio, e.Status })
                     .HasName("IX_MI_BD_ENVIOS_5596_5595");
 
                 entity.HasIndex(e => new { e.IdEnvio, e.IdResponsableDestino, e.IdServicioMensajeriasPrecio, e.IdTipoResponsableOrigen, e.IdResponsableOrigen, e.IdTipoResponsableDestino, e.FecEnvio, e.IdStatusEnvio })
                     .HasName("INDX1");
 
-                entity.HasIndex(e => new { e.IdEnvio, e.IdResponsableDestino, e.IdServicioMensajeria, e.NoGuia, e.IdUrgenciaEnvio, e.FecEnvio, e.FecRecepcion, e.IdTipoResponsableDestino, e.IdStatusEnvio, e.Status })
+                entity.HasIndex(e => new { e.IdResponsableDestino, e.IdServicioMensajeria, e.NoGuia, e.IdUrgenciaEnvio, e.FecEnvio, e.FecRecepcion, e.IdEnvio, e.IdTipoResponsableDestino, e.IdStatusEnvio, e.Status })
                     .HasName("IX_MI_BD_ENVIOS_6182_6181");
 
-                entity.HasIndex(e => new { e.IdEnvio, e.IdResponsableDestino, e.IdServicioMensajeria, e.NoGuia, e.Costo, e.IdUrgenciaEnvio, e.FecEnvio, e.FecRecepcion, e.IdTipoResponsableDestino, e.IdStatusEnvio, e.Status })
+                entity.HasIndex(e => new { e.IdUrgenciaEnvio, e.FecEnvio, e.FecRecepcion, e.IdEnvio, e.IdResponsableDestino, e.IdServicioMensajeria, e.NoGuia, e.Costo, e.IdTipoResponsableDestino, e.IdStatusEnvio, e.Status })
                     .HasName("IX_MI_BD_ENVIOS_13806_13805");
 
                 entity.Property(e => e.IdEnvio).HasColumnName("ID_ENVIO");
@@ -10800,6 +11330,31 @@ namespace WebApiSgsElavon.ModelsTest
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<BdEstadosProveedores>(entity =>
+            {
+                entity.HasKey(e => e.IdEstadoProveedor)
+                    .HasName("PK__BD_ESTAD__C52AAECC6A56A5B7");
+
+                entity.ToTable("BD_ESTADOS_PROVEEDORES");
+
+                entity.Property(e => e.IdEstadoProveedor).HasColumnName("ID_ESTADO_PROVEEDOR");
+
+                entity.Property(e => e.Cp)
+                    .HasColumnName("CP")
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdEstado).HasColumnName("ID_ESTADO");
+
+                entity.Property(e => e.IdProveedor).HasColumnName("ID_PROVEEDOR");
+
+                entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
+            });
+
             modelBuilder.Entity<BdEtiquetaInformacionUnidadCliente>(entity =>
             {
                 entity.HasKey(e => e.IdEtiquetaInformacionUnidadCliente);
@@ -10937,6 +11492,8 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.IdCausaCancelacion)
                     .HasColumnName("ID_CAUSA_CANCELACION")
                     .IsUnicode(false);
+
+                entity.Property(e => e.IdCorreo).HasColumnName("ID_CORREO");
 
                 entity.Property(e => e.Idamx)
                     .HasColumnName("IDAMX")
@@ -14483,6 +15040,20 @@ namespace WebApiSgsElavon.ModelsTest
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<BdOpcionesReingenieriaTipoUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdOpcionesReingenieriaTipoUsuario)
+                    .HasName("PK__BD_OPCIO__E3409B23F9419954");
+
+                entity.ToTable("BD_OPCIONES_REINGENIERIA_TIPO_USUARIO");
+
+                entity.Property(e => e.IdOpcionesReingenieriaTipoUsuario).HasColumnName("ID_OPCIONES_REINGENIERIA_TIPO_USUARIO");
+
+                entity.Property(e => e.IdOpcionesReingenieria).HasColumnName("ID_OPCIONES_REINGENIERIA");
+
+                entity.Property(e => e.IdTipoUsuario).HasColumnName("ID_TIPO_USUARIO");
+            });
+
             modelBuilder.Entity<BdOrdenCompra>(entity =>
             {
                 entity.HasKey(e => e.IdOrdenCompra)
@@ -15109,6 +15680,48 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.DescError)
                     .HasColumnName("DESC_ERROR")
                     .HasMaxLength(250)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<BdReCalculoDeFechasEstatus>(entity =>
+            {
+                entity.HasKey(e => e.IdReCalculoDeFechasEstatus)
+                    .HasName("PK__BD_RE_CA__079889B508302B1A");
+
+                entity.ToTable("BD_RE_CALCULO_DE_FECHAS_ESTATUS");
+
+                entity.Property(e => e.IdReCalculoDeFechasEstatus).HasColumnName("ID_RE_CALCULO_DE_FECHAS_ESTATUS");
+
+                entity.Property(e => e.DescError)
+                    .HasColumnName("DESC_ERROR")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FecAtencion)
+                    .HasColumnName("FEC_ATENCION")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FecGarantia)
+                    .HasColumnName("FEC_GARANTIA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdCarga).HasColumnName("ID_CARGA");
+
+                entity.Property(e => e.IdProveedor).HasColumnName("ID_PROVEEDOR");
+
+                entity.Property(e => e.IdStatusAr).HasColumnName("ID_STATUS_AR");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("ID_USUARIO");
+
+                entity.Property(e => e.Odt)
+                    .HasColumnName("ODT")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("STATUS")
                     .IsUnicode(false);
             });
 
@@ -15845,11 +16458,11 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdServicio, e.IdEspecificacionCausaRechazo, e.IdCliente, e.Precio })
                     .HasName("IX_MI_BD_SERVICIO_CAUSA_RECHAZO_PRECIO_10231_10230");
 
-                entity.HasIndex(e => new { e.IdServicio, e.IdEspecificacionCausaRechazo, e.Precio, e.IdCliente })
-                    .HasName("IX_MI_BD_SERVICIO_CAUSA_RECHAZO_PRECIO_10248_10247");
-
                 entity.HasIndex(e => new { e.Precio, e.IdCliente, e.IdServicio, e.IdEspecificacionCausaRechazo })
                     .HasName("IX_MI_BD_SERVICIO_CAUSA_RECHAZO_PRECIO_10246_10245");
+
+                entity.HasIndex(e => new { e.Precio, e.IdServicio, e.IdEspecificacionCausaRechazo, e.IdCliente })
+                    .HasName("IX_MI_BD_SERVICIO_CAUSA_RECHAZO_PRECIO_10248_10247");
 
                 entity.Property(e => e.IdServicioCausaRechazoPrecio).HasColumnName("ID_SERVICIO_CAUSA_RECHAZO_PRECIO");
 
@@ -16384,11 +16997,8 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdSolicitudRecoleccion, e.IdStatusSolicitudRecoleccion })
                     .HasName("IX_MI_BD_SOLICITUD_RECOLECCION_4785_4784");
 
-                entity.HasIndex(e => new { e.IdCliente, e.IdAlmacenDestino, e.IdServicioMensajeria, e.IdSolicitudRecoleccion, e.IdStatusSolicitudRecoleccion })
-                    .HasName("IX_MI_BD_SOLICITUD_RECOLECCION_4787_4786");
-
                 entity.HasIndex(e => new { e.IdSolicitudRecoleccion, e.IdCliente, e.IdAlmacenDestino, e.IdServicioMensajeria, e.IdStatusSolicitudRecoleccion })
-                    .HasName("IX_MI_BD_SOLICITUD_RECOLECCION_4599_4598");
+                    .HasName("IX_MI_BD_SOLICITUD_RECOLECCION_4787_4786");
 
                 entity.Property(e => e.IdSolicitudRecoleccion).HasColumnName("ID_SOLICITUD_RECOLECCION");
 
@@ -16542,17 +17152,17 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdStatusSolicitudAlmacen, e.IdEnvio })
                     .HasName("IX_BD_SOLICITUDES_ALMACEN_ID_STATUS_SOLICITUD_ALMACEN, ID_ENVIO");
 
-                entity.HasIndex(e => new { e.IdTipoSolicitudAlmacen, e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.IdUsuarioAlta, e.IdSolicitudAlmacen, e.IdStatusSolicitudAlmacen })
+                entity.HasIndex(e => new { e.IdSolicitudAlmacen, e.IdTipoSolicitudAlmacen, e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.IdUsuarioAlta, e.IdStatusSolicitudAlmacen })
                     .HasName("IX_MI_BD_SOLICITUDES_ALMACEN_21326_21325");
 
                 entity.HasIndex(e => new { e.IdSolicitudAlmacen, e.IdAlmacen, e.IdTipoSolicitudAlmacen, e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.IdUsuarioAlta, e.IdStatusSolicitudAlmacen })
                     .HasName("IX_MI_BD_SOLICITUDES_ALMACEN_4_3");
 
                 entity.HasIndex(e => new { e.IdSolicitudAlmacen, e.IdTipoSolicitudAlmacen, e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.IdUsuarioAlta, e.FecAlta, e.IdStatusSolicitudAlmacen })
-                    .HasName("IX_MI_BD_SOLICITUDES_ALMACEN_1906_1905");
-
-                entity.HasIndex(e => new { e.IdTipoSolicitudAlmacen, e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.IdUsuarioAlta, e.FecAlta, e.IdSolicitudAlmacen, e.IdStatusSolicitudAlmacen })
                     .HasName("IX_MI_BD_SOLICITUDES_ALMACEN_22_21");
+
+                entity.HasIndex(e => new { e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.IdUsuarioAlta, e.IdSolicitudAlmacen, e.IdAlmacen, e.IdTipoSolicitudAlmacen, e.IdStatusSolicitudAlmacen })
+                    .HasName("IX_MI_BD_SOLICITUDES_ALMACEN_12_11");
 
                 entity.HasIndex(e => new { e.IdSolicitudAlmacen, e.IdTipoSolicitudAlmacen, e.IdUrgenciaSolicitudAlmacen, e.IdAr, e.FecCompromiso, e.IdUsuarioAlta, e.FecAlta, e.IdStatusSolicitudAlmacen })
                     .HasName("IX_BD_SOLICITUDES_ALMACEN_ID_STATUS_SOLICITUD_ALMACEN");
@@ -17006,7 +17616,7 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdSolicitudViaticos, e.IdAr, e.IdStatusSolicitudViaticos, e.IdUsuarioSolicitado, e.FecConfirmacion })
                     .HasName("IX_MI_BD_SOLICITUDES_VIATICOS_97748_97747");
 
-                entity.HasIndex(e => new { e.IdUsuarioAlta, e.IdSolicitudViaticos, e.IdAr, e.Destino, e.IdUsuarioSolicitado, e.IdStatusSolicitudViaticos })
+                entity.HasIndex(e => new { e.IdSolicitudViaticos, e.IdAr, e.Destino, e.IdUsuarioSolicitado, e.IdUsuarioAlta, e.IdStatusSolicitudViaticos })
                     .HasName("IX_BD_SOLICITUDES_VIATICOS_ID_STATUS_SOLICITUD_VIATICOS");
 
                 entity.HasIndex(e => new { e.IdAr, e.Destino, e.IdUsuarioSolicitado, e.IdUsuarioAlta, e.IdSolicitudViaticos, e.IdStatusSolicitudViaticos, e.FecAlta })
@@ -18016,11 +18626,14 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.IdUnidad, e.IdCliente, e.IdProducto, e.IdTipoResponsable, e.IdResponsable, e.IsDaniada, e.IdStatusUnidad, e.Status })
                     .HasName("IX_MI_BD_UNIDADES_415_414");
 
+                entity.HasIndex(e => new { e.IdUnidad, e.IdCliente, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.NoImei, e.IsDaniada, e.IdStatusUnidad, e.IdProducto, e.IsRetiro, e.Status })
+                    .HasName("IX_MI_BD_UNIDADES_64246_64245");
+
                 entity.HasIndex(e => new { e.IdUnidad, e.NoImei, e.IsDaniada, e.IdStatusUnidad, e.IdCliente, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IsRetiro, e.Status })
                     .HasName("IX_MI_BD_UNIDADES_64248_64247");
 
-                entity.HasIndex(e => new { e.NoImei, e.IsDaniada, e.IdStatusUnidad, e.IdUnidad, e.IdCliente, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IdProducto, e.IsRetiro, e.Status })
-                    .HasName("IX_MI_BD_UNIDADES_64246_64245");
+                entity.HasIndex(e => new { e.IdUnidad, e.IdCliente, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IsDaniada, e.IdStatusUnidad, e.FecAlta, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.NoImei, e.Status })
+                    .HasName("IX_BD_UNIDADES_STATUS");
 
                 entity.HasIndex(e => new { e.IdUnidad, e.IdProducto, e.NoSerie, e.NoInventario, e.NoImei, e.PosicionInventario, e.FecAlta, e.IdCliente, e.IdMarca, e.IdModelo, e.IdTipoResponsable, e.IsDaniada, e.Status, e.IdResponsable, e.IdStatusUnidad })
                     .HasName("IX_MI_BD_UNIDADES_82332_82331");
@@ -18028,25 +18641,22 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.NoSerie, e.NoInventario, e.NoImei, e.PosicionInventario, e.FecAlta, e.IdUnidad, e.IdProducto, e.IdModelo, e.IdCliente, e.IdMarca, e.IdTipoResponsable, e.IsDaniada, e.Status, e.IdResponsable, e.IdStatusUnidad })
                     .HasName("IX_MI_BD_UNIDADES_187660_187659");
 
-                entity.HasIndex(e => new { e.NoSim, e.IdResponsable, e.PosicionInventario, e.IsDaniada, e.IdStatusUnidad, e.FecAlta, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.NoImei, e.IdUnidad, e.IdCliente, e.Status })
-                    .HasName("IX_BD_UNIDADES_STATUS");
+                entity.HasIndex(e => new { e.IdUnidad, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IdSim, e.NoImei, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IsDaniada, e.IdStatusUnidad, e.FecAlta, e.IdCliente, e.Status })
+                    .HasName("IX_BD_UNIDADES_ID_CLIENTE, STATUS");
 
                 entity.HasIndex(e => new { e.NoInventario, e.NoImei, e.PosicionInventario, e.IsDaniada, e.FecAlta, e.IdUnidad, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.IdCliente, e.IdTipoResponsable, e.IdResponsable, e.IsRetiro, e.IdStatusUnidad, e.Status })
                     .HasName("IX_MI_BD_UNIDADES_4171_4170");
 
-                entity.HasIndex(e => new { e.PosicionInventario, e.IsDaniada, e.IdStatusUnidad, e.FecAlta, e.IdUnidad, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IdSim, e.NoImei, e.NoSim, e.IdResponsable, e.IdCliente, e.Status })
-                    .HasName("IX_BD_UNIDADES_ID_CLIENTE, STATUS");
-
                 entity.HasIndex(e => new { e.IdUnidad, e.FecAlta, e.IdNivelDiagnostico, e.NoImei, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IsDaniada, e.IdStatusUnidad, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IdSim, e.IdCliente, e.Status })
                     .HasName("IX_MI_BD_UNIDADES_81_80");
 
-                entity.HasIndex(e => new { e.NoImei, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IdStatusUnidad, e.IdProducto, e.IsNueva, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IdUnidad, e.IdCliente, e.Status, e.IdAplicativo, e.IdConectividad, e.IdTipoResponsable })
+                entity.HasIndex(e => new { e.IdUnidad, e.NoImei, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IdStatusUnidad, e.IdProducto, e.IsNueva, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.IdCliente, e.Status, e.IdAplicativo, e.IdConectividad, e.IdTipoResponsable })
                     .HasName("missing_index_3944_3943");
 
-                entity.HasIndex(e => new { e.NoInventario, e.IdSim, e.NoImei, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IdUnidad, e.IdCliente, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.IsDaniada, e.IdStatusUnidad, e.FecAlta, e.IdNivelDiagnostico, e.Status })
+                entity.HasIndex(e => new { e.IsDaniada, e.IdStatusUnidad, e.FecAlta, e.IdNivelDiagnostico, e.NoInventario, e.IdSim, e.NoImei, e.NoSim, e.IdResponsable, e.PosicionInventario, e.IdUnidad, e.IdCliente, e.IdProducto, e.IdMarca, e.IdModelo, e.NoSerie, e.Status })
                     .HasName("IX_MI_BD_UNIDADES_83_82");
 
-                entity.HasIndex(e => new { e.PosicionInventario, e.IsRetiro, e.IsDaniada, e.FecAlta, e.IdAplicativo, e.IdConectividad, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.NoImei, e.IdResponsable, e.IdUnidad, e.IdCliente, e.IsNueva, e.IdTipoResponsable, e.IdStatusUnidad, e.Status })
+                entity.HasIndex(e => new { e.IdUnidad, e.IdCliente, e.IsNueva, e.PosicionInventario, e.IsRetiro, e.IsDaniada, e.FecAlta, e.IdAplicativo, e.IdConectividad, e.IdMarca, e.IdModelo, e.NoSerie, e.NoInventario, e.NoImei, e.IdResponsable, e.IdTipoResponsable, e.IdStatusUnidad, e.Status })
                     .HasName("missing_index_2282_2281");
 
                 entity.Property(e => e.IdUnidad).HasColumnName("ID_UNIDAD");
@@ -18568,6 +19178,10 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.NoSerie)
                     .HasColumnName("NO_SERIE")
                     .HasMaxLength(30);
+
+                entity.Property(e => e.Observaciones)
+                    .HasColumnName("OBSERVACIONES")
+                    .HasColumnType("text");
 
                 entity.Property(e => e.Status)
                     .HasColumnName("STATUS")
@@ -19118,7 +19732,7 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.HasIndex(e => e.TaskId);
 
-                entity.HasIndex(e => new { e.BbvaCrtDireccion, e.BbvaTsitio, e.BbvaCiAutoserv, e.Importado, e.Automatico, e.BbvaCtrAutoservicio, e.Summary, e.TaskType, e.TaskName, e.Priority, e.Urgency, e.BbvaCrtClaseAtm, e.IdTareaBancomer, e.TaskId, e.CreateDate, e.Status })
+                entity.HasIndex(e => new { e.IdTareaBancomer, e.TaskId, e.CreateDate, e.BbvaCrtDireccion, e.BbvaTsitio, e.BbvaCiAutoserv, e.Importado, e.Automatico, e.BbvaCtrAutoservicio, e.Summary, e.TaskType, e.TaskName, e.Priority, e.Urgency, e.BbvaCrtClaseAtm, e.Status })
                     .HasName("IX_BD_WS_BANCOMER_Status");
 
                 entity.Property(e => e.IdTareaBancomer).HasColumnName("id_tarea_bancomer");
@@ -22395,6 +23009,41 @@ namespace WebApiSgsElavon.ModelsTest
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<CSegmentosElavon>(entity =>
+            {
+                entity.HasKey(e => e.IdSegmentoElavon);
+
+                entity.ToTable("C_SEGMENTOS_ELAVON");
+
+                entity.HasIndex(e => e.DescSegmentoElavon)
+                    .HasName("IX_C_SEGMENTOS_ELAVON")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.IdUsuarioAlta)
+                    .HasName("IX_C_SEGMENTOS_ELAVON_2");
+
+                entity.HasIndex(e => e.Status)
+                    .HasName("IX_C_SEGMENTOS_ELAVON_1");
+
+                entity.Property(e => e.IdSegmentoElavon).HasColumnName("ID_SEGMENTO_ELAVON");
+
+                entity.Property(e => e.DescSegmentoElavon)
+                    .IsRequired()
+                    .HasColumnName("DESC_SEGMENTO_ELAVON")
+                    .HasMaxLength(70);
+
+                entity.Property(e => e.FecAlta)
+                    .HasColumnName("FEC_ALTA")
+                    .HasColumnType("smalldatetime");
+
+                entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("STATUS")
+                    .HasMaxLength(12);
+            });
+
             modelBuilder.Entity<CServicioMensajeria>(entity =>
             {
                 entity.HasKey(e => e.IdServicioMensajeria);
@@ -23550,6 +24199,32 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasConstraintName("FK__C_SUB_ALM__ID_PA__29B0ECBB");
             });
 
+            modelBuilder.Entity<CSubrechazo>(entity =>
+            {
+                entity.HasKey(e => e.IdSubrechazo)
+                    .HasName("ID_SUBRECHAZOPK");
+
+                entity.ToTable("C_SUBRECHAZO");
+
+                entity.Property(e => e.IdSubrechazo).HasColumnName("ID_SUBRECHAZO");
+
+                entity.Property(e => e.FechaAlta)
+                    .HasColumnName("FECHA_ALTA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("STATUS")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Subrechazo)
+                    .HasColumnName("SUBRECHAZO")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UsuarioAlta).HasColumnName("USUARIO_ALTA");
+            });
+
             modelBuilder.Entity<CTecnicos>(entity =>
             {
                 entity.HasKey(e => e.IdTecnico);
@@ -24613,6 +25288,8 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.IsCache).HasColumnName("IS_CACHE");
 
                 entity.Property(e => e.IsCallCenterContacto).HasColumnName("IS_CALL_CENTER_CONTACTO");
+
+                entity.Property(e => e.IsCambioStatusUnidadInstaladas).HasColumnName("IS_CAMBIO_STATUS_UNIDAD_INSTALADAS");
 
                 entity.Property(e => e.IsConsultaUnidad).HasColumnName("IS_CONSULTA_UNIDAD");
 
@@ -27475,10 +28152,10 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.HasIndex(e => new { e.DCp, e.DEstado, e.DMnpio, e.DCiudad, e.DAsenta })
                     .HasName("IX_SEPOMEX_1");
 
-                entity.HasIndex(e => new { e.Id, e.DAsenta, e.DMnpio, e.DCiudad, e.DCp, e.DEstado })
+                entity.HasIndex(e => new { e.DCp, e.Id, e.DAsenta, e.DMnpio, e.DCiudad, e.DEstado })
                     .HasName("missing_index_1249_1248");
 
-                entity.HasIndex(e => new { e.Id, e.DAsenta, e.DMnpio, e.DCiudad, e.DCp, e.IdTipoLocalidad, e.DEstado })
+                entity.HasIndex(e => new { e.IdTipoLocalidad, e.Id, e.DAsenta, e.DMnpio, e.DCiudad, e.DCp, e.DEstado })
                     .HasName("missing_index_208_207");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -27536,9 +28213,6 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.HasIndex(e => e.DCp)
                     .HasName("IX_SEPOMEX_d_CP");
-
-                entity.HasIndex(e => new { e.DCiudad, e.DCp, e.Id, e.DAsenta, e.DMnpio, e.DEstado })
-                    .HasName("IX_MI_SEPOMEX_6551_6550");
 
                 entity.HasIndex(e => new { e.Id, e.DAsenta, e.DMnpio, e.DCiudad, e.DCp, e.DEstado })
                     .HasName("IX_SEPOMEX_d_estado");

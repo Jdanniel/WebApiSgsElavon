@@ -13,6 +13,6 @@ namespace WebApiSgsElavon.ModelsTest
         public int? IdUsuarioAlta { get; set; }
         public DateTime? FecAlta { get; set; }
         public string StatusReasonCode { get; set; }
-        public int? IdTrechazo { get; set; }
+        public int IdTrechazo { get; set; }
     }
 }
