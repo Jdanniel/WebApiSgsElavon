@@ -175,19 +175,5 @@ namespace WebApiSgsElavon.Controllers
         {
             return Ok(await _odtService.prueba2());
         }
-
-        [HttpPut("AceptarRechazarOdt")]
-        public async Task<ActionResult> UpdateAceptarRechazarOdt(AceptarRechazarOdtRequest request)
-        {
-            var r = _odtService.AceptarRechazarOdt(request);
-            if(r == 1)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
     }
 }
