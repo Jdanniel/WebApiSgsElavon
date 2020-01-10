@@ -579,6 +579,7 @@ namespace WebApiSgsElavon.Services
                         .FirstOrDefault();
 
                     var bdunidad = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+
                     int idstatusunidadInstalar = bdunidad.IdStatusUnidad;
                     int idunidadInstalar = bdunidad.IdUnidad;
 
@@ -627,6 +628,48 @@ namespace WebApiSgsElavon.Services
                     };
                     _context.BdBitacoraUnidad.Add(bitacoraUnidad);
                     _context.SaveChanges();
+
+                    if (request.NO_SIM.Length > 0)
+                    {
+                        var sim = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefault();
+                        if(sim != null)
+                        {
+                            int idstatussimInstalar = sim.IdStatusUnidad;
+                            int idsimInstalar = sim.IdUnidad;
+
+                            BdInstalaciones instalacionesSim = new BdInstalaciones()
+                            {
+                                IdAr = ID_AR,
+                                IdTecnico = ID_TECNICO,
+                                IdNegocio = bdar.IdNegocio,
+                                IdUnidad = sim.IdUnidad,
+                                IsNueva = 0,
+                                IdClienteIni = 4,
+                                IdUsuarioAlta = ID_TECNICO,
+                                FecAlta = DateTime.Now,
+                            };
+                            _context.BdInstalaciones.Add(instalacionesSim);
+                            _context.SaveChanges();
+
+                            sim.IdStatusUnidad = 17;
+                            sim.IdTipoResponsable = 4;
+                            sim.IdResponsable = idnegocio;
+                            _context.SaveChanges();
+
+                            BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                            {
+                                IdStatusUnidadIni = idstatussimInstalar,
+                                IdStatusUnidadFin = 17,
+                                IdUnidad = idsimInstalar,
+                                IdTipoResponsable = 4,
+                                IdResponsable = idnegocio,
+                                IdUsuarioAlta = ID_TECNICO,
+                                FecAlta = DateTime.Now
+                            };
+                            _context.BdBitacoraUnidad.Add(bitacoraSim);
+                            _context.SaveChanges();
+                        }
+                    }
 
                     string notificado = request.NOTIFICADO ? "SI" : "NO";
                     string promociones = request.PROMOCIONES ? "SI" : "NO";

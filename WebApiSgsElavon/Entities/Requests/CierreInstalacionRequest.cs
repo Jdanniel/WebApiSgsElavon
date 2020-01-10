@@ -8,6 +8,7 @@ namespace WebApiSgsElavon.Entities.Requests
     public class CierreInstalacionRequest
     {
         public string NO_SERIE { get; set; }
+        public string NO_SIM { get; set; }
         public string CONECTIVIDAD { get; set; }
         public string APLICATIVO { get; set; }
         public string VERSION { get; set; }
