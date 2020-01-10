@@ -23,6 +23,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<CambioStatusAr>> GetCambioStatusAr();
         Task<IEnumerable<Subrechazos>> GetSubrechazos();
         Task<IEnumerable<Causasrechazos>> GetCausasrechazos();
+        Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -181,6 +182,21 @@ namespace WebApiSgsElavon.Services
                 })
                 .ToListAsync();
             return unidades;
+        }
+
+        public async Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad()
+        {
+            List<BdModelosConectividades> modelosConectividades = await context
+                .BdModeloConectividad
+                .Where(x => x.Status == "ACTIVO")
+                .Select(x => new BdModelosConectividades
+                {
+                    ID_MODELO_CONECTIVIDAD = x.IdModeloConectividad,
+                    ID_MODELO = x.IdModelo,
+                    ID_CONECTIVIDAD = x.IdConectividad
+                })
+                .ToListAsync();
+            return modelosConectividades;
         }
     }
 }

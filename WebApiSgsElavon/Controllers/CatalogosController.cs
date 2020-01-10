@@ -101,5 +101,12 @@ namespace WebApiSgsElavon.Controllers
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
+        [HttpGet("modelosconectividad")]
+        public async Task<ActionResult<BdModelosConectividades>> GetModelosConectividades()
+        {
+            var lista = await _Catalogosservices.GetModeloConectividad();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
     }
 }
