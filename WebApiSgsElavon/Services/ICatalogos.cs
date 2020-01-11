@@ -175,7 +175,7 @@ namespace WebApiSgsElavon.Services
                     ID_CONECTIVIDAD = x.IdConectividad, 
                     ID_MARCA = x.IdMarca, 
                     ID_MODELO = x.IdModelo, 
-                    NO_SERIE = x.NoSerie,
+                    NO_SERIE = x.NoSerie.Trim(),
                     ID_STATUS_UNIDAD = x.IdStatusUnidad,
                     IS_NUEVA = x.IsNueva,
                     DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault())
