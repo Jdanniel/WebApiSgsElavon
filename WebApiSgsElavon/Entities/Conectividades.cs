@@ -12,5 +12,7 @@ namespace WebApiSgsElavon.Entities
         public int ID_CONECTIVIDAD { get; set; }
         [JsonProperty(PropertyName = "DESC_CONECTIVIDAD")]
         public string DESC_CONECTIVIDAD { get; set; }
+        [JsonProperty(PropertyName = "IS_GPRS")]
+        public int IS_GPRS { get; set; }
     }
 }

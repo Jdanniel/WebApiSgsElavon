@@ -68,7 +68,7 @@ namespace WebApiSgsElavon.Services
             List<Conectividades> conectividades = await context
                 .CConectividad
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Conectividades { ID_CONECTIVIDAD = x.IdConectividad, DESC_CONECTIVIDAD = x.DescConectividad})
+                .Select(x => new Conectividades { ID_CONECTIVIDAD = x.IdConectividad, DESC_CONECTIVIDAD = x.DescConectividad, IS_GPRS = x.IsGprs == null ? 0 : x.IsGprs})
                 .ToListAsync();
             return conectividades;
         }

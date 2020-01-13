@@ -20,7 +20,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request);
         int AceptarRechazarOdt(AceptarRechazarOdtRequest request);
         Task<IEnumerable<OdtEvent2>> prueba2();
-        bool cierreInstalacion(CierreInstalacionRequest request);
+        string cierreInstalacion(CierreInstalacionRequest request);
         bool CierreSustitucion(SustitucionesRequest request);
         bool CierreRetiro(CierresRetiroRequest request);
         bool CierreRechazo(CierreRechazoRequest request);
@@ -559,198 +559,219 @@ namespace WebApiSgsElavon.Services
                 return false;
             }
         }
-        public bool cierreInstalacion(CierreInstalacionRequest request)
+        public string cierreInstalacion(CierreInstalacionRequest request)
         {
             if(request != null)
             {
-                try
+                List<int> idstatusar = new List<int>() { 6,7};
+                var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
+                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    int ID_AR = request.ID_AR;
-                    int ID_TECNICO = request.ID_TECNICO;
-                    
-                    var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
-                    
-                    int? idstatusini = bdar.IdStatusAr;
-                    
-                    int idnegocio = _context
-                        .BdNegocios
-                        .Where(x => x.NoAfiliacion == bdar.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
-                        .Select(x => x.IdNegocio)
-                        .FirstOrDefault();
-
-                    var bdunidad = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
-
-                    int idstatusunidadInstalar = bdunidad.IdStatusUnidad;
-                    int idunidadInstalar = bdunidad.IdUnidad;
-
-                    BdInstalaciones instalaciones = new BdInstalaciones()
+                    try
                     {
-                        IdAr = ID_AR,
-                        IdTecnico = ID_TECNICO,
-                        IdNegocio = bdar.IdNegocio,
-                        IdUnidad = bdunidad.IdUnidad,
-                        IsNueva = 0,
-                        IdClienteIni = 4,
-                        IdUsuarioAlta = ID_TECNICO,
-                        FecAlta = DateTime.Now,
-                    };
-                    _context.BdInstalaciones.Add(instalaciones);
-                    _context.SaveChanges();
+                        int ID_AR = request.ID_AR;
+                        int ID_TECNICO = request.ID_TECNICO;
 
-                    int idconectividadinstalada = _context
-                        .CConectividad
-                        .Where(x => x.DescConectividad == request.CONECTIVIDAD)
-                        .Select(x => x.IdConectividad)
-                        .FirstOrDefault();
-                    
-                    int idaplicativoinstalado = _context
-                        .CSoftware
-                        .Where(x => x.DescSoftware == request.APLICATIVO)
-                        .Select(x => x.IdSoftware)
-                        .FirstOrDefault();
+                        var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
 
-                    bdunidad.IdConectividad = idconectividadinstalada;
-                    bdunidad.IdAplicativo = idaplicativoinstalado;
-                    bdunidad.IdStatusUnidad = 17;
-                    bdunidad.IdTipoResponsable = 4;
-                    bdunidad.IdResponsable = idnegocio;
-                    _context.SaveChanges();
+                        int? idstatusini = bdar.IdStatusAr;
 
-                    BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
-                    {
-                        IdStatusUnidadIni = idstatusunidadInstalar,
-                        IdStatusUnidadFin = 17,
-                        IdUnidad = idunidadInstalar,
-                        IdTipoResponsable = 4,
-                        IdResponsable = idnegocio,
-                        IdUsuarioAlta = ID_TECNICO,
-                        FecAlta = DateTime.Now
-                    };
-                    _context.BdBitacoraUnidad.Add(bitacoraUnidad);
-                    _context.SaveChanges();
+                        int idnegocio = _context
+                            .BdNegocios
+                            .Where(x => x.NoAfiliacion == bdar.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
+                            .Select(x => x.IdNegocio)
+                            .FirstOrDefault();
 
-                    if (request.NO_SIM.Length > 0)
-                    {
-                        var sim = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefault();
-                        if(sim != null)
+                        var bdunidad = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+
+                        int idstatusunidadInstalar = bdunidad.IdStatusUnidad;
+                        int idunidadInstalar = bdunidad.IdUnidad;
+
+                        BdInstalaciones instalaciones = new BdInstalaciones()
                         {
-                            int idstatussimInstalar = sim.IdStatusUnidad;
-                            int idsimInstalar = sim.IdUnidad;
+                            IdAr = ID_AR,
+                            IdTecnico = ID_TECNICO,
+                            IdNegocio = bdar.IdNegocio,
+                            IdUnidad = bdunidad.IdUnidad,
+                            IsNueva = 0,
+                            IdClienteIni = 4,
+                            IdUsuarioAlta = ID_TECNICO,
+                            FecAlta = DateTime.Now,
+                        };
+                        _context.BdInstalaciones.Add(instalaciones);
+                        _context.SaveChanges();
 
-                            BdInstalaciones instalacionesSim = new BdInstalaciones()
-                            {
-                                IdAr = ID_AR,
-                                IdTecnico = ID_TECNICO,
-                                IdNegocio = bdar.IdNegocio,
-                                IdUnidad = sim.IdUnidad,
-                                IsNueva = 0,
-                                IdClienteIni = 4,
-                                IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now,
-                            };
-                            _context.BdInstalaciones.Add(instalacionesSim);
-                            _context.SaveChanges();
+                        int idconectividadinstalada = _context
+                            .CConectividad
+                            .Where(x => x.DescConectividad == request.CONECTIVIDAD)
+                            .Select(x => x.IdConectividad)
+                            .FirstOrDefault();
 
-                            sim.IdStatusUnidad = 17;
-                            sim.IdTipoResponsable = 4;
-                            sim.IdResponsable = idnegocio;
-                            _context.SaveChanges();
+                        int idaplicativoinstalado = _context
+                            .CSoftware
+                            .Where(x => x.DescSoftware == request.APLICATIVO)
+                            .Select(x => x.IdSoftware)
+                            .FirstOrDefault();
 
-                            BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
-                            {
-                                IdStatusUnidadIni = idstatussimInstalar,
-                                IdStatusUnidadFin = 17,
-                                IdUnidad = idsimInstalar,
-                                IdTipoResponsable = 4,
-                                IdResponsable = idnegocio,
-                                IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now
-                            };
-                            _context.BdBitacoraUnidad.Add(bitacoraSim);
-                            _context.SaveChanges();
-                        }
-                    }
+                        bdunidad.IdConectividad = idconectividadinstalada;
+                        bdunidad.IdAplicativo = idaplicativoinstalado;
+                        bdunidad.IdStatusUnidad = 17;
+                        bdunidad.IdTipoResponsable = 4;
+                        bdunidad.IdResponsable = idnegocio;
+                        bdunidad.IdSim = bdar.IdProveedor;
+                        _context.SaveChanges();
 
-                    string notificado = request.NOTIFICADO ? "SI" : "NO";
-                    string promociones = request.PROMOCIONES ? "SI" : "NO";
-                    string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+                        int isgprs = _context.CConectividad.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs).FirstOrDefault();
 
-                    bdar.NoInventario = request.VERSION;
-                    bdar.Atiende = request.ATIENDE;
-                    bdar.IdSolucion = 9;
-                    bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                    bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                    bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                    bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                    bdar.DigitoVerificador = request.DISCOVER.ToString();
-                    bdar.Caja = request.CAJA.ToString();
-                    bdar.DescripcionTrabajo = request.COMENTARIO;
-                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
-                    bdar.MiComercio = "COMERCIO NOTIFICADO: "
-                                        + notificado
-                                        + " / PROMOCIONES: "
-                                        + promociones
-                                        + " / SE BAJO APP: "
-                                        + descargarApp
-                                        + " / "
-                                        + request.TELEFONO_1
-                                        + " / "
-                                        + request.TELEFONO_2;
-                    bdar.CadenaCierre += request.CONCLUSIONES_AMEX;
-                    bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
-                    bdar.IdStatusAr = 6;
-                    _context.SaveChanges();
-
-                    insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
-
-                    BdArMiComercio micomercio = new BdArMiComercio()
-                    {
-                        IdAr = ID_AR,
-                        Notificado = request.NOTIFICADO ? 1 : 0,
-                        Promociones = request.PROMOCIONES ? 1 : 0,
-                        DescargarApp = request.DESCARGA_APP ? 1 : 0,
-                        Telefono1 = request.TELEFONO_1,
-                        Telefono2 = request.TELEFONO_2,
-                        FecAlta = DateTime.Now
-                    };
-                    _context.BdArMiComercio.Add(micomercio);
-                    _context.SaveChanges();
-
-                    BdArAccesorios accesoriosInstalados = new BdArAccesorios()
-                    {
-                        IdAr = ID_AR,
-                        Bateria = (request.BATERIA ? "SI" : "NO"),
-                        Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
-                        Base = (request.BASE ? "SI" : "NO"),
-                        Tapa = (request.TAPA ? "SI" : "NO"),
-                        CableAc = (request.CABLE_AC ? "SI" : "NO")
-                    };
-
-                    _context.BdArAccesorios.Add(accesoriosInstalados);
-                    _context.SaveChanges();
-
-                    if (request.IS_AMEX)
-                    {
-                        BdArTerminalAsociadaAmex terminal = new BdArTerminalAsociadaAmex()
+                        BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
                         {
-                            IdAr = request.ID_AR,
-                            IdTerminalAmex = request.ID_AMEX,
-                            AfiliacionTerminalAmex = request.AFILIACION_AMEX,
+                            IdStatusUnidadIni = idstatusunidadInstalar,
+                            IdStatusUnidadFin = 17,
+                            IdUnidad = idunidadInstalar,
+                            IdTipoResponsable = 4,
+                            IdResponsable = idnegocio,
                             IdUsuarioAlta = ID_TECNICO,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdArTerminalAsociadaAmex.Add(terminal);
+                        _context.BdBitacoraUnidad.Add(bitacoraUnidad);
                         _context.SaveChanges();
+
+                        if (isgprs == 1)
+                        {
+                            if(request.NO_SIM != null)
+                            {
+                                var sim = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefault();
+                                if (sim != null)
+                                {
+                                    int idstatussimInstalar = sim.IdStatusUnidad;
+                                    int idsimInstalar = sim.IdUnidad;
+
+                                    BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                    {
+                                        IdAr = ID_AR,
+                                        IdTecnico = ID_TECNICO,
+                                        IdNegocio = bdar.IdNegocio,
+                                        IdUnidad = sim.IdUnidad,
+                                        IsNueva = 0,
+                                        IdClienteIni = 4,
+                                        IdUsuarioAlta = ID_TECNICO,
+                                        FecAlta = DateTime.Now,
+                                    };
+                                    _context.BdInstalaciones.Add(instalacionesSim);
+                                    _context.SaveChanges();
+
+                                    sim.IdStatusUnidad = 17;
+                                    sim.IdTipoResponsable = 4;
+                                    sim.IdResponsable = idnegocio;
+                                    sim.IdSim = bdar.IdProveedor;
+                                    _context.SaveChanges();
+
+                                    BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                    {
+                                        IdStatusUnidadIni = idstatussimInstalar,
+                                        IdStatusUnidadFin = 17,
+                                        IdUnidad = idsimInstalar,
+                                        IdTipoResponsable = 4,
+                                        IdResponsable = idnegocio,
+                                        IdUsuarioAlta = ID_TECNICO,
+                                        FecAlta = DateTime.Now
+                                    };
+                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                return "ID SIM no puede estar vacio cuando la conectividad es IS_GPRS";
+                            }
+                        }
+
+                        string notificado = request.NOTIFICADO ? "SI" : "NO";
+                        string promociones = request.PROMOCIONES ? "SI" : "NO";
+                        string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+
+                        bdar.NoInventario = request.VERSION;
+                        bdar.Atiende = request.ATIENDE;
+                        bdar.IdSolucion = 9;
+                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.Caja = request.CAJA.ToString();
+                        bdar.DescripcionTrabajo = request.COMENTARIO;
+                        bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                                            + notificado
+                                            + " / PROMOCIONES: "
+                                            + promociones
+                                            + " / SE BAJO APP: "
+                                            + descargarApp
+                                            + " / "
+                                            + request.TELEFONO_1
+                                            + " / "
+                                            + request.TELEFONO_2;
+                        bdar.CadenaCierre += request.CONCLUSIONES_AMEX;
+                        bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
+                        bdar.IdStatusAr = 6;
+                        _context.SaveChanges();
+
+                        insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
+
+                        BdArMiComercio micomercio = new BdArMiComercio()
+                        {
+                            IdAr = ID_AR,
+                            Notificado = request.NOTIFICADO ? 1 : 0,
+                            Promociones = request.PROMOCIONES ? 1 : 0,
+                            DescargarApp = request.DESCARGA_APP ? 1 : 0,
+                            Telefono1 = request.TELEFONO_1,
+                            Telefono2 = request.TELEFONO_2,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdArMiComercio.Add(micomercio);
+                        _context.SaveChanges();
+
+                        BdArAccesorios accesoriosInstalados = new BdArAccesorios()
+                        {
+                            IdAr = ID_AR,
+                            Bateria = (request.BATERIA ? "SI" : "NO"),
+                            Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
+                            Base = (request.BASE ? "SI" : "NO"),
+                            Tapa = (request.TAPA ? "SI" : "NO"),
+                            CableAc = (request.CABLE_AC ? "SI" : "NO")
+                        };
+
+                        _context.BdArAccesorios.Add(accesoriosInstalados);
+                        _context.SaveChanges();
+
+                        if (request.IS_AMEX)
+                        {
+                            BdArTerminalAsociadaAmex terminal = new BdArTerminalAsociadaAmex()
+                            {
+                                IdAr = request.ID_AR,
+                                IdTerminalAmex = request.ID_AMEX,
+                                AfiliacionTerminalAmex = request.AFILIACION_AMEX,
+                                IdUsuarioAlta = ID_TECNICO,
+                                FecAlta = DateTime.Now
+                            };
+                            _context.BdArTerminalAsociadaAmex.Add(terminal);
+                            _context.SaveChanges();
+                        }
+                        transaction.Commit();
+                        return "OK";
                     }
-                    return true;
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return "DB";
+                    }
                 }
-                catch(Exception ex){
-                    return false;
-                }
+
             }
             else
             {
-                return false;
+                return "El request esta vacio";
             }
         }
         public bool CierreSustitucion(SustitucionesRequest request)

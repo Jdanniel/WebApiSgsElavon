@@ -119,14 +119,16 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreInstalacion")]
         public async Task<ActionResult<ODT>> CierreInstalacion(CierreInstalacionRequest request)
         {
-            if (_odtService.cierreInstalacion(request))
+            var msg = _odtService.cierreInstalacion(request);
+
+            if (string.Equals(msg,"OK",StringComparison.InvariantCultureIgnoreCase))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(msg);
             }
         }
 

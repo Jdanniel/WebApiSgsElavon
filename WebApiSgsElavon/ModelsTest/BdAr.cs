@@ -104,7 +104,7 @@ namespace WebApiSgsElavon.ModelsTest
         public int? IdUnidadAtendida { get; set; }
         public int? IdReglaStatusAr { get; set; }
         public DateTime? FecAltaReglaStatusAr { get; set; }
-        public int? IdStatusAr { get; set; }
+        public int IdStatusAr { get; set; }
         public DateTime? FecStatusAr { get; set; }
         public string CadenaCierreEscrita { get; set; }
         public string CodigoIntervencion { get; set; }

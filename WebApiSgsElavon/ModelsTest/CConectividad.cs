@@ -13,7 +13,7 @@ namespace WebApiSgsElavon.ModelsTest
         public string Status { get; set; }
         public int? IdUsuarioAlta { get; set; }
         public DateTime? FechaAlta { get; set; }
-        public int? IsGprs { get; set; }
+        public int IsGprs { get; set; }
         public int? IsConjunto { get; set; }
     }
 }
