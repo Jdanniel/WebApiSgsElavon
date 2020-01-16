@@ -622,7 +622,7 @@ namespace WebApiSgsElavon.Services
                         bdunidad.IdSim = bdar.IdProveedor;
                         _context.SaveChanges();
 
-                        int isgprs = _context.CConectividad.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs).FirstOrDefault();
+                        var isgprs = _context.CConectividad.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs == null ? 0 : x.IsGprs).FirstOrDefault();
 
                         BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
                         {
@@ -764,7 +764,7 @@ namespace WebApiSgsElavon.Services
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return "DB";
+                        return "DB: " + ex.ToString();
                     }
                 }
 
