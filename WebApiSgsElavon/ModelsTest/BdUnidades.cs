@@ -41,8 +41,8 @@ namespace WebApiSgsElavon.ModelsTest
         public string NoImei { get; set; }
         public string NoSim { get; set; }
         public string NoEquipo { get; set; }
-        public int? IdTipoResponsable { get; set; }
-        public int? IdResponsable { get; set; }
+        public int IdTipoResponsable { get; set; }
+        public int IdResponsable { get; set; }
         public int? IdLlave { get; set; }
         public int? IdSoftware { get; set; }
         public string PosicionInventario { get; set; }

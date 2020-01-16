@@ -16,6 +16,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<Conectividades>> GetConectividades();
         Task<IEnumerable<Software>> GetSoftwares();
         Task<IEnumerable<Unidades>> GetUnidades(int idusuario);
+        Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario);
         Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas();
         Task<IEnumerable<Causas>> GetCausas();
         Task<IEnumerable<Fallas>> GetFallas();
@@ -178,7 +179,9 @@ namespace WebApiSgsElavon.Services
                     NO_SERIE = x.NoSerie.Trim(),
                     ID_STATUS_UNIDAD = x.IdStatusUnidad,
                     IS_NUEVA = x.IsNueva,
-                    DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault())
+                    DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
+                    ID_TIPO_RESPONSABLE = x.IdTipoResponsable,
+                    ID_RESPONSABLE = x.IdResponsable
                 })
                 .ToListAsync();
             return unidades;
@@ -197,6 +200,27 @@ namespace WebApiSgsElavon.Services
                 })
                 .ToListAsync();
             return modelosConectividades;
+        }
+
+        public async Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario)
+        {
+            List<int> idstatusar = new List<int> { 6, 7, 8 };
+            var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
+            List<Unidades> unidadesNegocio = await context.BdUnidades.Where(x => x.IdTipoResponsable == 4 && x.IdStatusUnidad == 17 && negocios.Contains(x.IdResponsable)).Select(x => new Unidades 
+            {
+                ID_UNIDAD = x.IdUnidad,
+                ID_MODELO = x.IdModelo,
+                ID_MARCA = x.IdMarca,
+                ID_CONECTIVIDAD = x.IdConectividad,
+                ID_APLICATIVO = x.IdAplicativo,
+                ID_STATUS_UNIDAD = x.IdStatusUnidad,
+                IS_NUEVA = x.IsNueva,
+                NO_SERIE = x.NoSerie,
+                DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
+                ID_TIPO_RESPONSABLE = x.IdTipoResponsable,
+                ID_RESPONSABLE = x.IdResponsable
+            }).ToListAsync();
+            return unidadesNegocio;
         }
     }
 }

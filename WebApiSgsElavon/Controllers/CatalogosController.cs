@@ -58,6 +58,13 @@ namespace WebApiSgsElavon.Controllers
         {
             return await _Catalogosservices.GetUnidades(idusuario);
         }
+        [HttpGet("unidadesNegocio/{idusuario}")]
+        public async Task<ActionResult<IEnumerable<Unidades>>> GetUnidadesNegocio(int idusuario)
+        {
+            var lista = await _Catalogosservices.GetUnidadesNegocio(idusuario);
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
         [HttpGet("movinventariosf")]
         public async Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas()
         {

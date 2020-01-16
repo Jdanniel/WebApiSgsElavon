@@ -26,5 +26,9 @@ namespace WebApiSgsElavon.Entities
         public int? IS_NUEVA { get; set; }
         [JsonProperty(PropertyName = "DESC_STATUS_UNIDAD")]
         public string DESC_STATUS_UNIDAD { get; set; }
+        [JsonProperty(PropertyName = "ID_TIPO_RESPONSABLE")]
+        public int ID_TIPO_RESPONSABLE { get; set; }
+        [JsonProperty(PropertyName = "ID_RESPONSABLE")]
+        public int ID_RESPONSABLE { get; set; }
     }
 }

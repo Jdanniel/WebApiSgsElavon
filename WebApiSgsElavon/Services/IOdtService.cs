@@ -604,13 +604,13 @@ namespace WebApiSgsElavon.Services
 
                         int idconectividadinstalada = _context
                             .CConectividad
-                            .Where(x => x.DescConectividad == request.CONECTIVIDAD)
+                            .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.IdCliente == 4)
                             .Select(x => x.IdConectividad)
                             .FirstOrDefault();
 
                         int idaplicativoinstalado = _context
                             .CSoftware
-                            .Where(x => x.DescSoftware == request.APLICATIVO)
+                            .Where(x => x.DescSoftware == request.APLICATIVO && x.IdCliente == 4)
                             .Select(x => x.IdSoftware)
                             .FirstOrDefault();
 
