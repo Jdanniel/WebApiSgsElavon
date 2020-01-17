@@ -8,6 +8,7 @@ namespace WebApiSgsElavon.Entities.Requests
     public class CierresRetiroRequest
     {
         public string NO_SERIE { get; set; }
+        public string NO_SIM { get; set; }
         public string MARCA { get; set; }
         public string MODELO { get; set; }
         public string CONECTIVIDAD { get; set; }

@@ -448,15 +448,17 @@ namespace WebApiSgsElavon.Services
                     int? idstatusini = bdar.IdStatusAr;
                     var bdunidadRetirada = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
                     int idconectividadretirada = _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IdConectividad).FirstOrDefault();
+                    int isgprs = _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefault();
                     int idaplicativoretirada = _context.CSoftware.Where(x => x.DescSoftware == request.APLICATIVO.Trim()).Select(x => x.IdSoftware).FirstOrDefault();
                     int idmarcaretiro = _context.CMarcas.Where(x => x.DescMarca == request.MARCA.Trim()).Select(x => x.IdMarca).FirstOrDefault();
                     int idmodeloretiro = _context.CModelos.Where(x => x.DescModelo == request.MODELO.Trim()).Select(x => x.IdModelo).FirstOrDefault();
                     int? idstatusunidadiniretirar = null;
                     int idunidadretirar = 0;
-
+                    /*Reglas de validacion por modelo*/
                     if (bdunidadRetirada == null)
                     {
                         var bdunidadretiradaUniverso = _context.BdUniversoUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+                        
                         if(bdunidadretiradaUniverso != null)
                         {
                             BdUnidades unidad = new BdUnidades()
@@ -518,6 +520,40 @@ namespace WebApiSgsElavon.Services
                     };
                     _context.BdRetiros.Add(retiros);
                     _context.SaveChanges();
+
+                    if(isgprs == 1)
+                    {
+                        if (request.NO_SIM != null)
+                        {
+                            var simretiro = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM && x.IdMarca == 10).FirstOrDefault();
+
+                            if (simretiro == null)
+                            {
+                                var simretirouniverso = _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM).FirstOrDefault();
+                                if(simretirouniverso!= null)
+                                {
+                                    BdUnidades sim = new BdUnidades()
+                                    {
+                                        IdCliente = 4,
+                                        NoSerie = request.NO_SIM,
+                                        IdStatusUnidad = 30,
+                                        Status = "ACTIVO"
+                                    };
+                                    _context.BdUnidades.Add(sim);
+                                    _context.SaveChanges();
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                simretiro.IdStatusUnidad = 30;
+                                _context.SaveChanges();
+                            }
+                        }
+                    }
 
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
