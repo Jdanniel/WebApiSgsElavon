@@ -105,14 +105,16 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreSustitucion")]
         public async Task<ActionResult<ODT>> CierreSustitucion(SustitucionesRequest request)
         {
-            if (_odtService.CierreSustitucion(request))
+            var msg = _odtService.CierreSustitucion(request);
+
+            if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(msg);
             }
         }
 
@@ -135,14 +137,15 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreRetiro")]
         public async Task<ActionResult<ODT>> CierreRetiro(CierresRetiroRequest request)
         {
-            if (_odtService.CierreRetiro(request))
+            var msg = _odtService.CierreRetiro(request);
+            if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(msg);
             }
         }
         [HttpPost("CierreRechazo")]

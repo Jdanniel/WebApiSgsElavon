@@ -10,6 +10,7 @@ namespace WebApiSgsElavon.Entities.Requests
         public int ID_AR { get; set; }
         public int ID_TECNICO { get; set; }
         public string NO_SERIE { get; set; }
+        public string NO_SIM { get; set; }
         public string CONECTIVIDAD { get; set; }
         public string APLICATIVO { get; set; }
         public string VERSION { get; set; }
@@ -23,6 +24,7 @@ namespace WebApiSgsElavon.Entities.Requests
         public string AFILIACION_AMEX { get; set; }
         public string CONCLUSIONES_AMEX { get; set; }
         public string NO_SERIE_RETIRO { get; set; }
+        public string NO_SIM_RETIRO { get; set; }
         public string MARCA_RETIRO { get; set; }
         public string MODELO_RETIRO { get; set; }
         public string CONECTIVIDAD_RETIRO { get; set; }
