@@ -23,6 +23,7 @@ namespace WebApiSgsElavon.Services
         string cierreInstalacion(CierreInstalacionRequest request);
         string CierreSustitucion(SustitucionesRequest request);
         string CierreRetiro(CierresRetiroRequest request);
+        string CierreSinMovInventario(CierreSinMovInventarioRequest request);
         bool CierreRechazo(CierreRechazoRequest request);
         Task<ODT> GetOdtbyId(int idAr);
     }
@@ -809,6 +810,80 @@ namespace WebApiSgsElavon.Services
             {
                 return "El modelo no puede estar vacio";
             }
+        }
+        public string CierreSinMovInventario(CierreSinMovInventarioRequest request)
+        {
+            if(request != null)
+            {
+                var ID_AR = request.ID_AR;
+                List<int> idstatusar = new List<int>() { 6, 7 };
+                var valArs = _context.BdAr.Where(x => x.IdAr == ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
+                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                        
+                        int? idstatusini = bdar.IdStatusAr;
+
+                        string notificado = request.NOTIFICADO ? "SI" : "NO";
+                        string promociones = request.PROMOCIONES ? "SI" : "NO";
+                        string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+
+                        bdar.Atiende = request.ATIENDE;
+                        bdar.IdSolucion = 9;
+                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.Caja = request.CAJA.ToString();
+                        bdar.DescripcionTrabajo = request.COMENTARIO;
+                        bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                                            + notificado
+                                            + " / PROMOCIONES: "
+                                            + promociones
+                                            + " / SE BAJO APP: "
+                                            + descargarApp
+                                            + " / "
+                                            + request.TELEFONO_1
+                                            + " / "
+                                            + request.TELEFONO_2;
+                        bdar.IdStatusAr = 6;
+                        _context.SaveChanges();
+
+                        insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sin Movimiento de Inventario Aplicación");
+
+                        BdArMiComercio micomercio = new BdArMiComercio()
+                        {
+                            IdAr = ID_AR,
+                            Notificado = request.NOTIFICADO ? 1 : 0,
+                            Promociones = request.PROMOCIONES ? 1 : 0,
+                            DescargarApp = request.DESCARGA_APP ? 1 : 0,
+                            Telefono1 = request.TELEFONO_1,
+                            Telefono2 = request.TELEFONO_2,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdArMiComercio.Add(micomercio);
+                        _context.SaveChanges();
+                        transaction.Commit();
+                        return "OK";
+                    }
+                    catch(Exception ex)
+                    {
+                        transaction.Rollback();
+                        return "DB: " + ex.ToString();
+                    }
+                }
+            }
+            else
+            {
+                return "El modelo no puede estar vacio";
+            }
+
         }
         public string CierreSustitucion(SustitucionesRequest request)
         {

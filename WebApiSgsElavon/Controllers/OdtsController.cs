@@ -161,7 +161,20 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest();
             }
         }
-
+        [HttpPost("CierreSinMovInventario")]
+        public async Task<ActionResult<ODT>> CierreSinMovInventario(CierreSinMovInventarioRequest request)
+        {
+            var msg = _odtService.CierreSinMovInventario(request);
+            if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest(msg);
+            }
+        }
         [HttpGet("GetByIdar/{idAr}")]
         public async Task<ActionResult<ODT>> GetByIdar(int idAr)
         {
