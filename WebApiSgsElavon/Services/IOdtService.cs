@@ -22,6 +22,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<OdtEvent2>> prueba2();
         string cierreInstalacion(CierreInstalacionRequest request);
         string CierreSustitucion(SustitucionesRequest request);
+        string CierreSustitucionSim(SustitucionesSimRequest request);
         string CierreRetiro(CierresRetiroRequest request);
         string CierreSinMovInventario(CierreSinMovInventarioRequest request);
         bool CierreRechazo(CierreRechazoRequest request);
@@ -524,6 +525,8 @@ namespace WebApiSgsElavon.Services
 
                     if(isgprs == 1)
                     {
+                        int idSim;
+
                         if (request.NO_SIM != null)
                         {
                             var simretiro = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM && x.IdMarca == 10).FirstOrDefault();
@@ -542,6 +545,7 @@ namespace WebApiSgsElavon.Services
                                     };
                                     _context.BdUnidades.Add(sim);
                                     _context.SaveChanges();
+                                    idSim = sim.IdUnidad;
                                 }
                                 else
                                 {
@@ -552,7 +556,22 @@ namespace WebApiSgsElavon.Services
                             {
                                 simretiro.IdStatusUnidad = 30;
                                 _context.SaveChanges();
+                                idSim = simretiro.IdUnidad;
                             }
+
+                            BdRetiros retirosSim = new BdRetiros()
+                            {
+                                IdAr = ID_AR,
+                                IdTecnico = ID_TECNICO,
+                                IdNegocio = bdar.IdNegocio,
+                                IdUnidad = idSim,
+                                IsDaniada = 0,
+                                IsNueva = 0,
+                                IdUsuarioAlta = ID_TECNICO,
+                                FecAlta = DateTime.Now
+                            };
+                            _context.BdRetiros.Add(retirosSim);
+                            _context.SaveChanges();
                         }
                     }
 
@@ -584,7 +603,7 @@ namespace WebApiSgsElavon.Services
 
                     _context.BdArAccesorios.Add(accesoriosRetirados);
                     _context.SaveChanges();
-                    return "";
+                    return "OK";
                 }
                 catch (Exception ex)
                 {
@@ -749,7 +768,19 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += request.CONCLUSIONES_AMEX;
+                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        + " VERSION: " + request.VERSION
+                        + " CAJA: " + request.CAJA
+                        + " ROLLOS INSTALADOS: " + request.ROLLOS
+                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
+                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
+                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
+                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
+                        + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
+                        + " ID AMEX: " + request.ID_AMEX
+                        + " AFILIACION AMEX: " + request.AFILIACION_AMEX
+                        + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
+                        + " CONCLUSIONES: " + request.COMENTARIO;
                         bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
                         bdar.IdStatusAr = 6;
                         _context.SaveChanges();
@@ -928,7 +959,19 @@ namespace WebApiSgsElavon.Services
                                         + request.TELEFONO_1
                                         + " / "
                                         + request.TELEFONO_2;
-                    bdar.CadenaCierre += request.CONCLUSIONES_AMEX;
+                    bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        + " VERSION: " + request.VERSION
+                        + " CAJA: " + request.CAJA
+                        + " ROLLOS INSTALADOS: " + request.ROLLOS
+                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
+                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
+                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
+                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
+                        + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
+                        + " ID AMEX: " + request.ID_AMEX
+                        + " AFILIACION AMEX: " + request.AFILIACION_AMEX
+                        + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
+                        + " CONCLUSIONES: " + request.COMENTARIO;
                     bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
                     bdar.IdStatusAr = 6;
                     _context.SaveChanges();
@@ -1199,10 +1242,11 @@ namespace WebApiSgsElavon.Services
 
                     if (isgprs == 1)
                     {
-                        if (request.NO_SIM != null)
+                        if (request.NO_SIM_RETIRO != null)
                         {
+                            int idSim;
                             var simretiro = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM_RETIRO && x.IdMarca == 10).FirstOrDefault();
-
+                      
                             if (simretiro == null)
                             {
                                 var simretirouniverso = _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM_RETIRO).FirstOrDefault();
@@ -1217,6 +1261,7 @@ namespace WebApiSgsElavon.Services
                                     };
                                     _context.BdUnidades.Add(sim);
                                     _context.SaveChanges();
+                                    idSim = sim.IdUnidad;
                                 }
                                 else
                                 {
@@ -1227,7 +1272,21 @@ namespace WebApiSgsElavon.Services
                             {
                                 simretiro.IdStatusUnidad = 30;
                                 _context.SaveChanges();
+                                idSim = simretiro.IdUnidad;
                             }
+                            BdRetiros retirosSim = new BdRetiros()
+                            {
+                                IdAr = ID_AR,
+                                IdTecnico = ID_TECNICO,
+                                IdNegocio = bdar.IdNegocio,
+                                IdUnidad = idSim,
+                                IsDaniada = 0,
+                                IsNueva = 0,
+                                IdUsuarioAlta = ID_TECNICO,
+                                FecAlta = DateTime.Now
+                            };
+                            _context.BdRetiros.Add(retirosSim);
+                            _context.SaveChanges();
                         }
                     }
 
@@ -1235,6 +1294,183 @@ namespace WebApiSgsElavon.Services
 
                     return "OK";
                 }catch(Exception ex)
+                {
+                    return "db";
+                }
+            }
+            else
+            {
+                return "El modelo no puede estar vacio";
+            }
+        }
+        public string CierreSustitucionSim(SustitucionesSimRequest request)
+        {
+            if (request != null)
+            {
+                try
+                {
+                    /*INFORMACION DEL AR*/
+                    int ID_AR = request.ID_AR;
+                    int ID_TECNICO = request.ID_TECNICO;
+                    var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                    int? idstatusini = bdar.IdStatusAr;
+                    int idnegocioar = _context
+                        .BdNegocios
+                        .Where(x => x.NoAfiliacion == bdar.NoAfiliacion)
+                        .Select(x => x.IdNegocio)
+                        .FirstOrDefault();
+
+                    string notificado = request.NOTIFICADO ? "SI" : "NO";
+                    string promociones = request.PROMOCIONES ? "SI" : "NO";
+                    string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+
+                    bdar.Atiende = request.ATIENDE;
+                    bdar.IdSolucion = 9;
+                    bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                    bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                    bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                    bdar.DigitoVerificador = request.DISCOVER.ToString();
+                    bdar.Caja = request.CAJA.ToString();
+                    bdar.DescripcionTrabajo = request.COMENTARIO;
+                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                    bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                                        + notificado
+                                        + " / PROMOCIONES: "
+                                        + promociones
+                                        + " / SE BAJO APP: "
+                                        + descargarApp
+                                        + " / "
+                                        + request.TELEFONO_1
+                                        + " / "
+                                        + request.TELEFONO_2;
+                    bdar.IdStatusAr = 6;
+                    _context.SaveChanges();
+
+                    insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sustitucion Aplicación");
+
+                    BdArMiComercio micomercio = new BdArMiComercio()
+                    {
+                        IdAr = ID_AR,
+                        Notificado = request.NOTIFICADO ? 1 : 0,
+                        Promociones = request.PROMOCIONES ? 1 : 0,
+                        DescargarApp = request.DESCARGA_APP ? 1 : 0,
+                        Telefono1 = request.TELEFONO_1,
+                        Telefono2 = request.TELEFONO_2,
+                        FecAlta = DateTime.Now
+                    };
+                    _context.BdArMiComercio.Add(micomercio);
+                    _context.SaveChanges();
+
+                    /*FIN DE INFORMACION DE AR*/
+
+                    /*INFORMACION SIM INSTALADO*/
+
+                        if (request.NO_SIM != null)
+                        {
+                            var sim = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefault();
+                            if (sim != null)
+                            {
+                                int idstatussimInstalar = sim.IdStatusUnidad;
+                                int idsimInstalar = sim.IdUnidad;
+
+                                BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                {
+                                    IdAr = ID_AR,
+                                    IdTecnico = ID_TECNICO,
+                                    IdNegocio = bdar.IdNegocio,
+                                    IdUnidad = sim.IdUnidad,
+                                    IsNueva = 0,
+                                    IdClienteIni = 4,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                };
+                                _context.BdInstalaciones.Add(instalacionesSim);
+                                _context.SaveChanges();
+
+                                sim.IdStatusUnidad = 17;
+                                sim.IdTipoResponsable = 4;
+                                sim.IdResponsable = idnegocioar;
+                                sim.IdSim = bdar.IdProveedor;
+                                _context.SaveChanges();
+
+                                BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = idstatussimInstalar,
+                                    IdStatusUnidadFin = 17,
+                                    IdUnidad = idsimInstalar,
+                                    IdTipoResponsable = 4,
+                                    IdResponsable = idnegocioar,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now
+                                };
+                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+                            return "ID SIM no puede estar vacio cuando la conectividad es IS_GPRS";
+                        }
+
+
+
+                    /*FIN UNIDAD INSTALADA*/
+
+                    /*INFORMACION UNIDAD RETIRADA*/
+
+                    if (request.NO_SIM_RETIRO != null)
+                    {
+                        int idSim;
+                        var simretiro = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM_RETIRO && x.IdMarca == 10).FirstOrDefault();
+
+                        if (simretiro == null)
+                        {
+                            var simretirouniverso = _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM_RETIRO).FirstOrDefault();
+                            if (simretirouniverso != null)
+                            {
+                                BdUnidades sim = new BdUnidades()
+                                {
+                                    IdCliente = 4,
+                                    NoSerie = request.NO_SIM_RETIRO,
+                                    IdStatusUnidad = 30,
+                                    Status = "ACTIVO"
+                                };
+                                _context.BdUnidades.Add(sim);
+                                _context.SaveChanges();
+                                idSim = sim.IdUnidad;
+                            }
+                            else
+                            {
+                                return "El número de sim retirado no existe en el sistema";
+                            }
+                        }
+                        else
+                        {
+                            simretiro.IdStatusUnidad = 30;
+                            _context.SaveChanges();
+                            idSim = simretiro.IdUnidad;
+                        }
+                        BdRetiros retirosSim = new BdRetiros()
+                        {
+                            IdAr = ID_AR,
+                            IdTecnico = ID_TECNICO,
+                            IdNegocio = bdar.IdNegocio,
+                            IdUnidad = idSim,
+                            IsDaniada = 0,
+                            IsNueva = 0,
+                            IdUsuarioAlta = ID_TECNICO,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdRetiros.Add(retirosSim);
+                        _context.SaveChanges();
+                    }
+
+                    /*FIN DE INFORMACION UNIDAD RETIRADA*/
+
+                    return "OK";
+                }
+                catch (Exception ex)
                 {
                     return "db";
                 }

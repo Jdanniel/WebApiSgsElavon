@@ -117,7 +117,21 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(msg);
             }
         }
+        [HttpPost("CierreSustitucionSim")]
+        public async Task<ActionResult<ODT>> CierreSustitucionSim(SustitucionesSimRequest request)
+        {
+            var msg = _odtService.CierreSustitucionSim(request);
 
+            if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
+                return Ok(newOdt);
+            }
+            else
+            {
+                return BadRequest(msg);
+            }
+        }
         [HttpPost("CierreInstalacion")]
         public async Task<ActionResult<ODT>> CierreInstalacion(CierreInstalacionRequest request)
         {
