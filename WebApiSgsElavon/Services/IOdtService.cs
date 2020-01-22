@@ -395,6 +395,11 @@ namespace WebApiSgsElavon.Services
                     odt.Atiende = request.ATIENDE;
                     odt.DescripcionTrabajo = request.CONCLUSIONES;
                     odt.IdStatusAr = 7;
+                    odt.CadenaCierre += "DESC. DEL TRABAJO: " + request.CONCLUSIONES 
+                        + " FECHA: " + Convert.ToDateTime(request.FEC_CIERRE) 
+                        + " CAUSA RECHAZO: " + request.CAUSA_RECHAZO 
+                        + " SUBCATEGORIA CAUSA DE RECHAZO: " + request.SUBRECHAZO 
+                        + " AUTORIZO RECHAZO: " + request.ATIENDE;
                     _context.SaveChanges();
 
                     insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
@@ -577,6 +582,8 @@ namespace WebApiSgsElavon.Services
 
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
+                    bdar.IsExito = 1;
+                    bdar.IsRetiro = 1;
                     bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -587,6 +594,20 @@ namespace WebApiSgsElavon.Services
                     bdar.DescripcionTrabajo = request.COMENTARIO;
                     bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
                     bdar.IdStatusAr = 6;
+                    bdar.CadenaCierre += CrearCadenaCierre(
+                    request.APLICATIVO,
+                    request.VERSION,
+                    request.CAJA,
+                    request.ROLLOS,
+                    request.BATERIA,
+                    request.ELIMINADOR,
+                    request.TAPA,
+                    request.CABLE_AC,
+                    false,
+                    "",
+                    "",
+                    "",
+                    request.COMENTARIO);
                     _context.SaveChanges();
 
                     insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Retiro Aplicación");
@@ -750,6 +771,8 @@ namespace WebApiSgsElavon.Services
                         bdar.NoInventario = request.VERSION;
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsInstalacion = 1;
+                        bdar.IsExito = 1;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -768,19 +791,20 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
-                        + " VERSION: " + request.VERSION
-                        + " CAJA: " + request.CAJA
-                        + " ROLLOS INSTALADOS: " + request.ROLLOS
-                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
-                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
-                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
-                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
-                        + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
-                        + " ID AMEX: " + request.ID_AMEX
-                        + " AFILIACION AMEX: " + request.AFILIACION_AMEX
-                        + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
-                        + " CONCLUSIONES: " + request.COMENTARIO;
+                        bdar.CadenaCierre += CrearCadenaCierre(
+                            request.APLICATIVO, 
+                            request.VERSION, 
+                            request.CAJA, 
+                            request.ROLLOS, 
+                            request.BATERIA, 
+                            request.ELIMINADOR, 
+                            request.TAPA, 
+                            request.CABLE_AC, 
+                            request.IS_AMEX, 
+                            request.ID_AMEX, 
+                            request.AFILIACION_AMEX, 
+                            request.CONCLUSIONES_AMEX, 
+                            request.COMENTARIO);
                         bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
                         bdar.IdStatusAr = 6;
                         _context.SaveChanges();
@@ -883,6 +907,20 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
+                        bdar.CadenaCierre += CrearCadenaCierre(
+                            "",
+                            "",
+                            request.CAJA,
+                            request.ROLLOS,
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            "",
+                            "",
+                            "",
+                            request.COMENTARIO);
                         bdar.IdStatusAr = 6;
                         _context.SaveChanges();
 
@@ -926,6 +964,7 @@ namespace WebApiSgsElavon.Services
                     int ID_AR = request.ID_AR;
                     int ID_TECNICO = request.ID_TECNICO;
                     var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                    var idcausa = _context.CCausas.Where(x => x.DescCausa == request.DESC_CAUSA).Select(x => x.IdCausa).FirstOrDefault();
                     int? idstatusini = bdar.IdStatusAr;
                     int idnegocioar = _context
                         .BdNegocios
@@ -940,6 +979,9 @@ namespace WebApiSgsElavon.Services
                     bdar.NoInventario = request.VERSION;
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
+                    bdar.IdCausa = idcausa;
+                    bdar.IsSustitucion = 1;
+                    bdar.IsExito = 1;
                     bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -959,19 +1001,20 @@ namespace WebApiSgsElavon.Services
                                         + request.TELEFONO_1
                                         + " / "
                                         + request.TELEFONO_2;
-                    bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
-                        + " VERSION: " + request.VERSION
-                        + " CAJA: " + request.CAJA
-                        + " ROLLOS INSTALADOS: " + request.ROLLOS
-                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
-                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
-                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
-                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
-                        + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
-                        + " ID AMEX: " + request.ID_AMEX
-                        + " AFILIACION AMEX: " + request.AFILIACION_AMEX
-                        + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
-                        + " CONCLUSIONES: " + request.COMENTARIO;
+                    bdar.CadenaCierre += CrearCadenaCierre(
+                        request.APLICATIVO,
+                        request.VERSION,
+                        request.CAJA,
+                        request.ROLLOS,
+                        request.BATERIA,
+                        request.ELIMINADOR,
+                        request.TAPA,
+                        request.CABLE_AC,
+                        request.IS_AMEX,
+                        request.ID_AMEX,
+                        request.AFILIACION_AMEX,
+                        request.CONCLUSIONES_AMEX,
+                        request.COMENTARIO);
                     bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
                     bdar.IdStatusAr = 6;
                     _context.SaveChanges();
@@ -1326,6 +1369,8 @@ namespace WebApiSgsElavon.Services
 
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
+                    bdar.IsSustitucion = 1;
+                    bdar.IsExito = 1;
                     bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1344,6 +1389,20 @@ namespace WebApiSgsElavon.Services
                                         + request.TELEFONO_1
                                         + " / "
                                         + request.TELEFONO_2;
+                    bdar.CadenaCierre += CrearCadenaCierre(
+                        "",
+                        "",
+                        request.CAJA,
+                        request.ROLLOS,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        "",
+                        "",
+                        "",
+                        request.COMENTARIO);
                     bdar.IdStatusAr = 6;
                     _context.SaveChanges();
 
@@ -1503,6 +1562,22 @@ namespace WebApiSgsElavon.Services
                 return 0;
             }
 
+        }
+        public string CrearCadenaCierre(string aplicativo, string version, int caja, int rollos, bool bateria, bool eliminador, bool tapa, bool cableac, bool amex, string idamex, string afilamex, string conclusionesAmex, string comentario)
+        {
+            return "APLICACION:" + aplicativo == null ? "" : aplicativo
+                        + " VERSION: " + version == null ? "" : version
+                        + " CAJA: " + caja == null ? "" : caja
+                        + " ROLLOS INSTALADOS: " + rollos == null ? "" : rollos
+                        + " BATERIA: " + bateria == null ? "" : (bateria ? "SI" : "NO")
+                        + " ELIMINADOR: " + eliminador == null ? "" : (eliminador ? "SI" : "NO")
+                        + " TAPA: " + (tapa ? "SI" : "NO")
+                        + " CABLE AC: " + (cableac ? "SI" : "NO")
+                        + " AMEX: " + (amex ? "SI" : "NO")
+                        + " ID AMEX: " + idamex == null ? "" : idamex
+                        + " AFILIACION AMEX: " + afilamex == null ? "" : afilamex
+                        + " CONCLUSION AMEX: " + conclusionesAmex == null ? "" : conclusionesAmex
+                        + " CONCLUSIONES: " + comentario == null ? "" : comentario;
         }
         public async Task<ODT> GetOdtbyId(int idAr)
         {

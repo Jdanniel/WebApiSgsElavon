@@ -44,6 +44,7 @@ namespace WebApiSgsElavon.Entities.Requests
         public string ATIENDE { get; set; }
         public string OTORGANTE_VOBO { get; set; }
         public string TIPO_ATENCION { get; set; }
+        public string DESC_CAUSA { get; set; }
         public int ROLLOS { get; set; }
         public int DISCOVER { get; set; }
         public int CAJA { get; set; }
