@@ -97,7 +97,7 @@ namespace WebApiSgsElavon.Services
             List<Modelos> modelos = await context
                 .CModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new Modelos { ID_MODELO = x.IdModelo, DESC_MODELO = x.DescModelo })
+                .Select(x => new Modelos { ID_MODELO = x.IdModelo, DESC_MODELO = x.DescModelo, ID_MARCA = x.IdMarca })
                 .ToListAsync();
             return modelos;
         }

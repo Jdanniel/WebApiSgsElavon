@@ -477,7 +477,9 @@ namespace WebApiSgsElavon.Services
                                 IdAplicativo = idaplicativoretirada,
                                 IdConectividad = idconectividadretirada,
                                 Status = "ACTIVO",
-                                IdStatusUnidad = 30
+                                IdStatusUnidad = 30,
+                                IdTipoResponsable = 2,
+                                IdResponsable = request.ID_TECNICO
                             };
                             _context.BdUnidades.Add(unidad);
                             _context.SaveChanges();
@@ -497,6 +499,8 @@ namespace WebApiSgsElavon.Services
                         bdunidadRetirada.IdAplicativo = idaplicativoretirada;
                         bdunidadRetirada.IdMarca = idmarcaretiro;
                         bdunidadRetirada.IdModelo = idmodeloretiro;
+                        bdunidadRetirada.IdTipoResponsable = 2;
+                        bdunidadRetirada.IdTipoResponsable = request.ID_TECNICO;
                         bdunidadRetirada.IdStatusUnidad = 30;
                         _context.SaveChanges();
                     }
@@ -546,6 +550,8 @@ namespace WebApiSgsElavon.Services
                                         IdCliente = 4,
                                         NoSerie = request.NO_SIM,
                                         IdStatusUnidad = 30,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = request.ID_TECNICO,
                                         Status = "ACTIVO"
                                     };
                                     _context.BdUnidades.Add(sim);
@@ -560,6 +566,8 @@ namespace WebApiSgsElavon.Services
                             else
                             {
                                 simretiro.IdStatusUnidad = 30;
+                                simretiro.IdTipoResponsable = 2;
+                                simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
                                 idSim = simretiro.IdUnidad;
                             }
@@ -594,7 +602,7 @@ namespace WebApiSgsElavon.Services
                     bdar.DescripcionTrabajo = request.COMENTARIO;
                     bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
                     bdar.IdStatusAr = 6;
-                    bdar.CadenaCierre += CrearCadenaCierre(
+                    bdar.CadenaCierre = CrearCadenaCierre(
                     request.APLICATIVO,
                     request.VERSION,
                     request.CAJA,
@@ -791,7 +799,7 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += CrearCadenaCierre(
+                        bdar.CadenaCierre = CrearCadenaCierre(
                             request.APLICATIVO, 
                             request.VERSION, 
                             request.CAJA, 
@@ -907,7 +915,7 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += CrearCadenaCierre(
+                        bdar.CadenaCierre = CrearCadenaCierre(
                             "",
                             "",
                             request.CAJA,
@@ -1389,7 +1397,7 @@ namespace WebApiSgsElavon.Services
                                         + request.TELEFONO_1
                                         + " / "
                                         + request.TELEFONO_2;
-                    bdar.CadenaCierre += CrearCadenaCierre(
+                    bdar.CadenaCierre = CrearCadenaCierre(
                         "",
                         "",
                         request.CAJA,
@@ -1565,19 +1573,33 @@ namespace WebApiSgsElavon.Services
         }
         public string CrearCadenaCierre(string aplicativo, string version, int caja, int rollos, bool bateria, bool eliminador, bool tapa, bool cableac, bool amex, string idamex, string afilamex, string conclusionesAmex, string comentario)
         {
-            return "APLICACION:" + aplicativo == null ? "" : aplicativo
-                        + " VERSION: " + version == null ? "" : version
-                        + " CAJA: " + caja == null ? "" : caja
-                        + " ROLLOS INSTALADOS: " + rollos == null ? "" : rollos
-                        + " BATERIA: " + bateria == null ? "" : (bateria ? "SI" : "NO")
-                        + " ELIMINADOR: " + eliminador == null ? "" : (eliminador ? "SI" : "NO")
-                        + " TAPA: " + (tapa ? "SI" : "NO")
-                        + " CABLE AC: " + (cableac ? "SI" : "NO")
-                        + " AMEX: " + (amex ? "SI" : "NO")
-                        + " ID AMEX: " + idamex == null ? "" : idamex
-                        + " AFILIACION AMEX: " + afilamex == null ? "" : afilamex
-                        + " CONCLUSION AMEX: " + conclusionesAmex == null ? "" : conclusionesAmex
-                        + " CONCLUSIONES: " + comentario == null ? "" : comentario;
+            string ap = aplicativo == null ? "" : aplicativo;
+            string ver = version == null ? "" : version;
+            string ca = caja.ToString();
+            string ro = rollos.ToString();
+            string bat = bateria ? "SI" : "NO";
+            string eli = eliminador ? "SI" : "NO";
+            string ta = tapa ? "SI" : "NO";
+            string cab = cableac ? "SI" : "NO";
+            string am = amex ? "SI" : "NO";
+            string id = idamex == null ? "" : idamex;
+            string af = afilamex == null ? "" : afilamex;
+            string camex = conclusionesAmex == null ? "" : conclusionesAmex;
+            string con = comentario == null ? "" : comentario;
+
+            return "APLICACION: " + ap 
+                        + " VERSION: " + ver 
+                        + " CAJA: " + ca 
+                        + " ROLLOS INSTALADOS : " + ro 
+                        + " BATERIA: " + bat
+                        + " ELIMINADOR: " + eli
+                        + " TAPA: " + ta
+                        + " CABLE AC: " + cab
+                        + " AMEX: " + am
+                        + " ID AMEX: " + id
+                        + " AFILIACION AMEX: " + af
+                        + " CONCLUSION AMEX: " + camex
+                        + " CONCLUSIONES: " + con;
         }
         public async Task<ODT> GetOdtbyId(int idAr)
         {

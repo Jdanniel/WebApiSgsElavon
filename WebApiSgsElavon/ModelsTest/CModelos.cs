@@ -24,7 +24,7 @@ namespace WebApiSgsElavon.ModelsTest
         public int IdModelo { get; set; }
         public string DescModelo { get; set; }
         public string Descripcion { get; set; }
-        public int? IdMarca { get; set; }
+        public int IdMarca { get; set; }
         public int? IsGprs { get; set; }
         public decimal? Costo { get; set; }
         public int? IdMonedaCosto { get; set; }

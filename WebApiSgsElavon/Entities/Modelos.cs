@@ -12,5 +12,7 @@ namespace WebApiSgsElavon.Entities
         public int ID_MODELO { get; set; }
         [JsonProperty(PropertyName = "DESC_MODELO")]
         public string DESC_MODELO { get; set; }
+        [JsonProperty(PropertyName = "ID_MARCA")]
+        public int ID_MARCA { get; set; }
     }
 }
