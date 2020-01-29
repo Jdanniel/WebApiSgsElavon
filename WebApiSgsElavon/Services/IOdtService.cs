@@ -395,11 +395,6 @@ namespace WebApiSgsElavon.Services
                     odt.Atiende = request.ATIENDE;
                     odt.DescripcionTrabajo = request.CONCLUSIONES;
                     odt.IdStatusAr = 7;
-                    odt.CadenaCierre += "DESC. DEL TRABAJO: " + request.CONCLUSIONES 
-                        + " FECHA: " + Convert.ToDateTime(request.FEC_CIERRE) 
-                        + " CAUSA RECHAZO: " + request.CAUSA_RECHAZO 
-                        + " SUBCATEGORIA CAUSA DE RECHAZO: " + request.SUBRECHAZO 
-                        + " AUTORIZO RECHAZO: " + request.ATIENDE;
                     _context.SaveChanges();
 
                     insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
@@ -449,6 +444,8 @@ namespace WebApiSgsElavon.Services
             {
                 try
                 {
+                    insertDataTable(request.ToJson().ToString(),request.ID_TECNICO, request.ID_AR, "CIERRE RETIRO");
+                    
                     int ID_AR = request.ID_AR;
                     int ID_TECNICO = request.ID_TECNICO;
                     var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
@@ -477,9 +474,7 @@ namespace WebApiSgsElavon.Services
                                 IdAplicativo = idaplicativoretirada,
                                 IdConectividad = idconectividadretirada,
                                 Status = "ACTIVO",
-                                IdStatusUnidad = 30,
-                                IdTipoResponsable = 2,
-                                IdResponsable = request.ID_TECNICO
+                                IdStatusUnidad = 30
                             };
                             _context.BdUnidades.Add(unidad);
                             _context.SaveChanges();
@@ -499,8 +494,6 @@ namespace WebApiSgsElavon.Services
                         bdunidadRetirada.IdAplicativo = idaplicativoretirada;
                         bdunidadRetirada.IdMarca = idmarcaretiro;
                         bdunidadRetirada.IdModelo = idmodeloretiro;
-                        bdunidadRetirada.IdTipoResponsable = 2;
-                        bdunidadRetirada.IdTipoResponsable = request.ID_TECNICO;
                         bdunidadRetirada.IdStatusUnidad = 30;
                         _context.SaveChanges();
                     }
@@ -550,8 +543,6 @@ namespace WebApiSgsElavon.Services
                                         IdCliente = 4,
                                         NoSerie = request.NO_SIM,
                                         IdStatusUnidad = 30,
-                                        IdTipoResponsable = 2,
-                                        IdResponsable = request.ID_TECNICO,
                                         Status = "ACTIVO"
                                     };
                                     _context.BdUnidades.Add(sim);
@@ -566,8 +557,6 @@ namespace WebApiSgsElavon.Services
                             else
                             {
                                 simretiro.IdStatusUnidad = 30;
-                                simretiro.IdTipoResponsable = 2;
-                                simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
                                 idSim = simretiro.IdUnidad;
                             }
@@ -590,8 +579,6 @@ namespace WebApiSgsElavon.Services
 
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
-                    bdar.IsExito = 1;
-                    bdar.IsRetiro = 1;
                     bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -602,20 +589,6 @@ namespace WebApiSgsElavon.Services
                     bdar.DescripcionTrabajo = request.COMENTARIO;
                     bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
                     bdar.IdStatusAr = 6;
-                    bdar.CadenaCierre = CrearCadenaCierre(
-                    request.APLICATIVO,
-                    request.VERSION,
-                    request.CAJA,
-                    request.ROLLOS,
-                    request.BATERIA,
-                    request.ELIMINADOR,
-                    request.TAPA,
-                    request.CABLE_AC,
-                    false,
-                    "",
-                    "",
-                    "",
-                    request.COMENTARIO);
                     _context.SaveChanges();
 
                     insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Retiro Aplicación");
@@ -648,6 +621,8 @@ namespace WebApiSgsElavon.Services
         {
             if(request != null)
             {
+                insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION");
+                
                 List<int> idstatusar = new List<int>() { 6,7};
                 var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
                 if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
@@ -779,8 +754,6 @@ namespace WebApiSgsElavon.Services
                         bdar.NoInventario = request.VERSION;
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
-                        bdar.IsInstalacion = 1;
-                        bdar.IsExito = 1;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -799,20 +772,19 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre = CrearCadenaCierre(
-                            request.APLICATIVO, 
-                            request.VERSION, 
-                            request.CAJA, 
-                            request.ROLLOS, 
-                            request.BATERIA, 
-                            request.ELIMINADOR, 
-                            request.TAPA, 
-                            request.CABLE_AC, 
-                            request.IS_AMEX, 
-                            request.ID_AMEX, 
-                            request.AFILIACION_AMEX, 
-                            request.CONCLUSIONES_AMEX, 
-                            request.COMENTARIO);
+                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        + " VERSION: " + request.VERSION
+                        + " CAJA: " + request.CAJA
+                        + " ROLLOS INSTALADOS: " + request.ROLLOS
+                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
+                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
+                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
+                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
+                        + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
+                        + " ID AMEX: " + request.ID_AMEX
+                        + " AFILIACION AMEX: " + request.AFILIACION_AMEX
+                        + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
+                        + " CONCLUSIONES: " + request.COMENTARIO;
                         bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
                         bdar.IdStatusAr = 6;
                         _context.SaveChanges();
@@ -878,6 +850,7 @@ namespace WebApiSgsElavon.Services
         {
             if(request != null)
             {
+                insertDataTable(request.ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SIN MOVIMIENTO");
                 var ID_AR = request.ID_AR;
                 List<int> idstatusar = new List<int>() { 6, 7 };
                 var valArs = _context.BdAr.Where(x => x.IdAr == ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
@@ -915,20 +888,6 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre = CrearCadenaCierre(
-                            "",
-                            "",
-                            request.CAJA,
-                            request.ROLLOS,
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            "",
-                            "",
-                            "",
-                            request.COMENTARIO);
                         bdar.IdStatusAr = 6;
                         _context.SaveChanges();
 
@@ -968,11 +927,11 @@ namespace WebApiSgsElavon.Services
             {
                 try
                 {
+                    insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCIONES");
                     /*INFORMACION DEL AR*/
                     int ID_AR = request.ID_AR;
                     int ID_TECNICO = request.ID_TECNICO;
                     var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
-                    var idcausa = _context.CCausas.Where(x => x.DescCausa == request.DESC_CAUSA).Select(x => x.IdCausa).FirstOrDefault();
                     int? idstatusini = bdar.IdStatusAr;
                     int idnegocioar = _context
                         .BdNegocios
@@ -987,9 +946,6 @@ namespace WebApiSgsElavon.Services
                     bdar.NoInventario = request.VERSION;
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
-                    bdar.IdCausa = idcausa;
-                    bdar.IsSustitucion = 1;
-                    bdar.IsExito = 1;
                     bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1009,20 +965,19 @@ namespace WebApiSgsElavon.Services
                                         + request.TELEFONO_1
                                         + " / "
                                         + request.TELEFONO_2;
-                    bdar.CadenaCierre += CrearCadenaCierre(
-                        request.APLICATIVO,
-                        request.VERSION,
-                        request.CAJA,
-                        request.ROLLOS,
-                        request.BATERIA,
-                        request.ELIMINADOR,
-                        request.TAPA,
-                        request.CABLE_AC,
-                        request.IS_AMEX,
-                        request.ID_AMEX,
-                        request.AFILIACION_AMEX,
-                        request.CONCLUSIONES_AMEX,
-                        request.COMENTARIO);
+                    bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        + " VERSION: " + request.VERSION
+                        + " CAJA: " + request.CAJA
+                        + " ROLLOS INSTALADOS: " + request.ROLLOS
+                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
+                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
+                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
+                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
+                        + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
+                        + " ID AMEX: " + request.ID_AMEX
+                        + " AFILIACION AMEX: " + request.AFILIACION_AMEX
+                        + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
+                        + " CONCLUSIONES: " + request.COMENTARIO;
                     bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
                     bdar.IdStatusAr = 6;
                     _context.SaveChanges();
@@ -1360,6 +1315,7 @@ namespace WebApiSgsElavon.Services
             {
                 try
                 {
+                    insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     /*INFORMACION DEL AR*/
                     int ID_AR = request.ID_AR;
                     int ID_TECNICO = request.ID_TECNICO;
@@ -1377,8 +1333,6 @@ namespace WebApiSgsElavon.Services
 
                     bdar.Atiende = request.ATIENDE;
                     bdar.IdSolucion = 9;
-                    bdar.IsSustitucion = 1;
-                    bdar.IsExito = 1;
                     bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                     bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1397,20 +1351,6 @@ namespace WebApiSgsElavon.Services
                                         + request.TELEFONO_1
                                         + " / "
                                         + request.TELEFONO_2;
-                    bdar.CadenaCierre = CrearCadenaCierre(
-                        "",
-                        "",
-                        request.CAJA,
-                        request.ROLLOS,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false,
-                        "",
-                        "",
-                        "",
-                        request.COMENTARIO);
                     bdar.IdStatusAr = 6;
                     _context.SaveChanges();
 
@@ -1571,35 +1511,18 @@ namespace WebApiSgsElavon.Services
             }
 
         }
-        public string CrearCadenaCierre(string aplicativo, string version, int caja, int rollos, bool bateria, bool eliminador, bool tapa, bool cableac, bool amex, string idamex, string afilamex, string conclusionesAmex, string comentario)
+        public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            string ap = aplicativo == null ? "" : aplicativo;
-            string ver = version == null ? "" : version;
-            string ca = caja.ToString();
-            string ro = rollos.ToString();
-            string bat = bateria ? "SI" : "NO";
-            string eli = eliminador ? "SI" : "NO";
-            string ta = tapa ? "SI" : "NO";
-            string cab = cableac ? "SI" : "NO";
-            string am = amex ? "SI" : "NO";
-            string id = idamex == null ? "" : idamex;
-            string af = afilamex == null ? "" : afilamex;
-            string camex = conclusionesAmex == null ? "" : conclusionesAmex;
-            string con = comentario == null ? "" : comentario;
-
-            return "APLICACION: " + ap 
-                        + " VERSION: " + ver 
-                        + " CAJA: " + ca 
-                        + " ROLLOS INSTALADOS : " + ro 
-                        + " BATERIA: " + bat
-                        + " ELIMINADOR: " + eli
-                        + " TAPA: " + ta
-                        + " CABLE AC: " + cab
-                        + " AMEX: " + am
-                        + " ID AMEX: " + id
-                        + " AFILIACION AMEX: " + af
-                        + " CONCLUSION AMEX: " + camex
-                        + " CONCLUSIONES: " + con;
+            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
+            {
+                Datos = datos,
+                TipoCierre = tipoCierre,
+                FechaCarga = DateTime.Now,
+                IdUsuario = idusuario,
+                IdAr = idar
+            };
+            _context.BdDatosCierreAplicacion.Add(cierre);
+            _context.SaveChanges();
         }
         public async Task<ODT> GetOdtbyId(int idAr)
         {

@@ -193,6 +193,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdCursosAsignados> BdCursosAsignados { get; set; }
         public virtual DbSet<BdDbBackup> BdDbBackup { get; set; }
         public virtual DbSet<BdDevoluciones> BdDevoluciones { get; set; }
+        public virtual DbSet<BdDatosCierreAplicacion> BdDatosCierreAplicacion { get; set; }
         public virtual DbSet<BdDirecciones> BdDirecciones { get; set; }
         public virtual DbSet<BdDireccionesRelaciones> BdDireccionesRelaciones { get; set; }
         public virtual DbSet<BdDirectorioTelefonicoAr> BdDirectorioTelefonicoAr { get; set; }
@@ -10429,6 +10430,18 @@ namespace WebApiSgsElavon.ModelsTest
                     .WithMany(p => p.BdDevoluciones)
                     .HasForeignKey(d => d.IdUnidad)
                     .HasConstraintName("FK_BD_DEVOLUCIONES_BD_UNIDADES");
+            });
+
+            modelBuilder.Entity<BdDatosCierreAplicacion>(entity =>
+            {
+                entity.HasKey(e => e.IdDatoCierreAplicacion);
+                entity.ToTable("BD_DATOS_CIERRES_APLICACION");
+                entity.Property(e => e.IdDatoCierreAplicacion).HasColumnName("ID_DATO_CIERRE_APLICACION");
+                entity.Property(e => e.Datos).HasColumnName("DATOS").IsUnicode(false);
+                entity.Property(e => e.TipoCierre).HasColumnName("TIPO_CIERRE").IsUnicode(false);
+                entity.Property(e => e.FechaCarga).HasColumnName("FECHA_CARGA").HasColumnType("smalldatetime");
+                entity.Property(e => e.IdUsuario).HasColumnName("ID_USUARIO");
+                entity.Property(e => e.IdAr).HasColumnName("ID_AR");
             });
 
             modelBuilder.Entity<BdDirecciones>(entity =>
