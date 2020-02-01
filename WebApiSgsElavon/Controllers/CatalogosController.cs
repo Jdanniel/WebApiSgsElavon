@@ -115,5 +115,12 @@ namespace WebApiSgsElavon.Controllers
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
+        [HttpGet("reglasmodelos")]
+        public async Task<ActionResult<ReglasModelos>> GetReglasModelos()
+        {
+            var lista = await _Catalogosservices.GetReglasModelos();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
     }
 }

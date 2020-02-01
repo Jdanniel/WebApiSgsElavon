@@ -25,6 +25,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<Subrechazos>> GetSubrechazos();
         Task<IEnumerable<Causasrechazos>> GetCausasrechazos();
         Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad();
+        Task<IEnumerable<ReglasModelos>> GetReglasModelos();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -221,6 +222,22 @@ namespace WebApiSgsElavon.Services
                 ID_RESPONSABLE = x.IdResponsable
             }).ToListAsync();
             return unidadesNegocio;
+        }
+        public async Task<IEnumerable<ReglasModelos>> GetReglasModelos()
+        {
+            List<ReglasModelos> reglas = await context.BdReglasModelos
+                .Where(x => x.Status == "ACTIVO")
+                .Select(x => new ReglasModelos { 
+                    ID_REGLAS = x.IdReglas,
+                    ID_MODELO = x.IdModelo,
+                    LETRAS_MIN = x.LetrasMin,
+                    LETRAS_MAX = x.LetrasMax,
+                    NUMERO_MIN = x.NumeroMin,
+                    NUMERO_MAX = x.NumeroMax,
+                    LONG_MIN = x.LongMin,
+                    LONG_MAX = x.LongMax
+                }).ToListAsync();
+            return reglas;
         }
     }
 }
