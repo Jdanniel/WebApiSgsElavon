@@ -473,6 +473,8 @@ namespace WebApiSgsElavon.Services
                                 IdMarca = idmarcaretiro,
                                 IdAplicativo = idaplicativoretirada,
                                 IdConectividad = idconectividadretirada,
+                                IdTipoResponsable = 2,
+                                IdResponsable = request.ID_TECNICO,
                                 Status = "ACTIVO",
                                 IdStatusUnidad = 30
                             };
@@ -495,6 +497,8 @@ namespace WebApiSgsElavon.Services
                         bdunidadRetirada.IdMarca = idmarcaretiro;
                         bdunidadRetirada.IdModelo = idmodeloretiro;
                         bdunidadRetirada.IdStatusUnidad = 30;
+                        bdunidadRetirada.IdTipoResponsable = 2;
+                        bdunidadRetirada.IdResponsable = request.ID_TECNICO;
                         _context.SaveChanges();
                     }
 
@@ -543,6 +547,8 @@ namespace WebApiSgsElavon.Services
                                         IdCliente = 4,
                                         NoSerie = request.NO_SIM,
                                         IdStatusUnidad = 30,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = request.ID_TECNICO,
                                         Status = "ACTIVO"
                                     };
                                     _context.BdUnidades.Add(sim);
@@ -557,6 +563,8 @@ namespace WebApiSgsElavon.Services
                             else
                             {
                                 simretiro.IdStatusUnidad = 30;
+                                simretiro.IdTipoResponsable = 2;
+                                simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
                                 idSim = simretiro.IdUnidad;
                             }
@@ -850,7 +858,7 @@ namespace WebApiSgsElavon.Services
         {
             if(request != null)
             {
-                insertDataTable(request.ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SIN MOVIMIENTO");
+                insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SIN MOVIMIENTO");
                 var ID_AR = request.ID_AR;
                 List<int> idstatusar = new List<int>() { 6, 7 };
                 var valArs = _context.BdAr.Where(x => x.IdAr == ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
@@ -1191,6 +1199,8 @@ namespace WebApiSgsElavon.Services
                                 IdMarca = idmarcaretiro,
                                 IdAplicativo = idaplicativoretirada,
                                 IdConectividad = idconectividadretirada,
+                                IdTipoResponsable = 2,
+                                IdResponsable = request.ID_TECNICO,
                                 Status = "ACTIVO",
                                 IdStatusUnidad = 30
                             };
@@ -1213,6 +1223,8 @@ namespace WebApiSgsElavon.Services
                         bdunidadRetirada.IdAplicativo = idaplicativoretirada;
                         bdunidadRetirada.IdMarca = idmarcaretiro;
                         bdunidadRetirada.IdModelo = idmodeloretiro;*/
+                        bdunidadRetirada.IdTipoResponsable = 2;
+                        bdunidadRetirada.IdResponsable = request.ID_TECNICO;
                         bdunidadRetirada.IdStatusUnidad = 30;
                         _context.SaveChanges();
                     }
@@ -1262,7 +1274,9 @@ namespace WebApiSgsElavon.Services
                                     {
                                         IdCliente = 4,
                                         NoSerie = request.NO_SIM_RETIRO,
-                                        IdStatusUnidad = 30,
+                                        IdStatusUnidad = 15,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = request.ID_TECNICO,
                                         Status = "ACTIVO"
                                     };
                                     _context.BdUnidades.Add(sim);
@@ -1276,7 +1290,9 @@ namespace WebApiSgsElavon.Services
                             }
                             else
                             {
-                                simretiro.IdStatusUnidad = 30;
+                                simretiro.IdStatusUnidad = 15;
+                                simretiro.IdTipoResponsable = 2;
+                                simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
                                 idSim = simretiro.IdUnidad;
                             }
@@ -1440,6 +1456,8 @@ namespace WebApiSgsElavon.Services
                                 {
                                     IdCliente = 4,
                                     NoSerie = request.NO_SIM_RETIRO,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = request.ID_TECNICO,
                                     IdStatusUnidad = 30,
                                     Status = "ACTIVO"
                                 };
@@ -1454,7 +1472,9 @@ namespace WebApiSgsElavon.Services
                         }
                         else
                         {
-                            simretiro.IdStatusUnidad = 30;
+                            simretiro.IdStatusUnidad = 15;
+                            simretiro.IdTipoResponsable = 2;
+                            simretiro.IdResponsable = request.ID_TECNICO;
                             _context.SaveChanges();
                             idSim = simretiro.IdUnidad;
                         }
