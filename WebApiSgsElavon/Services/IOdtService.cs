@@ -1211,7 +1211,7 @@ namespace WebApiSgsElavon.Services
                         }
                         else
                         {
-                            return "El numero de sim instalado no existe en el sistema";
+                            return "El numero de serie retirado no existe en el sistema";
                         }
                     }
                     else
