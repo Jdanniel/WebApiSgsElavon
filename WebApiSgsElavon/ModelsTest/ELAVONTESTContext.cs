@@ -1821,6 +1821,11 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasColumnName("TAPA")
                     .HasMaxLength(10)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Movimiento)
+                    .HasColumnName("MOVIMIENTO")
+                    .HasMaxLength(40)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<BdArArchivosVarios>(entity =>

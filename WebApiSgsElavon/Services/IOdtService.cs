@@ -608,7 +608,9 @@ namespace WebApiSgsElavon.Services
                         Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
                         Base = (request.BASE ? "SI" : "NO"),
                         Tapa = (request.TAPA ? "SI" : "NO"),
-                        CableAc = (request.CABLE_AC ? "SI" : "NO")
+                        CableAc = (request.CABLE_AC ? "SI" : "NO"),
+                        Movimiento = "RETIRO"
+
                     };
 
                     _context.BdArAccesorios.Add(accesoriosRetirados);
@@ -819,7 +821,8 @@ namespace WebApiSgsElavon.Services
                             Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
                             Base = (request.BASE ? "SI" : "NO"),
                             Tapa = (request.TAPA ? "SI" : "NO"),
-                            CableAc = (request.CABLE_AC ? "SI" : "NO")
+                            CableAc = (request.CABLE_AC ? "SI" : "NO"),
+                            Movimiento = "INSTALACION"
                         };
 
                         _context.BdArAccesorios.Add(accesoriosInstalados);
@@ -1012,7 +1015,8 @@ namespace WebApiSgsElavon.Services
                         Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
                         Base = (request.BASE ? "SI" : "NO"),
                         Tapa = (request.TAPA ? "SI" : "NO"),
-                        CableAc = (request.CABLE_AC ? "SI" : "NO")
+                        CableAc = (request.CABLE_AC ? "SI" : "NO"),
+                        Movimiento = "INSTALACION"
                     };
 
                     _context.BdArAccesorios.Add(accesoriosInstalados);
@@ -1025,7 +1029,8 @@ namespace WebApiSgsElavon.Services
                         Eliminador = (request.ELIMINADOR_RETIRO ? "SI" : "NO"),
                         Base = (request.BASE_RETIRO ? "SI" : "NO"),
                         Tapa = (request.TAPA_RETIRO ? "SI" : "NO"),
-                        CableAc = (request.CABLE_AC_RETIRO ? "SI" : "NO")
+                        CableAc = (request.CABLE_AC_RETIRO ? "SI" : "NO"),
+                        Movimiento = "RETIRO"
                     };
 
                     _context.BdArAccesorios.Add(accesoriosRetirados);
