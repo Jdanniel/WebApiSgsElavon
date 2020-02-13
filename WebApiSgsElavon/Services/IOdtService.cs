@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
 using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Utils;
 
 namespace WebApiSgsElavon.Services
 {
@@ -459,7 +460,7 @@ namespace WebApiSgsElavon.Services
                     int? idstatusunidadiniretirar = null;
                     int idunidadretirar = 0;
                     /*Reglas de validacion por modelo*/
-                    if (bdunidadRetirada == null)
+                    if (bdunidadRetirada == null || request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
                     {
                         var bdunidadretiradaUniverso = _context.BdUniversoUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
                         
@@ -469,6 +470,7 @@ namespace WebApiSgsElavon.Services
                             {
                                 NoSerie = request.NO_SERIE,
                                 IdCliente = 4,
+                                IdSim = bdar.IdProveedor,
                                 IdModelo = idmodeloretiro,
                                 IdMarca = idmarcaretiro,
                                 IdAplicativo = idaplicativoretirada,
@@ -484,7 +486,31 @@ namespace WebApiSgsElavon.Services
                         }
                         else
                         {
-                            return "El número de serie no existe en el sistema";
+                            if(request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
+                            {
+                                BdUnidades unidadNueva = new BdUnidades()
+                                {
+                                    NoSerie = Randoms.AlphaNumeric(9)+"-"+Randoms.AlphaNumeric(1),
+                                    IdCliente = 4,
+                                    IdSim = bdar.IdProveedor,
+                                    IdModelo = idmodeloretiro,
+                                    IdMarca = idmarcaretiro,
+                                    IdAplicativo = idaplicativoretirada,
+                                    IdConectividad = idconectividadretirada,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = request.ID_TECNICO,
+                                    Status = "ACTIVO",
+                                    IdStatusUnidad = 30
+                                };
+                                _context.BdUnidades.Add(unidadNueva);
+                                _context.SaveChanges();
+                                idunidadretirar = unidadNueva.IdUnidad;
+                                idstatusunidadiniretirar = 15;
+                            }
+                            else
+                            {
+                                return "El número de serie no existe en el sistema";
+                            }
                         }
                     }
                     else
@@ -520,7 +546,7 @@ namespace WebApiSgsElavon.Services
                         IdAr = ID_AR,
                         IdTecnico = ID_TECNICO,
                         IdNegocio = bdar.IdNegocio,
-                        IdUnidad = bdunidadRetirada.IdUnidad,
+                        IdUnidad = idunidadretirar,
                         IsDaniada = 0,
                         IsNueva = 0,
                         IdUsuarioAlta = ID_TECNICO,
@@ -549,6 +575,7 @@ namespace WebApiSgsElavon.Services
                                         IdStatusUnidad = 30,
                                         IdTipoResponsable = 2,
                                         IdResponsable = request.ID_TECNICO,
+                                        IdSim = bdar.IdProveedor,
                                         Status = "ACTIVO"
                                     };
                                     _context.BdUnidades.Add(sim);
@@ -1187,7 +1214,7 @@ namespace WebApiSgsElavon.Services
                     int idunidadRetirada = 0;
                     int? idstatusunidadretirada = null;
 
-                    if (bdunidadRetirada == null)
+                    if (bdunidadRetirada == null || request.NO_SERIE_RETIRO.ToUpper().Trim() == "ILEGIBLE")
                     {
                         var bdunidadretiradaUniverso = _context
                             .BdUniversoUnidades
@@ -1200,6 +1227,7 @@ namespace WebApiSgsElavon.Services
                             {
                                 NoSerie = request.NO_SERIE_RETIRO,
                                 IdCliente = 4,
+                                IdSim = bdar.IdProveedor,
                                 IdModelo = idmodeloretiro,
                                 IdMarca = idmarcaretiro,
                                 IdAplicativo = idaplicativoretirada,
@@ -1216,7 +1244,31 @@ namespace WebApiSgsElavon.Services
                         }
                         else
                         {
-                            return "El numero de serie retirado no existe en el sistema";
+                            if (request.NO_SERIE_RETIRO.ToUpper().Trim() == "ILEGIBLE")
+                            {
+                                BdUnidades unidadNueva = new BdUnidades()
+                                {
+                                    NoSerie = Randoms.AlphaNumeric(9) + "-" + Randoms.AlphaNumeric(1),
+                                    IdCliente = 4,
+                                    IdSim = bdar.IdProveedor,
+                                    IdModelo = idmodeloretiro,
+                                    IdMarca = idmarcaretiro,
+                                    IdAplicativo = idaplicativoretirada,
+                                    IdConectividad = idconectividadretirada,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = request.ID_TECNICO,
+                                    Status = "ACTIVO",
+                                    IdStatusUnidad = 30
+                                };
+                                _context.BdUnidades.Add(unidadNueva);
+                                _context.SaveChanges();
+                                idunidadRetirada = unidadNueva.IdUnidad;
+                                idstatusunidadretirada = null;
+                            }
+                            else
+                            {
+                                return "El numero de serie retirado no existe en el sistema";
+                            }
                         }
                     }
                     else
@@ -1281,6 +1333,7 @@ namespace WebApiSgsElavon.Services
                                         NoSerie = request.NO_SIM_RETIRO,
                                         IdStatusUnidad = 15,
                                         IdTipoResponsable = 2,
+                                        IdSim = bdar.IdProveedor,
                                         IdResponsable = request.ID_TECNICO,
                                         Status = "ACTIVO"
                                     };
