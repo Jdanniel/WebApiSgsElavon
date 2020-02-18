@@ -10,44 +10,44 @@ namespace WebApiSgsElavon.Entities.Requests
 {
     public partial class CierreSinMovInventarioRequest
     {
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("NOTIFICADO")]
         public bool NOTIFICADO { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("PROMOCIONES")]
         public bool PROMOCIONES { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("DESCARGA_APP")]
         public bool DESCARGA_APP { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("TELEFONO_1")]
         public string TELEFONO_1 { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("TELEFONO_2")]
         public string TELEFONO_2 { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("FECHA_CIERRE")]
         public string FECHA_CIERRE { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("ATIENDE")]
         public string ATIENDE { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("OTORGANTE_VOBO")]
         public string OTORGANTE_VOBO { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("TIPO_ATENCION")]
         public string TIPO_ATENCION { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("ROLLOS")]
         public int ROLLOS { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("DISCOVER")]
         public int DISCOVER { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("CAJA")]
         public int CAJA { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("COMENTARIO")]
         public string COMENTARIO { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("ID_AR")]
         public int ID_AR { get; set; }
-        [JsonProperty("NO_SERIE")]
+        [JsonProperty("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
     }
     public partial class CierreSinMovInventarioRequest
     {
-        public static CierreSinMovInventarioRequest FromJson(string json) => JsonConvert.DeserializeObject<CierreSinMovInventarioRequest>(json, ConverterInstalacion.Settings);
+        public static CierreSinMovInventarioRequest FromJson(string json) => JsonConvert.DeserializeObject<CierreSinMovInventarioRequest>(json, ConverterSinMovimiento.Settings);
     }
     public static class SerializeSinMovimiento
     {
-        public static string ToJson(this CierreSinMovInventarioRequest self) => JsonConvert.SerializeObject(self, ConverterInstalacion.Settings);
+        public static string ToJson(this CierreSinMovInventarioRequest self) => JsonConvert.SerializeObject(self, ConverterSinMovimiento.Settings);
     }
 
     internal static class ConverterSinMovimiento

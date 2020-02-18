@@ -505,7 +505,6 @@ namespace WebApiSgsElavon.Services
                                 _context.BdUnidades.Add(unidadNueva);
                                 _context.SaveChanges();
                                 idunidadretirar = unidadNueva.IdUnidad;
-                                idstatusunidadiniretirar = 15;
                             }
                             else
                             {
@@ -528,18 +527,39 @@ namespace WebApiSgsElavon.Services
                         _context.SaveChanges();
                     }
 
-                    BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+
+                    if (request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
                     {
-                        IdStatusUnidadIni = idstatusunidadiniretirar,
-                        IdStatusUnidadFin = 15,
-                        IdUnidad = idunidadretirar,
-                        IdTipoResponsable = 2,
-                        IdResponsable = ID_TECNICO,
-                        IdUsuarioAlta = ID_TECNICO,
-                        FecAlta = DateTime.Now
-                    };
-                    _context.BdBitacoraUnidad.Add(bitacoraUnidad);
-                    _context.SaveChanges();
+                        BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                        {
+                            IdStatusUnidadIni = null,
+                            IdStatusUnidadFin = 30,
+                            IdUnidad = idunidadretirar,
+                            IdTipoResponsable = 2,
+                            IdResponsable = ID_TECNICO,
+                            IdUsuarioAlta = ID_TECNICO,
+                            FecAlta = DateTime.Now,
+                            Comentario = "UNIDAD DADA DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE TPVS"
+                        };
+                        _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                        {
+                            IdStatusUnidadIni = idstatusunidadiniretirar,
+                            IdStatusUnidadFin = 15,
+                            IdUnidad = idunidadretirar,
+                            IdTipoResponsable = 2,
+                            IdResponsable = ID_TECNICO,
+                            IdUsuarioAlta = ID_TECNICO,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                        _context.SaveChanges();
+                    }
+
 
                     BdRetiros retiros = new BdRetiros()
                     {
@@ -550,7 +570,8 @@ namespace WebApiSgsElavon.Services
                         IsDaniada = 0,
                         IsNueva = 0,
                         IdUsuarioAlta = ID_TECNICO,
-                        FecAlta = DateTime.Now
+                        FecAlta = DateTime.Now,
+                        Tipo = "TPV"
                     };
                     _context.BdRetiros.Add(retiros);
                     _context.SaveChanges();
@@ -572,7 +593,8 @@ namespace WebApiSgsElavon.Services
                                     {
                                         IdCliente = 4,
                                         NoSerie = request.NO_SIM,
-                                        IdStatusUnidad = 30,
+                                        IdStatusUnidad = 15,
+                                        IsNueva = 0,
                                         IdTipoResponsable = 2,
                                         IdResponsable = request.ID_TECNICO,
                                         IdSim = bdar.IdProveedor,
@@ -589,7 +611,8 @@ namespace WebApiSgsElavon.Services
                             }
                             else
                             {
-                                simretiro.IdStatusUnidad = 30;
+                                simretiro.IdStatusUnidad = 15;
+                                simretiro.IsNueva = 0;
                                 simretiro.IdTipoResponsable = 2;
                                 simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
@@ -605,7 +628,8 @@ namespace WebApiSgsElavon.Services
                                 IsDaniada = 0,
                                 IsNueva = 0,
                                 IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now
+                                FecAlta = DateTime.Now,
+                                Tipo = "SIM"
                             };
                             _context.BdRetiros.Add(retirosSim);
                             _context.SaveChanges();
@@ -1295,7 +1319,8 @@ namespace WebApiSgsElavon.Services
                         IsDaniada = 0,
                         IsNueva = 0,
                         IdUsuarioAlta = ID_TECNICO,
-                        FecAlta = DateTime.Now
+                        FecAlta = DateTime.Now,
+                        Tipo = "TPV"
                     };
                     _context.BdRetiros.Add(retiros);
                     _context.SaveChanges();
@@ -1332,6 +1357,7 @@ namespace WebApiSgsElavon.Services
                                         IdCliente = 4,
                                         NoSerie = request.NO_SIM_RETIRO,
                                         IdStatusUnidad = 15,
+                                        IsNueva = 0,
                                         IdTipoResponsable = 2,
                                         IdSim = bdar.IdProveedor,
                                         IdResponsable = request.ID_TECNICO,
@@ -1349,6 +1375,7 @@ namespace WebApiSgsElavon.Services
                             else
                             {
                                 simretiro.IdStatusUnidad = 15;
+                                simretiro.IsNueva = 0;
                                 simretiro.IdTipoResponsable = 2;
                                 simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
@@ -1363,7 +1390,8 @@ namespace WebApiSgsElavon.Services
                                 IsDaniada = 0,
                                 IsNueva = 0,
                                 IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now
+                                FecAlta = DateTime.Now,
+                                Tipo = "SIM"
                             };
                             _context.BdRetiros.Add(retirosSim);
                             _context.SaveChanges();
