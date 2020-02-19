@@ -375,21 +375,10 @@ namespace WebApiSgsElavon.Services
                 int? idstatusini = odt.IdStatusAr;
                 try
                 {
-                    BdBitacoraAr bitacora = new BdBitacoraAr()
-                    {
-                        IdAr = idAr,
-                        IdStatusArIni = odt.IdStatusAr,
-                        IdStatusArFin = 7,
-                        Comentario = "Solicitud de Servicio Rechazada desde Aplicacion Movil",
-                        IsPda = 0,
-                        IdUsuarioAlta = request.ID_TECNICO,
-                        FecAlta = DateTime.Now
-                    };
-                    _context.BdBitacoraAr.Add(bitacora);
-                    _context.SaveChanges();
+                    insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "Rechazo");
 
-                    odt.FecCierre = Convert.ToDateTime(request.FEC_CIERRE);
-                    odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && x.DescCausaRechazo == request.CAUSA_RECHAZO).Select(x => x.IdTrechazo).FirstOrDefault());
+                    odt.FecCierre = DateTime.ParseExact(request.FEC_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                    odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && request.CAUSA_RECHAZO.Contains(x.DescCausaRechazo)).Select(x => x.IdTrechazo).FirstOrDefault());
                     odt.CausaRechazo = (_context.CSubrechazo.Where(x => x.Status == "ACTIVO" && x.Subrechazo == request.SUBRECHAZO).Select(x => x.Id).FirstOrDefault()).ToString();
                     odt.IdSolucion = (_context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion == request.TIPO_ATENCION).Select(x => x.IdSolucion).FirstOrDefault());
                     odt.IdTecnico = request.ID_TECNICO;
@@ -404,6 +393,7 @@ namespace WebApiSgsElavon.Services
                 }
                 catch (Exception ex)
                 {
+                    insertDataTable(ex.ToString(), request.ID_TECNICO, request.ID_AR, "Rechazo");
                     return false;
                 }
             }
@@ -457,7 +447,7 @@ namespace WebApiSgsElavon.Services
                     int idaplicativoretirada = _context.CSoftware.Where(x => x.DescSoftware == request.APLICATIVO.Trim()).Select(x => x.IdSoftware).FirstOrDefault();
                     int idmarcaretiro = _context.CMarcas.Where(x => x.DescMarca == request.MARCA.Trim()).Select(x => x.IdMarca).FirstOrDefault();
                     int idmodeloretiro = _context.CModelos.Where(x => x.DescModelo == request.MODELO.Trim()).Select(x => x.IdModelo).FirstOrDefault();
-                    int? idstatusunidadiniretirar = null;
+                    int? idstatusunidadiniretirar = bdunidadRetirada.IdStatusUnidad;
                     int idunidadretirar = 0;
                     /*Reglas de validacion por modelo*/
                     if (bdunidadRetirada == null || request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
@@ -470,6 +460,7 @@ namespace WebApiSgsElavon.Services
                             {
                                 NoSerie = request.NO_SERIE,
                                 IdCliente = 4,
+                                IdProducto = 1,
                                 IdSim = bdar.IdProveedor,
                                 IdModelo = idmodeloretiro,
                                 IdMarca = idmarcaretiro,
@@ -492,6 +483,7 @@ namespace WebApiSgsElavon.Services
                                 {
                                     NoSerie = Randoms.AlphaNumeric(9)+"-"+Randoms.AlphaNumeric(1),
                                     IdCliente = 4,
+                                    IdProducto = 1,
                                     IdSim = bdar.IdProveedor,
                                     IdModelo = idmodeloretiro,
                                     IdMarca = idmarcaretiro,
@@ -646,7 +638,7 @@ namespace WebApiSgsElavon.Services
                     bdar.DigitoVerificador = request.DISCOVER.ToString();
                     bdar.Caja = request.CAJA.ToString();
                     bdar.DescripcionTrabajo = request.COMENTARIO;
-                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                    bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
                     bdar.IdStatusAr = 6;
                     _context.SaveChanges();
 
@@ -680,11 +672,11 @@ namespace WebApiSgsElavon.Services
         }
         public string cierreInstalacion(CierreInstalacionRequest request)
         {
-            if(request != null)
+            if (request != null)
             {
                 insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION");
-                
-                List<int> idstatusar = new List<int>() { 6,7};
+
+                List<int> idstatusar = new List<int>() { 6, 7 };
                 var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
                 if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
                 using (var transaction = _context.Database.BeginTransaction())
@@ -760,7 +752,7 @@ namespace WebApiSgsElavon.Services
 
                         if (isgprs == 1)
                         {
-                            if(request.NO_SIM != null)
+                            if (request.NO_SIM != null)
                             {
                                 var sim = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefault();
                                 if (sim != null)
@@ -822,7 +814,7 @@ namespace WebApiSgsElavon.Services
                         bdar.DigitoVerificador = request.DISCOVER.ToString();
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
                         bdar.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
@@ -939,7 +931,7 @@ namespace WebApiSgsElavon.Services
                         bdar.DigitoVerificador = request.DISCOVER.ToString();
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
                         bdar.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
@@ -1016,8 +1008,7 @@ namespace WebApiSgsElavon.Services
                     bdar.DigitoVerificador = request.DISCOVER.ToString();
                     bdar.Caja = request.CAJA.ToString();
                     bdar.DescripcionTrabajo = request.COMENTARIO;
-                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
-                    bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                    bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);                    bdar.MiComercio = "COMERCIO NOTIFICADO: "
                                         + notificado
                                         + " / PROMOCIONES: "
                                         + promociones
@@ -1258,6 +1249,7 @@ namespace WebApiSgsElavon.Services
                                 IdConectividad = idconectividadretirada,
                                 IdTipoResponsable = 2,
                                 IdResponsable = request.ID_TECNICO,
+                                IdProducto = 1,
                                 Status = "ACTIVO",
                                 IdStatusUnidad = 30
                             };
@@ -1274,6 +1266,7 @@ namespace WebApiSgsElavon.Services
                                 {
                                     NoSerie = Randoms.AlphaNumeric(9) + "-" + Randoms.AlphaNumeric(1),
                                     IdCliente = 4,
+                                    IdProducto = 1,
                                     IdSim = bdar.IdProveedor,
                                     IdModelo = idmodeloretiro,
                                     IdMarca = idmarcaretiro,
@@ -1442,7 +1435,7 @@ namespace WebApiSgsElavon.Services
                     bdar.DigitoVerificador = request.DISCOVER.ToString();
                     bdar.Caja = request.CAJA.ToString();
                     bdar.DescripcionTrabajo = request.COMENTARIO;
-                    bdar.FecCierre = Convert.ToDateTime(request.FECHA_CIERRE);
+                    bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
                     bdar.MiComercio = "COMERCIO NOTIFICADO: "
                                         + notificado
                                         + " / PROMOCIONES: "
@@ -1541,6 +1534,7 @@ namespace WebApiSgsElavon.Services
                                 BdUnidades sim = new BdUnidades()
                                 {
                                     IdCliente = 4,
+                                    IdProducto = 1,
                                     NoSerie = request.NO_SIM_RETIRO,
                                     IdTipoResponsable = 2,
                                     IdResponsable = request.ID_TECNICO,

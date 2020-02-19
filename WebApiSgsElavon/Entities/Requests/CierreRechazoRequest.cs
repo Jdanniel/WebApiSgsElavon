@@ -1,29 +1,59 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities.Requests
 {
-    public class CierreRechazoRequest
+    public partial class CierreRechazoRequest
     {
-        [JsonProperty(PropertyName = "FEC_CIERRE")]
+        [JsonProperty("FEC_CIERRE")]
         public string FEC_CIERRE { get; set; }
-        [JsonProperty(PropertyName = "CAUSA_RECHAZO")]
-        public string CAUSA_RECHAZO { get; set; }
-        [JsonProperty(PropertyName = "SUBRECHAZO")]
-        public string SUBRECHAZO { get; set; }
-        [JsonProperty(PropertyName = "TIPO_ATENCION")]
-        public string TIPO_ATENCION { get; set; }
-        [JsonProperty(PropertyName = "ATIENDE")]
-        public string ATIENDE { get; set; }
-        [JsonProperty(PropertyName = "CONCLUSIONES")]
-        public string CONCLUSIONES { get; set; }
-        [JsonProperty(PropertyName = "ID_AR")]
-        public int ID_AR { get; set; }
-        [JsonProperty(PropertyName = "ID_TECNICO")]
-        public int ID_TECNICO { get; set; }
 
+        [JsonProperty("CAUSA_RECHAZO")]
+        public string CAUSA_RECHAZO { get; set; }
+
+        [JsonProperty("SUBRECHAZO")]
+        public string SUBRECHAZO { get; set; }
+
+        [JsonProperty("TIPO_ATENCION")]
+        public string TIPO_ATENCION { get; set; }
+
+        [JsonProperty("ATIENDE")]
+        public string ATIENDE { get; set; }
+
+        [JsonProperty("CONCLUSIONES")]
+        public string CONCLUSIONES { get; set; }
+
+        [JsonProperty("ID_AR")]
+        public int ID_AR { get; set; }
+
+        [JsonProperty("ID_TECNICO")]
+        public int ID_TECNICO { get; set; }
+    }
+    public partial class CierreRechazoRequest
+    {
+        public static CierreRechazoRequest FromJson(string json) => JsonConvert.DeserializeObject<CierreRechazoRequest>(json, ConverterRechazoRequest.Settings);
+    }
+
+    public static class SerializeRechazoRequest
+    {
+        public static string ToJson(this CierreRechazoRequest self) => JsonConvert.SerializeObject(self, ConverterRechazoRequest.Settings);
+    }
+
+    internal static class ConverterRechazoRequest
+    {
+        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        {
+            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+            DateParseHandling = DateParseHandling.None,
+            Converters =
+            {
+                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
+            },
+        };
     }
 }

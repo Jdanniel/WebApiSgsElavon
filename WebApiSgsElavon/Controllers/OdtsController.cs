@@ -20,13 +20,11 @@ namespace WebApiSgsElavon.Controllers
         {
             this._odtService = service;
         }
-
         [HttpGet("getTotalOdts/{idusuario}")]
         public ActionResult<totalODT> getTotalOdts(int idusuario)
         {
             return _odtService.totalODTS(idusuario);
         }
-
         [HttpGet("getOdtsTecnico/{idusuario}")]
         public async Task<ActionResult<IEnumerable<ODT>>> getOdts(int idusuario)
         {
@@ -40,7 +38,6 @@ namespace WebApiSgsElavon.Controllers
             }
 
         }
-
         [HttpGet("getNewOdts/{idusuario}")]
         public async Task<ActionResult<string>> getNewOdts(int idusuario)
         {
@@ -53,7 +50,6 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(ex.ToString());
             }
         }
-
         [HttpPut("UpdateStatusAr")]
         public async Task<ActionResult<int>> UpdateStatusAr(UpdateStatusBdArRequest model)
         {
@@ -66,7 +62,6 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(ex.ToString());
             }
         }
-
         [HttpPost("AgregarComentario")]
         public ActionResult<int> AgregarComentario(AgregarComentarioRequest request)
         {
@@ -78,7 +73,6 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(ex.ToString());
             }
         }
-
         [HttpPost("GetNuevasOdts")]
         public async Task<ActionResult<IEnumerable<ODT>>> GetNuevasOdts(GetNuevasOdts request)
         {
@@ -86,7 +80,6 @@ namespace WebApiSgsElavon.Controllers
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
-
         [HttpPut("AceptarRechazarOdt")]
         public async Task<ActionResult<ODT>> AceptarRechazarOdt(AceptarRechazarOdtRequest request)
         {
@@ -101,7 +94,6 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest();
             }
         }
-
         [HttpPost("CierreSustitucion")]
         public async Task<ActionResult<ODT>> CierreSustitucion(SustitucionesRequest request)
         {
@@ -147,7 +139,6 @@ namespace WebApiSgsElavon.Controllers
                 return BadRequest(msg);
             }
         }
-
         [HttpPost("CierreRetiro")]
         public async Task<ActionResult<ODT>> CierreRetiro(CierresRetiroRequest request)
         {
@@ -201,7 +192,6 @@ namespace WebApiSgsElavon.Controllers
             return Ok(odt);
 
         }
-
         [HttpGet("PRUEBA")]
         public async Task<ActionResult<IEnumerable<OdtEvent>>> Prueba()
         {
