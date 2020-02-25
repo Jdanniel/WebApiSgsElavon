@@ -466,7 +466,7 @@ namespace WebApiSgsElavon.Services
                         int idaplicativoretirada = _context.CSoftware.Where(x => x.DescSoftware == request.APLICATIVO.Trim()).Select(x => x.IdSoftware).FirstOrDefault();
                         int idmarcaretiro = _context.CMarcas.Where(x => x.DescMarca == request.MARCA.Trim()).Select(x => x.IdMarca).FirstOrDefault();
                         int idmodeloretiro = _context.CModelos.Where(x => x.DescModelo == request.MODELO.Trim()).Select(x => x.IdModelo).FirstOrDefault();
-                        int? idstatusunidadiniretirar = bdunidadRetirada.IdStatusUnidad;
+                        int? idstatusunidadiniretirar = null;
                         int idunidadretirar = 0;
 
                         #endregion
