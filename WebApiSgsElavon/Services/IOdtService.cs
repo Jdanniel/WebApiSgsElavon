@@ -383,8 +383,9 @@ namespace WebApiSgsElavon.Services
 
                     //Actualizacion de Datos del servicio
                     odt.FecCierre = DateTime.ParseExact(request.FEC_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                    odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && x.DescCausaRechazo.Trim() == request.CAUSA_RECHAZO.Trim()).Select(x => x.IdTrechazo).FirstOrDefault());
-                    odt.CausaRechazo = (_context.CSubrechazo.Where(x => x.Status == "ACTIVO" && x.Subrechazo.Trim() == request.SUBRECHAZO.Trim()).Select(x => x.Id).FirstOrDefault()).ToString();
+                    odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && EF.Functions.Like(x.DescCausaRechazo, "%"+request.CAUSA_RECHAZO+"%")).Select(x => x.IdTrechazo).FirstOrDefault());
+                    //odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && x.DescCausaRechazo.TrimEnd() == request.CAUSA_RECHAZO.TrimEnd()).Select(x => x.IdTrechazo).FirstOrDefault());
+                    odt.CausaRechazo = (_context.CSubrechazo.Where(x => x.Status == "ACTIVO" && EF.Functions.Like(x.Subrechazo, "%"+request.SUBRECHAZO+"%")).Select(x => x.Id).FirstOrDefault()).ToString();
                     odt.IdSolucion = (_context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion.Trim() == request.TIPO_ATENCION.Trim()).Select(x => x.IdSolucion).FirstOrDefault());
                     odt.IdTecnico = request.ID_TECNICO;
                     odt.Atiende = request.ATIENDE;
@@ -1511,7 +1512,7 @@ namespace WebApiSgsElavon.Services
                             }
                         }
                         #endregion
-
+                        transaction.Commit();
                         return "OK";
                     }
                     catch (Exception ex)
