@@ -22,6 +22,7 @@ namespace WebApiSgsElavon.Services
         int AceptarRechazarOdt(AceptarRechazarOdtRequest request);
         Task<IEnumerable<OdtEvent2>> prueba2();
         string cierreInstalacion(CierreInstalacionRequest request);
+        string cierreInstalacionSim(CierreInstalacionSimRequest request);
         string CierreSustitucion(SustitucionesRequest request);
         string CierreSustitucionSim(SustitucionesSimRequest request);
         string CierreRetiro(CierresRetiroRequest request);
@@ -947,6 +948,168 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         
+                        transaction.Commit();
+                        return "OK";
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return "DB: " + ex.ToString();
+                    }
+                }
+
+            }
+            else
+            {
+                return "El modelo no puede estar vacio";
+            }
+        }
+        #endregion
+        #region Cierre Instalacion Sim
+        public string cierreInstalacionSim(CierreInstalacionSimRequest request)
+        {
+            if (request != null)
+            {
+                insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION");
+
+                #region Validacion Si la Odt se encuentra cerrada o rechazada
+                List<int> idstatusar = new List<int>() { 6, 7 };
+                var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
+                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+                #endregion
+
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        #region Obtener informacion del Servicio
+                        int ID_AR = request.ID_AR;
+                        int ID_TECNICO = request.ID_TECNICO;
+
+                        var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+
+                        int? idstatusini = bdar.IdStatusAr;
+
+                        int idnegocio = _context
+                            .BdNegocios
+                            .Where(x => x.NoAfiliacion == bdar.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
+                            .Select(x => x.IdNegocio)
+                            .FirstOrDefault();
+
+                        #endregion
+
+                        #region Se valida que exista el sim y se agrega registro en BD_UNIDADES
+
+                        if (request.NO_SIM != null)
+                        {
+                            var sim = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefault();
+                            if (sim != null)
+                            {
+                                int idstatussimInstalar = sim.IdStatusUnidad;
+                                int idsimInstalar = sim.IdUnidad;
+
+                                BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                {
+                                    IdAr = ID_AR,
+                                    IdTecnico = ID_TECNICO,
+                                    IdNegocio = bdar.IdNegocio,
+                                    IdUnidad = sim.IdUnidad,
+                                    IsNueva = 0,
+                                    IdClienteIni = 4,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                };
+                                _context.BdInstalaciones.Add(instalacionesSim);
+                                _context.SaveChanges();
+
+                                sim.IdStatusUnidad = 17;
+                                sim.IdTipoResponsable = 4;
+                                sim.IdResponsable = idnegocio;
+                                sim.IdSim = bdar.IdProveedor;
+                                _context.SaveChanges();
+
+                                BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = idstatussimInstalar,
+                                    IdStatusUnidadFin = 17,
+                                    IdUnidad = idsimInstalar,
+                                    IdTipoResponsable = 4,
+                                    IdResponsable = idnegocio,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now
+                                };
+                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+                            return "ID SIM no puede estar vacio cuando la conectividad es IS_GPRS";
+                        }
+
+                        #endregion
+
+                        #region Actualizacion de la informacion del servicio en BD_AR
+                        string notificado = request.NOTIFICADO ? "SI" : "NO";
+                        string promociones = request.PROMOCIONES ? "SI" : "NO";
+                        string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+
+                        bdar.Atiende = request.ATIENDE;
+                        bdar.IdSolucion = 9;
+                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
+                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.Caja = request.CAJA.ToString();
+                        bdar.DescripcionTrabajo = request.COMENTARIO;
+                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                                            + notificado
+                                            + " / PROMOCIONES: "
+                                            + promociones
+                                            + " / SE BAJO APP: "
+                                            + descargarApp
+                                            + " / "
+                                            + request.TELEFONO_1
+                                            + " / "
+                                            + request.TELEFONO_2;
+                        bdar.CadenaCierre += "APLICACION:"
+                        + " VERSION: "
+                        + " CAJA: " + request.CAJA
+                        + " ROLLOS INSTALADOS: " + request.ROLLOS
+                        + " BATERIA: "
+                        + " ELIMINADOR: "
+                        + " TAPA: "
+                        + " CABLE AC: "
+                        + " AMEX: "
+                        + " ID AMEX: "
+                        + " AFILIACION AMEX: "
+                        + " CONCLUSION AMEX: "
+                        + " CONCLUSIONES: " + request.COMENTARIO;
+                        bdar.IdStatusAr = 6;
+                        _context.SaveChanges();
+                        #endregion
+
+                        #region Ingreso de informacion en BD_BITACORA_AR
+                        insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
+                        #endregion
+
+                        #region Ingreso de informacion en BD_AR_MI_COMERCIO
+                        BdArMiComercio micomercio = new BdArMiComercio()
+                        {
+                            IdAr = ID_AR,
+                            Notificado = request.NOTIFICADO ? 1 : 0,
+                            Promociones = request.PROMOCIONES ? 1 : 0,
+                            DescargarApp = request.DESCARGA_APP ? 1 : 0,
+                            Telefono1 = request.TELEFONO_1,
+                            Telefono2 = request.TELEFONO_2,
+                            FecAlta = DateTime.Now
+                        };
+                        _context.BdArMiComercio.Add(micomercio);
+                        _context.SaveChanges();
+                        #endregion
+
                         transaction.Commit();
                         return "OK";
                     }
