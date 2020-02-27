@@ -742,6 +742,7 @@ namespace WebApiSgsElavon.Services
                             .FirstOrDefault();
 
                         var bdunidad = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
+                        
                         int idconectividadinstalada = _context
                             .CConectividad
                             .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.IdCliente == 4)
