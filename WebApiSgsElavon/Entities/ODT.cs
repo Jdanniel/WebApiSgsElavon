@@ -52,5 +52,7 @@ namespace WebApiSgsElavon.Entities
         public int ID_FALLA { get; set; }
         [JsonProperty(PropertyName = "DESC_STATUS_AR")]
         public string DESC_STATUS_AR { get; set; }
+        [JsonProperty(PropertyName = "ARCHIVOS")]
+        public int ARCHIVOS { get; set; }
     }
 }

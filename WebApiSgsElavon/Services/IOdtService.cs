@@ -74,7 +74,8 @@ namespace WebApiSgsElavon.Services
                 "BD_AR.ID_FALLA, " +
                 "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
                 "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
-                "AS DESC_STATUS_AR " +
+                "AS DESC_STATUS_AR, " +
+                "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO'" +
@@ -351,7 +352,8 @@ namespace WebApiSgsElavon.Services
                     "BD_AR.ID_FALLA, " +
                     "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
                     "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
-                    "AS DESC_STATUS_AR " +
+                    "AS DESC_STATUS_AR, " +
+                    "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS " +
                     "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                     "WHERE ID_TECNICO = @p0 " +
@@ -393,7 +395,10 @@ namespace WebApiSgsElavon.Services
                     odt.DescripcionTrabajo = request.CONCLUSIONES;
                     odt.IdStatusAr = 7;
                     _context.SaveChanges();
-
+                    if(odt.IdServicio==22 && odt.IdFalla == 64)
+                    {
+                        RegresarRollos(odt.IdAr);
+                    }
                     //Guardar Datos en bitacora del servicio
                     insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
 
@@ -1902,6 +1907,29 @@ namespace WebApiSgsElavon.Services
 
         }
         #endregion
+        #region Regresar Rollos a bloqueos
+        public int RegresarRollos(int idar)
+        {
+            try
+            {
+                BdAr ar = _context.BdAr.Where(x => x.IdAr == idar).FirstOrDefault();
+
+                BdBloqueos bloqueo = _context.BdBloqueos.Where(x => x.NoAfiliacion == ar.NoAfiliacion).FirstOrDefault();
+                int total = 0;
+                if (ar.Insumos.HasValue)
+                {
+                    total = ar.Insumos.Value;
+                }
+                bloqueo.TotalRollos += total;
+                _context.BdBloqueos.Add(bloqueo);
+                _context.SaveChanges();
+                return 1;
+            }catch(Exception ex)
+            {
+                return 0;
+            }
+        }
+        #endregion
         #region Datos Aplicacion
         public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
@@ -1945,7 +1973,8 @@ namespace WebApiSgsElavon.Services
                 "BD_AR.ID_FALLA, " +
                 "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
                 "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
-                "AS DESC_STATUS_AR " +
+                "AS DESC_STATUS_AR, " +
+                "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_AR = @p0 " +
