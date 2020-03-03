@@ -75,7 +75,8 @@ namespace WebApiSgsElavon.Services
                 "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
                 "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
                 "AS DESC_STATUS_AR, " +
-                "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS " +
+                "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
+                " BD_AR.BITACORA " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO'" +
@@ -353,7 +354,8 @@ namespace WebApiSgsElavon.Services
                     "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
                     "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
                     "AS DESC_STATUS_AR, " +
-                    "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS " +
+                    "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
+                    "BD_AR.BITACORA " +
                     "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                     "WHERE ID_TECNICO = @p0 " +
@@ -1974,7 +1976,8 @@ namespace WebApiSgsElavon.Services
                 "(SELECT DESC_STATUS_AR FROM C_STATUS_AR SS " +
                 "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
                 "AS DESC_STATUS_AR, " +
-                "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS " +
+                "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
+                "BD_AR.BITACORA " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_AR = @p0 " +
