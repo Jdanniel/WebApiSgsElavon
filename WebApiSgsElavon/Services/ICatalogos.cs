@@ -166,11 +166,12 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<Unidades>> GetUnidades(int idusuario)
         {
             List<int> status = new List<int>();
-            status.Add(13);
+            //status.Add(13);
             status.Add(15);
+            var usuario = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
             List<Unidades> unidades = await context
                 .BdUnidades
-                .Where(x => status.Contains(x.IdStatusUnidad) && x.Status == "ACTIVO" && x.IdResponsable == idusuario && x.IdTipoResponsable == 2 && x.IdCliente == 4)
+                .Where(x => status.Contains(x.IdStatusUnidad) && x.Status == "ACTIVO" && x.IdCliente == 4 && x.IdSim == usuario.IdProveedor)
                 .Select(x => new Unidades { 
                     ID_UNIDAD = x.IdUnidad, 
                     ID_APLICATIVO = x.IdAplicativo, 
