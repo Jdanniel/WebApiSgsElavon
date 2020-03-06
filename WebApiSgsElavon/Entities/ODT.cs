@@ -56,5 +56,7 @@ namespace WebApiSgsElavon.Entities
         public int ARCHIVOS { get; set; }
         [JsonProperty(PropertyName = "BITACORA")]
         public string BITACORA { get; set; }
+        [JsonProperty(PropertyName = "TELEFONO")]
+        public string TELEFONO { get; set; }
     }
 }
