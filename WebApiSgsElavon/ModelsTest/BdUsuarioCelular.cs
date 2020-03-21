@@ -15,5 +15,6 @@ namespace WebApiSgsElavon.ModelsTest
         public int? IdUsuarioAlta { get; set; }
         public DateTime? FecAlta { get; set; }
         public string Status { get; set; }
+        public string Imei { get; set; }
     }
 }

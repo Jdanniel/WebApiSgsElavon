@@ -32,6 +32,7 @@ namespace WebApiSgsElavon.Services
 
                 BdBitacoraNegociosCoordenadas coordenadas = new BdBitacoraNegociosCoordenadas();
                 coordenadas.IdNegocio = request.ID_NEGOCIO;
+                coordenadas.IdAr = request.ID_AR;
                 coordenadas.Latitud = request.LATITUD;
                 coordenadas.Longitud = request.LONGITUD;
                 coordenadas.IdUsuarioAlta = request.ID_USUARIO;

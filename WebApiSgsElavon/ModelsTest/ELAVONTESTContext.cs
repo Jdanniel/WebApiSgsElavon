@@ -4482,6 +4482,8 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.Property(e => e.IdNegocio).HasColumnName("ID_NEGOCIO");
 
+                entity.Property(e => e.IdAr).HasColumnName("ID_AR");
+
                 entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
 
                 entity.Property(e => e.Latitud)
@@ -19352,6 +19354,10 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasColumnName("STATUS")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+                entity.Property(e => e.Imei)
+                .HasColumnName("IMEI")
+                .HasMaxLength(20)
+                .IsUnicode(false);
             });
 
             modelBuilder.Entity<BdUsuarioCliente>(entity =>

@@ -62,8 +62,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
-                "BD_NEGOCIOS.LATITUD, " +
-                "BD_NEGOCIOS.LONGITUD, " +
+                "NULL AS LATITUD, " +
+                "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
                 "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
                 "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
@@ -128,8 +128,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
-                "BD_NEGOCIOS.LATITUD, " +
-                "BD_NEGOCIOS.LONGITUD, " +
+                "NULL AS LATITUD, " +
+                "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
                 "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
                 "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
@@ -188,8 +188,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
-                "BD_NEGOCIOS.LATITUD, " +
-                "BD_NEGOCIOS.LONGITUD, " +
+                "NULL AS LATITUD, " +
+                "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
                 "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
                 "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
@@ -271,8 +271,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
-                "BD_NEGOCIOS.LATITUD, " +
-                "BD_NEGOCIOS.LONGITUD, " +
+                "NULL AS LATITUD, " +
+                "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_GARANTIA)) AS [DAYS], " +
                 "CONVERT(INT,MONTH(FEC_GARANTIA)) AS [MONTHS], " +
                 "CONVERT(INT,YEAR(FEC_GARANTIA)) AS [YEARS], " +
@@ -342,8 +342,8 @@ namespace WebApiSgsElavon.Services
                     "BD_NEGOCIOS.DIRECCION, " +
                     "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                     "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
-                    "BD_NEGOCIOS.LATITUD, " +
-                    "BD_NEGOCIOS.LONGITUD, " +
+                    "NULL AS LATITUD, " +
+                    "NULL AS LONGITUD, " +
                     "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
                     "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
                     "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +
@@ -1965,8 +1965,8 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
-                "BD_NEGOCIOS.LATITUD, " +
-                "BD_NEGOCIOS.LONGITUD, " +
+                "NULL AS LATITUD, " +
+                "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
                 "CONVERT(INT,MONTH(FEC_ATENCION)) AS [MONTHS], " +
                 "CONVERT(INT,YEAR(FEC_ATENCION)) AS [YEARS], " +

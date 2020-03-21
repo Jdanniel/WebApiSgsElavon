@@ -10,6 +10,8 @@ namespace WebApiSgsElavon.Entities.Requests
     {
         [JsonProperty(PropertyName = "ID_NEGOCIO")]
         public int ID_NEGOCIO { get; set; }
+        [JsonProperty(PropertyName = "ID_AR")]
+        public int ID_AR { get; set; }
         [JsonProperty(PropertyName = "ID_USUARIO")]
         public int ID_USUARIO { get; set; }
         [JsonProperty(PropertyName = "LATITUD")]
