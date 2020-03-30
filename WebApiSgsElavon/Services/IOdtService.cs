@@ -80,7 +80,8 @@ namespace WebApiSgsElavon.Services
                 " BD_AR.TELEFONO " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO' " +
+                "AND BD_AR.FEC_ATENCION IS NOT NULL " +
                 " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario).ToListAsync();
 
             //var totalYears = odt.GroupBy(x => x.AA).Count();
@@ -137,7 +138,8 @@ namespace WebApiSgsElavon.Services
                 "ROW_NUMBER() OVER(ORDER BY FEC_GARANTIA ASC) AS NUMBER " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR = 3 AND BD_AR.STATUS='PROCESADO' " +
+                "AND BD_AR.FEC_ATENCION IS NOT NULL " +
                 " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario).ToListAsync();
 
             OdtEvent evento;
@@ -200,7 +202,8 @@ namespace WebApiSgsElavon.Services
                 "BD_AR.ID_FALLA " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO' " +
+                "AND BD_AR.FEC_ATENCION IS NOT NULL " +
                 " ORDER BY BD_AR.FEC_GARANTIA ASC", 34).ToListAsync();
 
             var years = odts.GroupBy(x => new { x.YEARS }).Select(x => x.Key).ToList();
@@ -283,7 +286,8 @@ namespace WebApiSgsElavon.Services
                 "BD_AR.ID_FALLA " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
-                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO'" +
+                "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13) AND BD_AR.STATUS='PROCESADO' " +
+                "AND BD_AR.FEC_ATENCION IS NOT NULL " +
                 " ORDER BY BD_AR.FEC_GARANTIA ASC", 34).ToListAsync();
 
             var years = odts.GroupBy(x => new { x.YEARS }).Select(x => x.Key).ToList();
@@ -362,6 +366,7 @@ namespace WebApiSgsElavon.Services
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                     "WHERE ID_TECNICO = @p0 " +
                     "AND ID_STATUS_AR IN(3,4,5,6,7,13,35) " +
+                    "AND BD_AR.FEC_ATENCION IS NOT NULL " +
                     "AND BD_AR.STATUS='PROCESADO' " +
                     "AND BD_AR.FEC_ALTA > @p1" +
                     " ORDER BY BD_AR.FEC_ATENCION ASC", parametros)
@@ -1984,6 +1989,7 @@ namespace WebApiSgsElavon.Services
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_AR = @p0 " +
+                "AND BD_AR.FEC_ATENCION IS NOT NULL " +
                 "AND BD_AR.STATUS='PROCESADO' ", parametros)
                 .FirstOrDefault();
             return newodt;

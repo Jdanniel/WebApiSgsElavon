@@ -12,5 +12,8 @@ namespace WebApiSgsElavon.Entities
         public int ID_SERVICIO { get; set; }
         [JsonProperty(PropertyName = "DESC_SERVICIO")]
         public string DESC_SERVICIO { get; set; }
+        [JsonProperty(PropertyName = "IdARNeedNOcheckup")]
+        public int? IdARNeedNOcheckup { get; set; }
+
     }
 }

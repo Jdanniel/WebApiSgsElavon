@@ -118,7 +118,7 @@ namespace WebApiSgsElavon.Services
             List<Servicios> servicios = await context
                 .CServicios
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Servicios { ID_SERVICIO = x.IdServicio, DESC_SERVICIO = x.DescServicio })
+                .Select(x => new Servicios { ID_SERVICIO = x.IdServicio, DESC_SERVICIO = x.DescServicio, IdARNeedNOcheckup = x.IdArneedNocheckup })
                 .ToListAsync();
             return servicios;
         }
