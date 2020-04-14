@@ -1668,6 +1668,8 @@ namespace WebApiSgsElavon.Services
                                     var simretirouniverso = _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM_RETIRO).FirstOrDefault();
                                     if (simretirouniverso != null)
                                     {
+                                        var idcarrier = _context.CModelos.Where(x => x.DescModelo == simretirouniverso.Carrier.TrimEnd() && x.Status == "ACTIVO").Select(x => x.IdModelo).FirstOrDefault();
+                                        
                                         BdUnidades sim = new BdUnidades()
                                         {
                                             IdCliente = 4,
@@ -1676,6 +1678,7 @@ namespace WebApiSgsElavon.Services
                                             IsNueva = 0,
                                             IdTipoResponsable = 2,
                                             IdMarca = 10,
+                                            IdModelo = idcarrier,
                                             IdSim = bdar.IdProveedor,
                                             IdResponsable = request.ID_TECNICO,
                                             FecAlta = DateTime.Now,
@@ -1894,6 +1897,7 @@ namespace WebApiSgsElavon.Services
                                 var simretirouniverso = _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM_RETIRO).FirstOrDefault();
                                 if (simretirouniverso != null)
                                 {
+                                    var idcarrier = _context.CModelos.Where(x => x.DescModelo == simretirouniverso.Carrier.TrimEnd() && x.Status == "ACTIVO").Select(x => x.IdModelo).FirstOrDefault();
                                     BdUnidades sim = new BdUnidades()
                                     {
                                         IdCliente = 4,
@@ -1903,6 +1907,7 @@ namespace WebApiSgsElavon.Services
                                         IdTipoResponsable = 2,
                                         IdResponsable = request.ID_TECNICO,
                                         IdStatusUnidad = 30,
+                                        IdModelo = idcarrier,
                                         Status = "ACTIVO",
                                         FecAlta = DateTime.Now
                                     };
