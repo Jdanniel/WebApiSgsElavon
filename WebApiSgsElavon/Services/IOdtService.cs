@@ -508,6 +508,7 @@ namespace WebApiSgsElavon.Services
                                     IdResponsable = request.ID_TECNICO,
                                     IdStatusUnidad = 30,
                                     Status = "ACTIVO",
+                                    FecAlta = DateTime.Now
                                 };
                                 _context.BdUnidades.Add(unidad);
                                 _context.SaveChanges();
@@ -531,6 +532,7 @@ namespace WebApiSgsElavon.Services
                                         IdResponsable = request.ID_TECNICO,
                                         IdStatusUnidad = 30,
                                         Status = "ACTIVO",
+                                        FecAlta = DateTime.Now
                                     };
                                     _context.BdUnidades.Add(unidadNueva);
                                     _context.SaveChanges();
@@ -560,7 +562,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Actualizacion de Bitacora de la Unidad BD_BITACORA_UNIDAD
-                        if (request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
+                        if(bdunidadRetirada == null)
                         {
                             BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
                             {
@@ -572,6 +574,22 @@ namespace WebApiSgsElavon.Services
                                 IdUsuarioAlta = ID_TECNICO,
                                 FecAlta = DateTime.Now,
                                 Comentario = "UNIDAD DADA DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE TPVS"
+                            };
+                            _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                            _context.SaveChanges();
+                        }
+                        else if (request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
+                        {
+                            BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                            {
+                                IdStatusUnidadIni = null,
+                                IdStatusUnidadFin = 30,
+                                IdUnidad = idunidadretirar,
+                                IdTipoResponsable = 2,
+                                IdResponsable = ID_TECNICO,
+                                IdUsuarioAlta = ID_TECNICO,
+                                FecAlta = DateTime.Now,
+                                Comentario = "UNIDAD AUTOGENERADA POR EL SISTEMA"
                             };
                             _context.BdBitacoraUnidad.Add(bitacoraUnidad);
                             _context.SaveChanges();
@@ -594,26 +612,14 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso de unidad retirada en BD_RETIROS
-                        BdRetiros retiros = new BdRetiros()
-                        {
-                            IdAr = ID_AR,
-                            IdTecnico = ID_TECNICO,
-                            IdNegocio = bdar.IdNegocio,
-                            IdUnidad = idunidadretirar,
-                            IsDaniada = 0,
-                            IsNueva = 0,
-                            IdUsuarioAlta = ID_TECNICO,
-                            FecAlta = DateTime.Now,
-                            Tipo = "TPV"
-                        };
-                        _context.BdRetiros.Add(retiros);
-                        _context.SaveChanges();
+                        insertarBdRetiros(ID_AR,ID_TECNICO,bdar.IdNegocio,idunidadretirar,"TPV");
                         #endregion
 
                         #region Si la conectividad seleccionada cuenta con el campo IS_GPRS = 1 se actualizara o creara un nuevo registro en BD_UNIDADES
                         if (isgprs == 1)
                         {
                             int idSim;
+                            int idstatusanteriorSim = 0;
 
                             if (request.NO_SIM != null)
                             {
@@ -628,11 +634,13 @@ namespace WebApiSgsElavon.Services
                                         {
                                             IdCliente = 4,
                                             NoSerie = request.NO_SIM,
+                                            IdMarca = 10,
                                             IdStatusUnidad = 15,
                                             IsNueva = 0,
                                             IdTipoResponsable = 2,
                                             IdResponsable = request.ID_TECNICO,
                                             IdSim = bdar.IdProveedor,
+                                            FecAlta = DateTime.Now,
                                             Status = "ACTIVO"
                                         };
                                         _context.BdUnidades.Add(sim);
@@ -646,6 +654,7 @@ namespace WebApiSgsElavon.Services
                                 }
                                 else
                                 {
+                                    idstatusanteriorSim = simretiro.IdStatusUnidad;
                                     simretiro.IdStatusUnidad = 15;
                                     simretiro.IsNueva = 0;
                                     simretiro.IdTipoResponsable = 2;
@@ -653,21 +662,40 @@ namespace WebApiSgsElavon.Services
                                     _context.SaveChanges();
                                     idSim = simretiro.IdUnidad;
                                 }
-
-                                BdRetiros retirosSim = new BdRetiros()
+                                insertarBdRetiros(ID_AR,ID_TECNICO,bdar.IdNegocio,idSim,"SIM");
+                                #region Bitacora del Sim
+                                if (simretiro == null)
                                 {
-                                    IdAr = ID_AR,
-                                    IdTecnico = ID_TECNICO,
-                                    IdNegocio = bdar.IdNegocio,
-                                    IdUnidad = idSim,
-                                    IsDaniada = 0,
-                                    IsNueva = 0,
-                                    IdUsuarioAlta = ID_TECNICO,
-                                    FecAlta = DateTime.Now,
-                                    Tipo = "SIM"
-                                };
-                                _context.BdRetiros.Add(retirosSim);
-                                _context.SaveChanges();
+                                    BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                    {
+                                        IdStatusUnidadIni = null,
+                                        IdStatusUnidadFin = 15,
+                                        IdUnidad = idSim,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = ID_TECNICO,
+                                        IdUsuarioAlta = ID_TECNICO,
+                                        FecAlta = DateTime.Now,
+                                        Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
+                                    };
+                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.SaveChanges();
+                                }
+                                else
+                                {
+                                    BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                    {
+                                        IdStatusUnidadIni = idstatusanteriorSim,
+                                        IdStatusUnidadFin = 15,
+                                        IdUnidad = idSim,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = ID_TECNICO,
+                                        IdUsuarioAlta = ID_TECNICO,
+                                        FecAlta = DateTime.Now
+                                    };
+                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.SaveChanges();
+                                }
+                                #endregion
                             }
                         }
                         #endregion
@@ -685,6 +713,19 @@ namespace WebApiSgsElavon.Services
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
                         bdar.IdStatusAr = 6;
+                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        + " VERSION: " + request.VERSION
+                        + " CAJA: " + request.CAJA
+                        + " ROLLOS INSTALADOS: " + request.ROLLOS
+                        + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
+                        + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
+                        + " TAPA: " + (request.TAPA ? "SI" : "NO")
+                        + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
+                        + " AMEX: " 
+                        + " ID AMEX: "
+                        + " AFILIACION AMEX: "
+                        + " CONCLUSION AMEX: "
+                        + " CONCLUSIONES: " + request.COMENTARIO;
                         _context.SaveChanges();
                         #endregion
 
@@ -776,19 +817,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso de informacion en  BD_INSTALACIONES
-                        BdInstalaciones instalaciones = new BdInstalaciones()
-                        {
-                            IdAr = ID_AR,
-                            IdTecnico = ID_TECNICO,
-                            IdNegocio = bdar.IdNegocio,
-                            IdUnidad = bdunidad.IdUnidad,
-                            IsNueva = 0,
-                            IdClienteIni = 4,
-                            IdUsuarioAlta = ID_TECNICO,
-                            FecAlta = DateTime.Now,
-                        };
-                        _context.BdInstalaciones.Add(instalaciones);
-                        _context.SaveChanges();
+                        insertarBdinstalacion(ID_AR,ID_TECNICO,bdar.IdNegocio,bdunidad.IdUnidad,"TPV");
                         #endregion
 
                         #region Actualizacion de informacion de la unidad Instalada BD_UNIDADES
@@ -1248,6 +1277,7 @@ namespace WebApiSgsElavon.Services
                         #region Informacion del Servicio
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
+                        int idcausa = _context.CCausas.Where(x => x.DescCausa == request.DESC_CAUSA && x.IdCliente == 4 && x.Status == "ACTIVO").Select(x => x.IdCausa).FirstOrDefault();
                         var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
                         int? idstatusini = bdar.IdStatusAr;
                         int idnegocioar = _context
@@ -1264,6 +1294,7 @@ namespace WebApiSgsElavon.Services
                         bdar.NoInventario = request.VERSION;
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IdCausa = idcausa;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1463,6 +1494,10 @@ namespace WebApiSgsElavon.Services
                                     };
                                     _context.BdBitacoraUnidad.Add(bitacoraSim);
                                     _context.SaveChanges();
+
+                                    #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
+                                    insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar,"SIM");
+                                    #endregion
                                 }
                             }
                             else
@@ -1525,7 +1560,8 @@ namespace WebApiSgsElavon.Services
                                     IdResponsable = request.ID_TECNICO,
                                     IdProducto = 1,
                                     Status = "ACTIVO",
-                                    IdStatusUnidad = 30
+                                    IdStatusUnidad = 30,
+                                    FecAlta = DateTime.Now
                                 };
                                 _context.BdUnidades.Add(unidad);
                                 _context.SaveChanges();
@@ -1549,7 +1585,8 @@ namespace WebApiSgsElavon.Services
                                         IdTipoResponsable = 2,
                                         IdResponsable = request.ID_TECNICO,
                                         Status = "ACTIVO",
-                                        IdStatusUnidad = 30
+                                        IdStatusUnidad = 30,
+                                        FecAlta = DateTime.Now
                                     };
                                     _context.BdUnidades.Add(unidadNueva);
                                     _context.SaveChanges();
@@ -1579,20 +1616,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso de registro de la unidad retirada en BD_RETIROS
-                        BdRetiros retiros = new BdRetiros()
-                        {
-                            IdAr = ID_AR,
-                            IdTecnico = ID_TECNICO,
-                            IdNegocio = bdar.IdNegocio,
-                            IdUnidad = idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada,
-                            IsDaniada = 0,
-                            IsNueva = 0,
-                            IdUsuarioAlta = ID_TECNICO,
-                            FecAlta = DateTime.Now,
-                            Tipo = "TPV"
-                        };
-                        _context.BdRetiros.Add(retiros);
-                        _context.SaveChanges();
+                        insertarBdRetiros(ID_AR,ID_TECNICO,bdar.IdNegocio, idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada,"TPV");
                         #endregion
 
                         #region Si la unidad cuenta con el numero de serie = "ILEGIBLE" se agrega a la bitacora con un comentario distinto en BD_BITACORA_UNIDAD de lo contrario no lleva comenatrio
@@ -1631,7 +1655,7 @@ namespace WebApiSgsElavon.Services
 
                         #region Si la conectividad es IS_GPRS = 1 se ingresara el registro de un sim nuevo o se actualizara la informacion
                         int isgprsretiro = _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefault();
-
+                        int idstatusanteriorSim = 0;
                         if (isgprsretiro == 1)
                         {
                             if (request.NO_SIM_RETIRO != null)
@@ -1651,8 +1675,10 @@ namespace WebApiSgsElavon.Services
                                             IdStatusUnidad = 15,
                                             IsNueva = 0,
                                             IdTipoResponsable = 2,
+                                            IdMarca = 10,
                                             IdSim = bdar.IdProveedor,
                                             IdResponsable = request.ID_TECNICO,
+                                            FecAlta = DateTime.Now,
                                             Status = "ACTIVO"
                                         };
                                         _context.BdUnidades.Add(sim);
@@ -1666,6 +1692,7 @@ namespace WebApiSgsElavon.Services
                                 }
                                 else
                                 {
+                                    idstatusanteriorSim = simretiro.IdStatusUnidad;
                                     simretiro.IdStatusUnidad = 15;
                                     simretiro.IsNueva = 0;
                                     simretiro.IdTipoResponsable = 2;
@@ -1673,20 +1700,42 @@ namespace WebApiSgsElavon.Services
                                     _context.SaveChanges();
                                     idSim = simretiro.IdUnidad;
                                 }
-                                BdRetiros retirosSim = new BdRetiros()
+                                insertarBdRetiros(ID_AR,ID_TECNICO,bdar.IdNegocio,idSim,"SIM");
+
+                                #region Bitacora del Sim
+                                if (simretiro == null)
                                 {
-                                    IdAr = ID_AR,
-                                    IdTecnico = ID_TECNICO,
-                                    IdNegocio = bdar.IdNegocio,
-                                    IdUnidad = idSim,
-                                    IsDaniada = 0,
-                                    IsNueva = 0,
-                                    IdUsuarioAlta = ID_TECNICO,
-                                    FecAlta = DateTime.Now,
-                                    Tipo = "SIM"
-                                };
-                                _context.BdRetiros.Add(retirosSim);
-                                _context.SaveChanges();
+                                    BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                    {
+                                        IdStatusUnidadIni = null,
+                                        IdStatusUnidadFin = 15,
+                                        IdUnidad = idSim,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = ID_TECNICO,
+                                        IdUsuarioAlta = ID_TECNICO,
+                                        FecAlta = DateTime.Now,
+                                        Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
+                                    };
+                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.SaveChanges();
+                                }
+                                else
+                                {
+                                    BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                    {
+                                        IdStatusUnidadIni = idstatusanteriorSim,
+                                        IdStatusUnidadFin = 15,
+                                        IdUnidad = idSim,
+                                        IdTipoResponsable = 2,
+                                        IdResponsable = ID_TECNICO,
+                                        IdUsuarioAlta = ID_TECNICO,
+                                        FecAlta = DateTime.Now
+                                    };
+                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.SaveChanges();
+                                }
+                                #endregion
+
                             }
                         }
                         #endregion
@@ -1751,6 +1800,19 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
+                        bdar.CadenaCierre += "APLICACION:"
+                            + " VERSION: "
+                            + " CAJA: " + request.CAJA
+                            + " ROLLOS INSTALADOS: " + request.ROLLOS
+                            + " BATERIA: "
+                            + " ELIMINADOR: "
+                            + " TAPA: "
+                            + " CABLE AC: "
+                            + " AMEX: "
+                            + " ID AMEX: "
+                            + " AFILIACION AMEX: "
+                            + " CONCLUSION AMEX: "
+                            + " CONCLUSIONES: " + request.COMENTARIO;
                         bdar.IdStatusAr = 6;
                         _context.SaveChanges();
                         #endregion
@@ -1824,6 +1886,7 @@ namespace WebApiSgsElavon.Services
                         if (request.NO_SIM_RETIRO != null)
                         {
                             int idSim;
+                            int idstatusanteriorSim = 0;
                             var simretiro = _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM_RETIRO && x.IdMarca == 10).FirstOrDefault();
 
                             if (simretiro == null)
@@ -1835,11 +1898,13 @@ namespace WebApiSgsElavon.Services
                                     {
                                         IdCliente = 4,
                                         IdProducto = 1,
+                                        IdMarca = 10,
                                         NoSerie = request.NO_SIM_RETIRO,
                                         IdTipoResponsable = 2,
                                         IdResponsable = request.ID_TECNICO,
                                         IdStatusUnidad = 30,
-                                        Status = "ACTIVO"
+                                        Status = "ACTIVO",
+                                        FecAlta = DateTime.Now
                                     };
                                     _context.BdUnidades.Add(sim);
                                     _context.SaveChanges();
@@ -1852,25 +1917,48 @@ namespace WebApiSgsElavon.Services
                             }
                             else
                             {
+                                idstatusanteriorSim = simretiro.IdStatusUnidad;
                                 simretiro.IdStatusUnidad = 15;
                                 simretiro.IdTipoResponsable = 2;
                                 simretiro.IdResponsable = request.ID_TECNICO;
                                 _context.SaveChanges();
                                 idSim = simretiro.IdUnidad;
                             }
-                            BdRetiros retirosSim = new BdRetiros()
+                            #region Bitacora del Sim
+                            if (simretiro == null)
                             {
-                                IdAr = ID_AR,
-                                IdTecnico = ID_TECNICO,
-                                IdNegocio = bdar.IdNegocio,
-                                IdUnidad = idSim,
-                                IsDaniada = 0,
-                                IsNueva = 0,
-                                IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now
-                            };
-                            _context.BdRetiros.Add(retirosSim);
-                            _context.SaveChanges();
+                                BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = null,
+                                    IdStatusUnidadFin = 15,
+                                    IdUnidad = idSim,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                    Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
+                                };
+                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.SaveChanges();
+                            }
+                            else
+                            {
+                                BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = idstatusanteriorSim,
+                                    IdStatusUnidadFin = 15,
+                                    IdUnidad = idSim,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now
+                                };
+                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.SaveChanges();
+                            }
+                            #endregion
+
+                            insertarBdRetiros(ID_AR,ID_TECNICO,bdar.IdNegocio,idSim,"SIM");
                         }
                         #endregion
                         transaction.Commit();
@@ -1951,6 +2039,44 @@ namespace WebApiSgsElavon.Services
                 IdAr = idar
             };
             _context.BdDatosCierreAplicacion.Add(cierre);
+            _context.SaveChanges();
+        }
+        #endregion
+        #region Ingreso de informacion en  BD_INSTALACIONES
+        public void insertarBdinstalacion(int IDAR, int IDTECNICO, int IDNEGOCIO, int IDUNIDAD, string tipo)
+        {
+            BdInstalaciones instalaciones = new BdInstalaciones()
+            {
+                IdAr = IDAR,
+                IdTecnico = IDTECNICO,
+                IdNegocio = IDNEGOCIO,
+                IdUnidad = IDUNIDAD,
+                IsNueva = 0,
+                IdClienteIni = 4,
+                IdUsuarioAlta = IDTECNICO,
+                FecAlta = DateTime.Now,
+                Tipo = tipo
+            };
+            _context.BdInstalaciones.Add(instalaciones);
+            _context.SaveChanges();
+        }
+        #endregion
+        #region Ingreso de informacion en BD_RETIROS
+        public void insertarBdRetiros(int idar, int idtecnico, int idnegocio, int idunidad, string tipo)
+        {
+            BdRetiros retiros = new BdRetiros()
+            {
+                IdAr = idar,
+                IdTecnico = idtecnico,
+                IdNegocio = idnegocio,
+                IdUnidad = idunidad,
+                IsDaniada = 0,
+                IsNueva = 0,
+                IdUsuarioAlta = idtecnico,
+                FecAlta = DateTime.Now,
+                Tipo = tipo
+            };
+            _context.BdRetiros.Add(retiros);
             _context.SaveChanges();
         }
         #endregion
