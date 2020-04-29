@@ -10,7 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Helpers;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -30,9 +31,9 @@ namespace WebApiSgsElavon.Services
         };
 
         private readonly AppSettings _appSettings;
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
 
-        public UserService(IOptions<AppSettings> appSettings, ELAVONTESTContext context)
+        public UserService(IOptions<AppSettings> appSettings, ELAVONContext context)
         {
             _appSettings = appSettings.Value;
             _context = context;

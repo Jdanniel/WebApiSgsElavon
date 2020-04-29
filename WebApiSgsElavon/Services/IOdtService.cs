@@ -6,7 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 
 namespace WebApiSgsElavon.Services
@@ -33,9 +34,9 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
 
-        public OdtServices(ELAVONTESTContext context)
+        public OdtServices(ELAVONContext context)
         {
             _context = context;
         }
@@ -53,7 +54,9 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<ODT>> getOdts(int idusuario)
         {
 
-            List < ODT > odt = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+            List < ODT > odt = await _context.Query<ODT>().FromSql("SELECT ID_AR, " +
+                "BD_NEGOCIOS.ID_NEGOCIO, " +
+                "NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO, " +
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
@@ -429,10 +432,11 @@ namespace WebApiSgsElavon.Services
         #region Aceptar o Rechazar Servicio
         public int AceptarRechazarOdt(AceptarRechazarOdtRequest request)
         {
-            var odt = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
-            int? idstatusini = odt.IdStatusAr;
             try
             {
+                //var ii = _context.BdAr.Where(x => x.IdAr == request.ID_AR).Select(x => x.FolioTelecarga).FirstOrDefault();
+                var odt = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
+                var idstatusini = odt.IdStatusAr;
                 if (request.ID_STATUS_AR == 35)
                 {
                     odt.IdStatusAr = 35;
@@ -703,6 +707,7 @@ namespace WebApiSgsElavon.Services
                         #region Actualizacion de la informacion del servicio BD_AR
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsRetiro = 1;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -905,6 +910,7 @@ namespace WebApiSgsElavon.Services
                         bdar.NoInventario = request.VERSION;
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsInstalacion = 1;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1100,6 +1106,7 @@ namespace WebApiSgsElavon.Services
 
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsInstalacion = 1;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1200,6 +1207,9 @@ namespace WebApiSgsElavon.Services
 
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsInstalacion = 0;
+                        bdar.IsRetiro = 0;
+                        bdar.IsSustitucion = 0;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -1294,6 +1304,7 @@ namespace WebApiSgsElavon.Services
                         bdar.NoInventario = request.VERSION;
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsSustitucion = 1;
                         bdar.IdCausa = idcausa;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
@@ -1785,6 +1796,7 @@ namespace WebApiSgsElavon.Services
                         #region Actualizacion del servicio en BD_AR
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
+                        bdar.IsSustitucion = 1;
                         bdar.OtorganteVobo = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
@@ -2023,7 +2035,7 @@ namespace WebApiSgsElavon.Services
                     total = ar.Insumos.Value;
                 }
                 bloqueo.TotalRollos += total;
-                _context.BdBloqueos.Add(bloqueo);
+                //_context.BdBloqueos.Add(bloqueo);
                 _context.SaveChanges();
                 return 1;
             }catch(Exception ex)
@@ -2035,7 +2047,7 @@ namespace WebApiSgsElavon.Services
         #region Datos Aplicacion
         public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
+            BdDatosCierresAplicacion cierre = new BdDatosCierresAplicacion()
             {
                 Datos = datos,
                 TipoCierre = tipoCierre,
@@ -2043,7 +2055,7 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierreAplicacion.Add(cierre);
+            _context.BdDatosCierresAplicacion.Add(cierre);
             _context.SaveChanges();
         }
         #endregion

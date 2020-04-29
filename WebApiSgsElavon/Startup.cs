@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebApiSgsElavon.Helpers;
+using WebApiSgsElavon.Model;
 using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Services;
 
@@ -37,6 +38,10 @@ namespace WebApiSgsElavon
 
             services.AddDbContext<ELAVONTESTContext>(options =>
                  options.UseSqlServer(Configuration.GetConnectionString("TEST"))
+            );
+
+            services.AddDbContext<ELAVONContext>(options =>
+                 options.UseSqlServer(Configuration.GetConnectionString("PROD"))
             );
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
