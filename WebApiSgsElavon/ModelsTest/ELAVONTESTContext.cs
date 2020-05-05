@@ -4485,6 +4485,8 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.Property(e => e.IdAr).HasColumnName("ID_AR");
 
+                entity.Property(e => e.IdStatusAr).HasColumnName("ID_STATUS_AR");
+
                 entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
 
                 entity.Property(e => e.Latitud)

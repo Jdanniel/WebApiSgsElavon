@@ -12,5 +12,6 @@ namespace WebApiSgsElavon.ModelsTest
         public decimal? Longitud { get; set; }
         public int? IdUsuarioAlta { get; set; }
         public DateTime? FecAlta { get; set; }
+        public int? IdStatusAr { get; set; }
     }
 }

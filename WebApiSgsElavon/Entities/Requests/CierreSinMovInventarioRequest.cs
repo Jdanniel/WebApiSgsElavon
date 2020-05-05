@@ -30,8 +30,8 @@ namespace WebApiSgsElavon.Entities.Requests
         public string TIPO_ATENCION { get; set; }
         [JsonProperty("ROLLOS")]
         public int ROLLOS { get; set; }
-        [JsonProperty("DISCOVER")]
-        public int DISCOVER { get; set; }
+        [JsonProperty("GETNET")]
+        public int GETNET { get; set; }
         [JsonProperty("CAJA")]
         public int CAJA { get; set; }
         [JsonProperty("COMENTARIO")]

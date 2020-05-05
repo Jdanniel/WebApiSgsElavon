@@ -61,8 +61,8 @@ namespace WebApiSgsElavon.Entities.Requests
         [JsonProperty("ROLLOS")]
         public string ROLLOS { get; set; }
 
-        [JsonProperty("DISCOVER")]
-        public string DISCOVER { get; set; }
+        [JsonProperty("GETNET")]
+        public int GETNET { get; set; }
 
         [JsonProperty("CAJA")]
         public string CAJA { get; set; }

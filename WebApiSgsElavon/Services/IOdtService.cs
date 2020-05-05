@@ -6,8 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 
 namespace WebApiSgsElavon.Services
@@ -34,9 +34,9 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONContext _context;
+        private readonly ELAVONTESTContext _context;
 
-        public OdtServices(ELAVONContext context)
+        public OdtServices(ELAVONTESTContext context)
         {
             _context = context;
         }
@@ -713,7 +713,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.NoEquipo = request.VERSION;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        //bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -832,6 +832,7 @@ namespace WebApiSgsElavon.Services
                         bdunidad.IdTipoResponsable = 4;
                         bdunidad.IdResponsable = idnegocio;
                         bdunidad.IdSim = bdar.IdProveedor;
+                        bdunidad.FolioTelmex = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         _context.SaveChanges();
                         #endregion
 
@@ -915,7 +916,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1111,7 +1112,8 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        //bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1214,7 +1216,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1311,7 +1313,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.NoEquipo = request.VERSION_RETIRO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1444,6 +1446,7 @@ namespace WebApiSgsElavon.Services
                         bdunidad.IdStatusUnidad = 17;
                         bdunidad.IdTipoResponsable = 4;
                         bdunidad.IdResponsable = idnegocioar;
+                        bdunidad.FolioTelmex = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         _context.SaveChanges();
                         #endregion
                         #region Ingreso de registro en BD_BITACORA_UNIDAD de la unidad instalada
@@ -1801,7 +1804,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.DigitoVerificador = request.DISCOVER.ToString();
+                        //bdar.DigitoVerificador = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -2047,7 +2050,7 @@ namespace WebApiSgsElavon.Services
         #region Datos Aplicacion
         public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            BdDatosCierresAplicacion cierre = new BdDatosCierresAplicacion()
+            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
             {
                 Datos = datos,
                 TipoCierre = tipoCierre,
@@ -2055,7 +2058,7 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierresAplicacion.Add(cierre);
+            _context.BdDatosCierreAplicacion.Add(cierre);
             _context.SaveChanges();
         }
         #endregion
