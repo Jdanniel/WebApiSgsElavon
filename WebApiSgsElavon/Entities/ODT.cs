@@ -30,6 +30,8 @@ namespace WebApiSgsElavon.Entities
         public string FEC_GARANTIA { get; set; }
         [JsonProperty(PropertyName = "FEC_ATENCION")]
         public string FEC_ATENCION { get; set; }
+        [JsonProperty(PropertyName = "FEC_CIERRE")]
+        public string FEC_CIERRE { get; set; }
         [JsonProperty(PropertyName = "LATITUD")]
         public decimal? LATITUD { get; set; }
         [JsonProperty(PropertyName = "LONGITUD")]

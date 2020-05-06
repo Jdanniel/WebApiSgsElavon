@@ -65,6 +65,7 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
+                "CONVERT(VARCHAR,FEC_CIERRE,103) AS FEC_CIERRE, " +
                 "NULL AS LATITUD, " +
                 "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
@@ -349,6 +350,7 @@ namespace WebApiSgsElavon.Services
                     "BD_NEGOCIOS.DIRECCION, " +
                     "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                     "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
+                    "CONVERT(VARCHAR,FEC_CIERRE,103) AS FEC_CIERRE, " +
                     "NULL AS LATITUD, " +
                     "NULL AS LONGITUD, " +
                     "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
@@ -2116,6 +2118,7 @@ namespace WebApiSgsElavon.Services
                 "BD_NEGOCIOS.DIRECCION, " +
                 "CONVERT(VARCHAR,FEC_GARANTIA,103) +' '+ CONVERT(VARCHAR,FEC_GARANTIA,108) AS FEC_GARANTIA, " +
                 "CONVERT(VARCHAR,FEC_ATENCION,103) +' '+ CONVERT(VARCHAR,FEC_ATENCION,108) AS FEC_ATENCION, " +
+                "CONVERT(VARCHAR,FEC_CIERRE,103) AS FEC_CIERRE, " +
                 "NULL AS LATITUD, " +
                 "NULL AS LONGITUD, " +
                 "CONVERT(INT,DAY(FEC_ATENCION)) AS [DAYS], " +
