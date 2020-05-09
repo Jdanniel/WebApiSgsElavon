@@ -498,7 +498,7 @@ namespace WebApiSgsElavon.Services
                         {
                             var bdunidadretiradaUniverso = _context.BdUniversoUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefault();
 
-                            if (bdunidadretiradaUniverso != null)
+                            if (bdunidadretiradaUniverso != null && request.NO_SERIE.ToUpper().Trim() != "ILEGIBLE")
                             {
                                 BdUnidades unidad = new BdUnidades()
                                 {
@@ -1561,7 +1561,7 @@ namespace WebApiSgsElavon.Services
                                 .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim())
                                 .FirstOrDefault();
 
-                            if (bdunidadretiradaUniverso != null)
+                            if (bdunidadretiradaUniverso != null && request.NO_SERIE_RETIRO.ToUpper().Trim() != "ILEGIBLE")
                             {
                                 BdUnidades unidad = new BdUnidades()
                                 {
