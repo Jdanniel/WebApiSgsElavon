@@ -898,8 +898,8 @@ namespace WebApiSgsElavon.ModelsTest
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //optionsBuilder.UseSqlServer("Server=192.168.100.56;Persist Security Info=True;connect timeout=400000;Database=ELAVON-TEST;User Id=sa;Password=b4ckl45h;");
-                optionsBuilder.UseSqlServer("Server=192.168.5.68;Persist Security Info=True;connect timeout=400000;Database=ELAVON_PRODUCTIVO;User Id=sa;Password=micr0f0rmas;");
+                optionsBuilder.UseSqlServer("Server=192.168.100.56;Persist Security Info=True;connect timeout=400000;Database=ELAVON-TEST;User Id=sa;Password=b4ckl45h;");
+                //optionsBuilder.UseSqlServer("Server=192.168.5.68;Persist Security Info=True;connect timeout=400000;Database=ELAVON_PRODUCTIVO;User Id=sa;Password=micr0f0rmas;");
             }
         }
 

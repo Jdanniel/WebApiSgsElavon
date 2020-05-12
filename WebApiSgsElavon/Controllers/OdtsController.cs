@@ -157,7 +157,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreRetiro")]
         public async Task<ActionResult<ODT>> CierreRetiro(CierresRetiroRequest request)
         {
-            var msg = _odtService.CierreRetiro(request);
+            var msg = await _odtService.CierreRetiro(request);
             if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);

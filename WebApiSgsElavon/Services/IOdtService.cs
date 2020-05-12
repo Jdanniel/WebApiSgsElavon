@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
@@ -26,7 +29,7 @@ namespace WebApiSgsElavon.Services
         string cierreInstalacionSim(CierreInstalacionSimRequest request);
         string CierreSustitucion(SustitucionesRequest request);
         string CierreSustitucionSim(SustitucionesSimRequest request);
-        string CierreRetiro(CierresRetiroRequest request);
+        Task<string> CierreRetiro(CierresRetiroRequest request);
         string CierreSinMovInventario(CierreSinMovInventarioRequest request);
         bool CierreRechazo(CierreRechazoRequest request);
         Task<ODT> GetOdtbyId(int idAr);
@@ -35,10 +38,12 @@ namespace WebApiSgsElavon.Services
     public class OdtServices : IOdtService
     {
         private readonly ELAVONTESTContext _context;
+        private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONTESTContext context)
+        public OdtServices(ELAVONTESTContext context, IHttpClientFactory client)
         {
             _context = context;
+            _client = client;
         }
 
         public totalODT totalODTS(int idusuario)
@@ -462,7 +467,7 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Cierre Retiro
-        public string CierreRetiro(CierresRetiroRequest request)
+        public async Task<string> CierreRetiro(CierresRetiroRequest request)
         {
             if(request != null)
             {
@@ -757,6 +762,12 @@ namespace WebApiSgsElavon.Services
                         _context.SaveChanges();
                         #endregion
                         transaction.Commit();
+                        //var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        //requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
+                        //    , Encoding.UTF8
+                        //    , "application/json");
+                        //var client = _client.CreateClient();
+                        //await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
