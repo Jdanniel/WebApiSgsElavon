@@ -920,6 +920,7 @@ namespace WebApiSgsElavon.Services
                         string notificado = request.NOTIFICADO ? "SI" : "NO";
                         string promociones = request.PROMOCIONES ? "SI" : "NO";
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+                        string getnet = request.GETNET == 1 ? "SI" : "NO";
 
                         bdar.NoInventario = request.VERSION;
                         bdar.Atiende = request.ATIENDE;
@@ -929,7 +930,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1117,6 +1118,7 @@ namespace WebApiSgsElavon.Services
                         string notificado = request.NOTIFICADO ? "SI" : "NO";
                         string promociones = request.PROMOCIONES ? "SI" : "NO";
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+                        string getnet = request.GETNET == 1 ? "SI" : "NO";
 
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
@@ -1126,7 +1128,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
                         //bdar.DigitoVerificador = request.DISCOVER.ToString();
-                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1219,6 +1221,7 @@ namespace WebApiSgsElavon.Services
                         string notificado = request.NOTIFICADO ? "SI" : "NO";
                         string promociones = request.PROMOCIONES ? "SI" : "NO";
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+                        string getnet = request.GETNET == 1 ? "SI" : "NO";
 
                         bdar.Atiende = request.ATIENDE;
                         bdar.IdSolucion = 9;
@@ -1229,7 +1232,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
@@ -1314,6 +1317,7 @@ namespace WebApiSgsElavon.Services
                         string notificado = request.NOTIFICADO ? "SI" : "NO";
                         string promociones = request.PROMOCIONES ? "SI" : "NO";
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
+                        string getnet = request.GETNET == 1 ? "SI" : "NO";
                         #endregion
                         #region Actualizacion de la informacion del servcio en BD_AR
                         bdar.NoInventario = request.VERSION;
@@ -1326,7 +1330,7 @@ namespace WebApiSgsElavon.Services
                         bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
                         bdar.NoEquipo = request.VERSION_RETIRO;
                         bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         bdar.Caja = request.CAJA.ToString();
                         bdar.DescripcionTrabajo = request.COMENTARIO;
                         bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
