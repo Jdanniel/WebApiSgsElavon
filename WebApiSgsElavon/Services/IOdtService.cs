@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 
 namespace WebApiSgsElavon.Services
@@ -37,10 +37,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONTESTContext context, IHttpClientFactory client)
+        public OdtServices(ELAVONContext context, IHttpClientFactory client)
         {
             _context = context;
             _client = client;
@@ -2069,7 +2069,7 @@ namespace WebApiSgsElavon.Services
         #region Datos Aplicacion
         public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
+            BdDatosCierresAplicacion cierre = new BdDatosCierresAplicacion()
             {
                 Datos = datos,
                 TipoCierre = tipoCierre,
@@ -2077,7 +2077,7 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierreAplicacion.Add(cierre);
+            _context.BdDatosCierresAplicacion.Add(cierre);
             _context.SaveChanges();
         }
         #endregion

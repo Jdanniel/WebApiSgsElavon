@@ -22,5 +22,7 @@ namespace WebApiSgsElavon.Model
         public DateTime? FecAlta { get; set; }
         [Column("ID_AR")]
         public int? IdAr { get; set; }
+        [Column("ID_STATUS_AR")]
+        public int IdStatusAr { get; set; }
     }
 }
