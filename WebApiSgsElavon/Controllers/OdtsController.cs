@@ -91,13 +91,14 @@ namespace WebApiSgsElavon.Controllers
             }
             else
             {
+                //Para la siguiente version se debera realizar cambios para enviar un mensaje que ya fue reasignado o que ya no esta en el estatus correcto
                 return BadRequest();
             }
         }
         [HttpPost("CierreSustitucion")]
         public async Task<ActionResult<ODT>> CierreSustitucion(SustitucionesRequest request)
         {
-            var msg = _odtService.CierreSustitucion(request);
+            var msg = await _odtService.CierreSustitucion(request);
 
             if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -112,7 +113,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreSustitucionSim")]
         public async Task<ActionResult<ODT>> CierreSustitucionSim(SustitucionesSimRequest request)
         {
-            var msg = _odtService.CierreSustitucionSim(request);
+            var msg = await _odtService.CierreSustitucionSim(request);
 
             if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -127,7 +128,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreInstalacion")]
         public async Task<ActionResult<ODT>> CierreInstalacion(CierreInstalacionRequest request)
         {
-            var msg = _odtService.cierreInstalacion(request);
+            var msg = await _odtService.cierreInstalacion(request);
 
             if (string.Equals(msg,"OK",StringComparison.InvariantCultureIgnoreCase))
             {
@@ -142,7 +143,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreInstalacionSim")]
         public async Task<ActionResult<ODT>> CierreInstalacionSim(CierreInstalacionSimRequest request)
         {
-            var msg = _odtService.cierreInstalacionSim(request);
+            var msg = await _odtService.cierreInstalacionSim(request);
 
             if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -171,7 +172,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreRechazo")]
         public async Task<ActionResult<ODT>> CierreRechazo(CierreRechazoRequest request)
         {
-            if (_odtService.CierreRechazo(request))
+            if (await _odtService.CierreRechazo(request))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
@@ -184,7 +185,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreSinMovInventario")]
         public async Task<ActionResult<ODT>> CierreSinMovInventario(CierreSinMovInventarioRequest request)
         {
-            var msg = _odtService.CierreSinMovInventario(request);
+            var msg = await _odtService.CierreSinMovInventario(request);
             if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);

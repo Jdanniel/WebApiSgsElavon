@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 
 namespace WebApiSgsElavon.Services
@@ -25,25 +25,23 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<ODT>> GetNuevasOdts(GetNuevasOdts request);
         int AceptarRechazarOdt(AceptarRechazarOdtRequest request);
         Task<IEnumerable<OdtEvent2>> prueba2();
-        string cierreInstalacion(CierreInstalacionRequest request);
-        string cierreInstalacionSim(CierreInstalacionSimRequest request);
-        string CierreSustitucion(SustitucionesRequest request);
-        string CierreSustitucionSim(SustitucionesSimRequest request);
+        Task<string> cierreInstalacion(CierreInstalacionRequest request);
+        Task<string> cierreInstalacionSim(CierreInstalacionSimRequest request);
+        Task<string> CierreSustitucion(SustitucionesRequest request);
+        Task<string> CierreSustitucionSim(SustitucionesSimRequest request);
         Task<string> CierreRetiro(CierresRetiroRequest request);
-        string CierreSinMovInventario(CierreSinMovInventarioRequest request);
-        bool CierreRechazo(CierreRechazoRequest request);
+        Task<string> CierreSinMovInventario(CierreSinMovInventarioRequest request);
+        Task<bool> CierreRechazo(CierreRechazoRequest request);
         Task<ODT> GetOdtbyId(int idAr);
     }
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONContext _context;
-        private readonly IHttpClientFactory _client;
+        private readonly ELAVONTESTContext _context;
 
-        public OdtServices(ELAVONContext context, IHttpClientFactory client)
+        public OdtServices(ELAVONTESTContext context)
         {
             _context = context;
-            _client = client;
         }
 
         public totalODT totalODTS(int idusuario)
@@ -391,11 +389,21 @@ namespace WebApiSgsElavon.Services
             }
         }
         #region Cierre por rechazo
-        public bool CierreRechazo(CierreRechazoRequest request)
+        public async Task<bool> CierreRechazo(CierreRechazoRequest request)
         {
             //Validacion de modelo
             if(request != null)
             {
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Rechazo");
+                    return false;
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Rechazo");
+                    return false;
+                }
                 try
                 {
                     //Guarda informacion enviada en tabla
@@ -422,7 +430,6 @@ namespace WebApiSgsElavon.Services
                     }
                     //Guardar Datos en bitacora del servicio
                     insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
-
                     return true;
                 }
                 catch (Exception ex)
@@ -444,6 +451,16 @@ namespace WebApiSgsElavon.Services
             try
             {
                 //var ii = _context.BdAr.Where(x => x.IdAr == request.ID_AR).Select(x => x.FolioTelecarga).FirstOrDefault();
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Aceptar/Rechazar");
+                    return 0;
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Aceptar/Rechazar");
+                    return 0;
+                }
                 var odt = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
                 var idstatusini = odt.IdStatusAr;
                 if (request.ID_STATUS_AR == 35)
@@ -473,6 +490,16 @@ namespace WebApiSgsElavon.Services
         {
             if(request != null)
             {
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Retiro");
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Retiro");
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -764,12 +791,13 @@ namespace WebApiSgsElavon.Services
                         _context.SaveChanges();
                         #endregion
                         transaction.Commit();
-                        //var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
-                        //requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
-                        //    , Encoding.UTF8
-                        //    , "application/json");
-                        //var client = _client.CreateClient();
-                        //await client.SendAsync(requestHttp);
+                        /*
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
+                            , Encoding.UTF8
+                            , "application/json");
+                        var client = _client.CreateClient();
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -786,16 +814,22 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Cierre Instalacion
-        public string cierreInstalacion(CierreInstalacionRequest request)
+        public async Task<string> cierreInstalacion(CierreInstalacionRequest request)
         {
             if (request != null)
             {
                 insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION");
 
                 #region Validacion Si la Odt se encuentra cerrada o rechazada
-                List<int> idstatusar = new List<int>() { 6, 7 };
-                var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
-                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
                 #endregion
 
                 using (var transaction = _context.Database.BeginTransaction())
@@ -1016,6 +1050,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
                         
                         transaction.Commit();
+                        /*
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
+                            , Encoding.UTF8
+                            , "application/json");
+                        var client = _client.CreateClient();
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1033,16 +1074,21 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Cierre Instalacion Sim
-        public string cierreInstalacionSim(CierreInstalacionSimRequest request)
+        public async Task<string> cierreInstalacionSim(CierreInstalacionSimRequest request)
         {
             if (request != null)
             {
                 insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION");
 
                 #region Validacion Si la Odt se encuentra cerrada o rechazada
-                List<int> idstatusar = new List<int>() { 6, 7 };
-                var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
-                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
                 #endregion
 
                 using (var transaction = _context.Database.BeginTransaction())
@@ -1181,6 +1227,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         transaction.Commit();
+                        /*
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = 10794, idUsuario = 300 })
+                            , Encoding.UTF8
+                            , "application/json");
+                        var client = _client.CreateClient();
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1198,17 +1251,23 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Cierre Sin Movimiento de Inventario
-        public string CierreSinMovInventario(CierreSinMovInventarioRequest request)
+        public async Task<string> CierreSinMovInventario(CierreSinMovInventarioRequest request)
         {
             if(request != null)
             {
                 insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SIN MOVIMIENTO");
-                
+
                 #region Validacion del servicio no se encuentre rechazada o cerrada
-                var ID_AR = request.ID_AR;
-                List<int> idstatusar = new List<int>() { 6, 7 };
-                var valArs = _context.BdAr.Where(x => x.IdAr == ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
-                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Sin Movimiento");
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sin Movimiento");
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
                 #endregion
 
                 using (var transaction = _context.Database.BeginTransaction())
@@ -1216,7 +1275,7 @@ namespace WebApiSgsElavon.Services
                     try
                     {
                         #region Actualizacion del servicio en BD_AR
-                        var bdar = _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefault();
+                        var bdar = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
                         
                         int? idstatusini = bdar.IdStatusAr;
 
@@ -1253,13 +1312,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso de registro en BD_BITACORA_AE
-                        insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sin Movimiento de Inventario Aplicación");
+                        insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sin Movimiento de Inventario Aplicación");
                         #endregion
 
                         #region Ingreso de registro en BD_AR_MI_COMERCIO
                         BdArMiComercio micomercio = new BdArMiComercio()
                         {
-                            IdAr = ID_AR,
+                            IdAr = request.ID_AR,
                             Notificado = request.NOTIFICADO ? 1 : 0,
                             Promociones = request.PROMOCIONES ? 1 : 0,
                             DescargarApp = request.DESCARGA_APP ? 1 : 0,
@@ -1272,6 +1331,14 @@ namespace WebApiSgsElavon.Services
                         #endregion
                         
                         transaction.Commit();
+                        /*
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
+                            , Encoding.UTF8
+                            , "application/json");
+                        var client = _client.CreateClient();
+                        await client.SendAsync(requestHttp);*/
+                        
                         return "OK";
                     }
                     catch(Exception ex)
@@ -1289,14 +1356,21 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Cierre Sustitucion
-        public string CierreSustitucion(SustitucionesRequest request)
+        public async Task<string> CierreSustitucion(SustitucionesRequest request)
         {
             if(request != null)
             {
                 #region Validacion del servicio no se encuentre rechazada o cerrada
-                List<int> idstatusar = new List<int>() { 6, 7 };
-                var valArs = _context.BdAr.Where(x => x.IdAr == request.ID_AR && idstatusar.Contains(x.IdStatusAr)).Count();
-                if (valArs > 0) return "La Odt ya esta Cerrada o Rechazada";
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Sustitucion");
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sustitucion");
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
                 #endregion
 
                 using (var transaction = _context.Database.BeginTransaction())
@@ -1776,6 +1850,13 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         transaction.Commit();
+                        /*
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
+                            , Encoding.UTF8
+                            , "application/json");
+                        var client = _client.CreateClient();
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1791,10 +1872,24 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Cierre Sustitucion de Sim
-        public string CierreSustitucionSim(SustitucionesSimRequest request)
+        public async Task<string> CierreSustitucionSim(SustitucionesSimRequest request)
         {
             if (request != null)
             {
+
+                #region Validacion del servicio no se encuentre rechazada o cerrada
+                if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
+                {
+                    insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Sustitucion Sim");
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sustitucion Sim");
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
+                #endregion
+
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -2001,6 +2096,13 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         transaction.Commit();
+                        /*
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://sgse.microformas.com.mx/SgsElavonSalesforceAPI/api/SalesForce/SendCierre");
+                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
+                            , Encoding.UTF8
+                            , "application/json");
+                        var client = _client.CreateClient();
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -2069,7 +2171,7 @@ namespace WebApiSgsElavon.Services
         #region Datos Aplicacion
         public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            BdDatosCierresAplicacion cierre = new BdDatosCierresAplicacion()
+            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
             {
                 Datos = datos,
                 TipoCierre = tipoCierre,
@@ -2077,7 +2179,7 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierresAplicacion.Add(cierre);
+            _context.BdDatosCierreAplicacion.Add(cierre);
             _context.SaveChanges();
         }
         #endregion
@@ -2160,6 +2262,17 @@ namespace WebApiSgsElavon.Services
                 "AND BD_AR.STATUS='PROCESADO' ", parametros)
                 .FirstOrDefault();
             return newodt;
+        }
+        public bool validaAsignacion(int idar, int idtecnico)
+        {
+            var ar = _context.BdAr.Where(x => x.IdAr == idar && x.IdTecnico == idtecnico).Count();
+            return ar > 0 ? true : false;
+        }
+        public bool validaStatusAr(int idar)
+        {
+            List<int> idstatusar = new List<int>() { 6, 7, 8 };
+            var valArs = _context.BdAr.Where(x => x.IdAr == idar && idstatusar.Contains(x.IdStatusAr)).Count();
+            return valArs > 0 ? false : false;
         }
     }
 }

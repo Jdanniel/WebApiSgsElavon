@@ -43,7 +43,12 @@ namespace WebApiSgsElavon
             services.AddDbContext<ELAVONContext>(options =>
                  options.UseSqlServer(Configuration.GetConnectionString("PROD"))
             );
-            services.AddHttpClient();
+            /*
+            services.AddHttpClient<IOdtService, OdtServices>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["BaseUrl"]);
+            })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));*/
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
