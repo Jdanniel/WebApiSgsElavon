@@ -89,10 +89,18 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if(i == 2)
             {
                 //Para la siguiente version se debera realizar cambios para enviar un mensaje que ya fue reasignado o que ya no esta en el estatus correcto
                 return BadRequest();
+            }
+            else if(i == 3)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpPost("CierreSustitucion")]
@@ -105,10 +113,11 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest(msg);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpPost("CierreSustitucionSim")]
         public async Task<ActionResult<ODT>> CierreSustitucionSim(SustitucionesSimRequest request)
@@ -120,10 +129,11 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if(string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest(msg);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpPost("CierreInstalacion")]
         public async Task<ActionResult<ODT>> CierreInstalacion(CierreInstalacionRequest request)
@@ -135,10 +145,11 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest(msg);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpPost("CierreInstalacionSim")]
         public async Task<ActionResult<ODT>> CierreInstalacionSim(CierreInstalacionSimRequest request)
@@ -150,10 +161,11 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest(msg);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpPost("CierreRetiro")]
         public async Task<ActionResult<ODT>> CierreRetiro(CierresRetiroRequest request)
@@ -164,10 +176,11 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest(msg);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpPost("CierreRechazo")]
         public async Task<ActionResult<ODT>> CierreRechazo(CierreRechazoRequest request)
@@ -191,10 +204,11 @@ namespace WebApiSgsElavon.Controllers
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest(msg);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpGet("GetByIdar/{idAr}")]
         public async Task<ActionResult<ODT>> GetByIdar(int idAr)

@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 
 namespace WebApiSgsElavon.Services
@@ -37,9 +37,9 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
 
-        public OdtServices(ELAVONTESTContext context)
+        public OdtServices(ELAVONContext context)
         {
             _context = context;
         }
@@ -100,6 +100,17 @@ namespace WebApiSgsElavon.Services
         {
             try
             {
+                if (!validaAsignacion(model.ID_AR, model.ID_USUARIO))
+                {
+                    insertDataTable("El servicio fue reasignado", model.ID_USUARIO, model.ID_AR, "Retiro");
+                    return 3;
+                }
+                if (validaStatusAr(model.ID_AR))
+                {
+                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", model.ID_USUARIO, model.ID_AR, "Retiro");
+                    return 4;
+                }
+
                 var ar = await _context.BdAr.Where(x => x.IdAr == model.ID_AR && x.IdStatusAr != model.ID_STATUS_AR_P).FirstOrDefaultAsync();
                 
                 if (ar == null) return 2;
@@ -454,12 +465,12 @@ namespace WebApiSgsElavon.Services
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
                     insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Aceptar/Rechazar");
-                    return 0;
+                    return 2;
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
                     insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Aceptar/Rechazar");
-                    return 0;
+                    return 3;
                 }
                 var odt = _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefault();
                 var idstatusini = odt.IdStatusAr;
@@ -480,7 +491,7 @@ namespace WebApiSgsElavon.Services
             }
             catch (SqlException ex)
             {
-                return 0;
+                return 4;
             }
 
         }
@@ -2171,7 +2182,7 @@ namespace WebApiSgsElavon.Services
         #region Datos Aplicacion
         public void insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
+            BdDatosCierresAplicacion cierre = new BdDatosCierresAplicacion()
             {
                 Datos = datos,
                 TipoCierre = tipoCierre,
@@ -2179,7 +2190,7 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierreAplicacion.Add(cierre);
+            _context.BdDatosCierresAplicacion.Add(cierre);
             _context.SaveChanges();
         }
         #endregion
