@@ -2283,7 +2283,7 @@ namespace WebApiSgsElavon.Services
         {
             List<int> idstatusar = new List<int>() { 6, 7, 8 };
             var valArs = _context.BdAr.Where(x => x.IdAr == idar && idstatusar.Contains(x.IdStatusAr)).Count();
-            return valArs > 0 ? false : false;
+            return valArs > 0 ? true : false;
         }
     }
 }
