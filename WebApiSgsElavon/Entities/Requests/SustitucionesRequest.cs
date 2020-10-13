@@ -131,8 +131,15 @@ namespace WebApiSgsElavon.Entities.Requests
 
         [JsonProperty("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
+
         [JsonProperty("DESC_CAUSA")]
         public string DESC_CAUSA { get; set; }
+
+        [JsonProperty("IS_RETIRO_SIM")]
+        public bool IS_RETIRO_SIM { get; set; }
+
+        [JsonProperty("IS_INSTALACION_SIM")]
+        public bool IS_INSTALACION_SIM { get; set; }
     }
 
     public partial class SustitucionesRequest

@@ -83,7 +83,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPut("AceptarRechazarOdt")]
         public async Task<ActionResult<ODT>> AceptarRechazarOdt(AceptarRechazarOdtRequest request)
         {
-            var i =_odtService.AceptarRechazarOdt(request);
+            var i = await _odtService.AceptarRechazarOdt(request);
             if(i == 1)
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);

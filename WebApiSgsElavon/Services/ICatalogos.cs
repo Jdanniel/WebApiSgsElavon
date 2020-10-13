@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -31,9 +31,9 @@ namespace WebApiSgsElavon.Services
 
     public class CatalogosServices : ICatalogosServices
     {
-        private readonly ELAVONContext context;
+        private readonly ELAVONTESTContext context;
 
-        public CatalogosServices(ELAVONContext _context)
+        public CatalogosServices(ELAVONTESTContext _context)
         {
             context = _context;
         }
@@ -207,10 +207,10 @@ namespace WebApiSgsElavon.Services
 
         public async Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario)
         {
-            List<int> idstatusar = new List<int> { 6, 7, 8 };
+            //List<int> idstatusar = new List<int> { 6, 7, 8 };
             var PROVEEDOR = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
-            var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
-            List<Unidades> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor).Select(x => new Unidades 
+            //var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
+            List<Unidades> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null).Select(x => new Unidades 
             {
                 ID_UNIDAD = x.IdUnidad,
                 ID_MODELO = x.IdModelo,
@@ -219,7 +219,7 @@ namespace WebApiSgsElavon.Services
                 ID_APLICATIVO = x.IdAplicativo,
                 ID_STATUS_UNIDAD = x.IdStatusUnidad,
                 IS_NUEVA = x.IsNueva,
-                NO_SERIE = x.NoSerie,
+                NO_SERIE = x.NoSerie.Trim(),
                 DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
                 ID_TIPO_RESPONSABLE = x.IdTipoResponsable,
                 ID_RESPONSABLE = x.IdResponsable
