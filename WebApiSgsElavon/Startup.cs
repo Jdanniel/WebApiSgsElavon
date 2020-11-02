@@ -71,6 +71,7 @@ namespace WebApiSgsElavon
                     ValidateAudience = false
                 };
             });
+            services.AddHttpClient();
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IOdtService, OdtServices>();
             services.AddScoped<ICatalogosServices, CatalogosServices>();
