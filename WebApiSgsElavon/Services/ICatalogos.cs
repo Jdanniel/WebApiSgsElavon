@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -31,9 +31,9 @@ namespace WebApiSgsElavon.Services
 
     public class CatalogosServices : ICatalogosServices
     {
-        private readonly ELAVONTESTContext context;
+        private readonly ELAVONContext context;
 
-        public CatalogosServices(ELAVONTESTContext _context)
+        public CatalogosServices(ELAVONContext _context)
         {
             context = _context;
         }

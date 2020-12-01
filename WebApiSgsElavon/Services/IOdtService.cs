@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -37,10 +37,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -684,9 +684,11 @@ namespace WebApiSgsElavon.Services
                                 if (simretiro == null)
                                 {
                                     var simretirouniverso = await _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM).FirstOrDefaultAsync();
-                                    var idmodelossim = await GetCarrier(simretirouniverso.Sim.Trim());
+                                    
                                     if (simretirouniverso != null)
                                     {
+                                        var idmodelossim = await GetCarrier(simretirouniverso.Sim.Trim());
+
                                         BdUnidades sim = new BdUnidades()
                                         {
                                             IdCliente = 4,
@@ -814,14 +816,14 @@ namespace WebApiSgsElavon.Services
                         #endregion
                         transaction.Commit();
 
-
+                        /*
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
                         await client.SendAsync(requestHttp);
-
+                        */
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1085,13 +1087,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         transaction.Commit();
-                        
+                        /*
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1265,13 +1267,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         transaction.Commit();
-                        
+                        /*
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = 10794, idUsuario = 300 })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1368,13 +1370,13 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        transaction.Commit();
+                        transaction.Commit();/*
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
+                        await client.SendAsync(requestHttp);*/
 
                         return "OK";
                     }
@@ -1993,13 +1995,13 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         transaction.Commit();
-                        
+                        /*
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -2247,13 +2249,13 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         transaction.Commit();
-                        
+                        /*
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
+                        await client.SendAsync(requestHttp);*/
                         return "OK";
                     }
                     catch (Exception ex)
@@ -2323,7 +2325,7 @@ namespace WebApiSgsElavon.Services
         #region Datos Aplicacion
         public async Task insertDataTable(string datos, int idusuario, int idar, string tipoCierre)
         {
-            BdDatosCierreAplicacion cierre = new BdDatosCierreAplicacion()
+            BdDatosCierresAplicacion cierre = new BdDatosCierresAplicacion()
             {
                 Datos = datos,
                 TipoCierre = tipoCierre,
@@ -2331,7 +2333,7 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierreAplicacion.Add(cierre);
+            _context.BdDatosCierresAplicacion.Add(cierre);
             await _context.SaveChangesAsync();
         }
         #endregion

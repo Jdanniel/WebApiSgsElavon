@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.ModelsTest
 {
-    public class BdDatosCierreAplicacion
+    public class BdDatosCierresAplicacion
     {
         public int IdDatoCierreAplicacion { get; set; }
         public string Datos { get; set; }

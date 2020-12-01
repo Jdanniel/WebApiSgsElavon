@@ -193,7 +193,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<BdCursosAsignados> BdCursosAsignados { get; set; }
         public virtual DbSet<BdDbBackup> BdDbBackup { get; set; }
         public virtual DbSet<BdDevoluciones> BdDevoluciones { get; set; }
-        public virtual DbSet<BdDatosCierreAplicacion> BdDatosCierreAplicacion { get; set; }
+        public virtual DbSet<BdDatosCierresAplicacion> BdDatosCierresAplicacion { get; set; }
         public virtual DbSet<BdDirecciones> BdDirecciones { get; set; }
         public virtual DbSet<BdDireccionesRelaciones> BdDireccionesRelaciones { get; set; }
         public virtual DbSet<BdDirectorioTelefonicoAr> BdDirectorioTelefonicoAr { get; set; }
@@ -10442,7 +10442,7 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasConstraintName("FK_BD_DEVOLUCIONES_BD_UNIDADES");
             });
 
-            modelBuilder.Entity<BdDatosCierreAplicacion>(entity =>
+            modelBuilder.Entity<BdDatosCierresAplicacion>(entity =>
             {
                 entity.HasKey(e => e.IdDatoCierreAplicacion);
                 entity.ToTable("BD_DATOS_CIERRES_APLICACION");
