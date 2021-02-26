@@ -36,7 +36,7 @@ namespace WebApiSgsElavon.ModelsTest
         public int? IdFalla { get; set; }
         public int? HorasGarantia { get; set; }
         public decimal? PrecioExito { get; set; }
-        public decimal? Precio { get; set; }
+        public string Precio { get; set; }
         public int IdNegocio { get; set; }
         public int? IdEstado { get; set; }
         public int? IdRegion { get; set; }
@@ -73,7 +73,7 @@ namespace WebApiSgsElavon.ModelsTest
         public string OtorganteVobo { get; set; }
         public string OtorganteVoboTerceros { get; set; }
         public string IntensidadSenial { get; set; }
-        public int? IsSimRemplazada { get; set; }
+        public string IsSimRemplazada { get; set; }
         public string FallaEncontrada { get; set; }
         public string OtorganteVoboCliente { get; set; }
         public string MotivoCobro { get; set; }
@@ -129,7 +129,7 @@ namespace WebApiSgsElavon.ModelsTest
         public string FolioValidacion { get; set; }
         public string FolioTir { get; set; }
         public int? IdEspecificaCausaRechazo { get; set; }
-        public int? Duracion { get; set; }
+        public string Duracion { get; set; }
         public int? Traslado { get; set; }
         public int? IdStatusValidacionPrefacturacion { get; set; }
         public int? IdDescripcionTrabajo { get; set; }

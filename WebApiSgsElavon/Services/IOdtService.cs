@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -37,10 +37,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONContext _context;
+        private readonly ELAVONTESTContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -419,6 +419,11 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Rechazo");
                     return false;
                 }
+                if (!validaFecCierre(request.FEC_CIERRE))
+                {
+                    await insertDataTable("La fecha de cierre no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Rechazo");
+                    return false;
+                }
                 try
                 {
                     //Guarda informacion enviada en tabla
@@ -514,6 +519,11 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Retiro");
                     return "La Odt ya esta Cerrada o Rechazada";
+                }
+                if (!validaFecCierre(request.FECHA_CIERRE))
+                {
+                    await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Retiro");
+                    return "La FECHA DE CIERRE no puede ser mayor a la fecha actual.";
                 }
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
@@ -684,7 +694,7 @@ namespace WebApiSgsElavon.Services
                                 if (simretiro == null)
                                 {
                                     var simretirouniverso = await _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM).FirstOrDefaultAsync();
-                                    
+
                                     if (simretirouniverso != null)
                                     {
                                         var idmodelossim = await GetCarrier(simretirouniverso.Sim.Trim());
@@ -816,14 +826,14 @@ namespace WebApiSgsElavon.Services
                         #endregion
                         transaction.Commit();
 
-                        /*
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
+
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
                         await client.SendAsync(requestHttp);
-                        */
+
                         return "OK";
                     }
                     catch (Exception ex)
@@ -850,12 +860,19 @@ namespace WebApiSgsElavon.Services
 
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
+                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Instalacion");
                     return "El servicio fue reasignado a otro tecnico";
                 }
-                /*if (validaStatusAr(request.ID_AR))
+                if (validaStatusAr(request.ID_AR))
                 {
+                    await insertDataTable("La Odt ya esta Cerrada o Rechazada", request.ID_TECNICO, request.ID_AR, "Instalacion");
                     return "La Odt ya esta Cerrada o Rechazada";
-                }*/
+                }
+                if (!validaFecCierre(request.FECHA_CIERRE))
+                {
+                    await insertDataTable("La fecha de cierre no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Instalacion");
+                    return "La FECHA DE CIERRE no puede ser mayor a la fecha actual.";
+                }
                 #endregion
 
                 using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -1087,13 +1104,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         transaction.Commit();
-                        /*
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
+
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);*/
+                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1125,6 +1142,10 @@ namespace WebApiSgsElavon.Services
                 if (validaStatusAr(request.ID_AR))
                 {
                     return "La Odt ya esta Cerrada o Rechazada";
+                }
+                if (!validaFecCierre(request.FECHA_CIERRE))
+                {
+                    return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
                 #endregion
 
@@ -1267,13 +1288,13 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         transaction.Commit();
-                        /*
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
+
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = 10794, idUsuario = 300 })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);*/
+                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1307,6 +1328,10 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sin Movimiento");
                     return "La Odt ya esta Cerrada o Rechazada";
+                }
+                if (!validaFecCierre(request.FECHA_CIERRE))
+                {
+                    return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
                 #endregion
 
@@ -1370,13 +1395,13 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        transaction.Commit();/*
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
+                        transaction.Commit();
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);*/
+                        await client.SendAsync(requestHttp);
 
                         return "OK";
                     }
@@ -1409,6 +1434,10 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sustitucion");
                     return "La Odt ya esta Cerrada o Rechazada";
+                }
+                if (!validaFecCierre(request.FECHA_CIERRE))
+                {
+                    return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
                 #endregion
 
@@ -1876,7 +1905,7 @@ namespace WebApiSgsElavon.Services
                                 {
                                     int idSim;
                                     var simretiro = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM_RETIRO && x.IdMarca == 10).FirstOrDefaultAsync();
-                                    
+
                                     if (simretiro == null)
                                     {
                                         var simretirouniverso = await _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM_RETIRO).FirstOrDefaultAsync();
@@ -1995,13 +2024,13 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         transaction.Commit();
-                        /*
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
+
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);*/
+                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
@@ -2034,6 +2063,10 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sustitucion Sim");
                     return "La Odt ya esta Cerrada o Rechazada";
+                }
+                if (!validaFecCierre(request.FECHA_CIERRE))
+                {
+                    return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
                 #endregion
 
@@ -2249,13 +2282,13 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         transaction.Commit();
-                        /*
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/WEPAPISALESFORCE/api/SalesForce/SendCierre");
+
+                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
                             , "application/json");
                         var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);*/
+                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
@@ -2428,14 +2461,25 @@ namespace WebApiSgsElavon.Services
             var valArs = _context.BdAr.Where(x => x.IdAr == idar && idstatusar.Contains(x.IdStatusAr)).Count();
             return valArs > 0 ? true : false;
         }
+        public bool validaFecCierre(string fechcierre)
+        {
+            DateTime fechaactual = DateTime.UtcNow.AddSeconds(30);
+            DateTime feccierre1 = DateTime.ParseExact(fechcierre, "dd/MM/yyyy HH:mm:ss", null); ;
+            DateTime feccierreutc = feccierre1.ToUniversalTime();
+            if (feccierreutc > fechaactual)
+            {
+                return false;
+            }
+            return true;
+        }
         public async Task<int> GetCarrier(string sim)
         {
             string simsix = sim?.Substring(0, 6);
             CCarrier carrier = await _context.CCarrier.FirstOrDefaultAsync(x => x.DigitoVerificador == Convert.ToInt32(simsix));
-            if(carrier != null)
+            if (carrier != null)
             {
                 CModelos modelo = await _context.CModelos.FirstOrDefaultAsync(x => x.IdMarca == 10 && x.DescModelo.Equals(carrier.DescCarrier));
-                if(modelo != null)
+                if (modelo != null)
                 {
                     return modelo.IdModelo;
                 }

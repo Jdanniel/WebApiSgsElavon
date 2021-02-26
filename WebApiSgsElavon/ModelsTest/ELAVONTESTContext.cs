@@ -1337,7 +1337,10 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Duracion).HasColumnName("DURACION");
+                entity.Property(e => e.Duracion)
+                    .HasColumnName("DURACION")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Equipo)
                     .HasColumnName("EQUIPO")
@@ -1607,7 +1610,10 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.Property(e => e.IsRetiro).HasColumnName("IS_RETIRO");
 
-                entity.Property(e => e.IsSimRemplazada).HasColumnName("IS_SIM_REMPLAZADA");
+                entity.Property(e => e.IsSimRemplazada)
+                    .HasColumnName("IS_SIM_REMPLAZADA")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.IsSoporteCliente).HasColumnName("IS_SOPORTE_CLIENTE");
 
@@ -1721,7 +1727,8 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.Property(e => e.Precio)
                     .HasColumnName("PRECIO")
-                    .HasColumnType("numeric(18, 2)");
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.PrecioExito)
                     .HasColumnName("PRECIO_EXITO")

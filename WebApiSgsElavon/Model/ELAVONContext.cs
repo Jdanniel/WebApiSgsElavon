@@ -1142,6 +1142,8 @@ namespace WebApiSgsElavon.Model
 
                 entity.Property(e => e.DueBy).IsUnicode(false);
 
+                entity.Property(e => e.Duracion).IsUnicode(false);
+
                 entity.Property(e => e.Equipo).IsUnicode(false);
 
                 entity.Property(e => e.Estado).IsUnicode(false);

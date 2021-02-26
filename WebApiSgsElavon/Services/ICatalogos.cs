@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -31,9 +31,9 @@ namespace WebApiSgsElavon.Services
 
     public class CatalogosServices : ICatalogosServices
     {
-        private readonly ELAVONContext context;
+        private readonly ELAVONTESTContext context;
 
-        public CatalogosServices(ELAVONContext _context)
+        public CatalogosServices(ELAVONTESTContext _context)
         {
             context = _context;
         }
@@ -167,7 +167,7 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<Unidades>> GetUnidades(int idusuario)
         {
             List<int> status = new List<int>();
-            //status.Add(13);
+            status.Add(46);
             status.Add(15);
             var usuario = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
             List<Unidades> unidades = await context

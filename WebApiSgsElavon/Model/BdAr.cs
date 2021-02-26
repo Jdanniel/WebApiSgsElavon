@@ -89,8 +89,9 @@ namespace WebApiSgsElavon.Model
         public int? HorasGarantia { get; set; }
         [Column("PRECIO_EXITO", TypeName = "numeric(18, 2)")]
         public decimal? PrecioExito { get; set; }
-        [Column("PRECIO", TypeName = "numeric(18, 2)")]
-        public decimal? Precio { get; set; }
+        [Column("PRECIO")]
+        [StringLength(50)]
+        public string Precio { get; set; }
         [Column("ID_NEGOCIO")]
         public int IdNegocio { get; set; }
         [Column("ID_ESTADO")]
@@ -171,7 +172,8 @@ namespace WebApiSgsElavon.Model
         [StringLength(50)]
         public string IntensidadSenial { get; set; }
         [Column("IS_SIM_REMPLAZADA")]
-        public int? IsSimRemplazada { get; set; }
+        [StringLength(255)]
+        public string IsSimRemplazada { get; set; }
         [Column("FALLA_ENCONTRADA")]
         [StringLength(255)]
         public string FallaEncontrada { get; set; }
@@ -306,7 +308,8 @@ namespace WebApiSgsElavon.Model
         [Column("ID_ESPECIFICA_CAUSA_RECHAZO")]
         public int? IdEspecificaCausaRechazo { get; set; }
         [Column("DURACION")]
-        public int? Duracion { get; set; }
+        [StringLength(255)]
+        public string Duracion { get; set; }
         [Column("TRASLADO")]
         public int? Traslado { get; set; }
         [Column("ID_STATUS_VALIDACION_PREFACTURACION")]
