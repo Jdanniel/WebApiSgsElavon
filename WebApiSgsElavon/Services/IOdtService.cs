@@ -873,6 +873,10 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable("La fecha de cierre no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Instalacion");
                     return "La FECHA DE CIERRE no puede ser mayor a la fecha actual.";
                 }
+                if (!await ValidateInstalledSeries(request.NO_SERIE))
+                {
+                    return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
+                }
                 #endregion
 
                 using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -1438,6 +1442,10 @@ namespace WebApiSgsElavon.Services
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
+                }
+                if (!await ValidateInstalledSeries(request.NO_SERIE))
+                {
+                    return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
                 }
                 #endregion
 
@@ -2493,6 +2501,15 @@ namespace WebApiSgsElavon.Services
                 return 0;
             }
 
+        }
+        public async Task<bool> ValidateInstalledSeries(string serie)
+        {
+            BdUnidades unidad = await _context.BdUnidades.FirstOrDefaultAsync(x => x.NoSerie == serie.Trim());
+            if(unidad.IdStatusUnidad == 17)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
