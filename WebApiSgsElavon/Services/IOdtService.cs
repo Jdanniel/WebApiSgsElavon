@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -37,10 +37,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;

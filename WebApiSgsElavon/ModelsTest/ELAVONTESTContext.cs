@@ -1443,7 +1443,10 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
-                entity.Property(e => e.FolioTelecarga).HasColumnName("FOLIO_TELECARGA");
+                entity.Property(e => e.FolioTelecarga)
+                    .HasColumnName("FOLIO_TELECARGA")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.FolioTir)
                     .HasColumnName("FOLIO_TIR")
