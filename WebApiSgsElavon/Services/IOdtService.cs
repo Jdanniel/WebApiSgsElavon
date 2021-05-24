@@ -9,8 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -37,10 +37,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONContext _context;
+        private readonly ELAVONTESTContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -510,28 +510,26 @@ namespace WebApiSgsElavon.Services
         {
             if (request != null)
             {
+                await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE RETIRO(1)");
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
-                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Retiro");
+                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                     return "El servicio fue reasignado a otro tecnico";
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
-                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Retiro");
+                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                     return "La Odt ya esta Cerrada o Rechazada";
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
-                    await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Retiro");
+                    await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                     return "La FECHA DE CIERRE no puede ser mayor a la fecha actual.";
                 }
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
                     try
                     {
-
-                        await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE RETIRO");
-
                         #region Obtener datos del servicio y la unidad a retirar
                         var bdar = await _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
 
@@ -823,6 +821,7 @@ namespace WebApiSgsElavon.Services
 
                         _context.BdArAccesorios.Add(accesoriosRetirados);
                         await _context.SaveChangesAsync();
+                        await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - RETIRO");
                         #endregion
                         transaction.Commit();
 
@@ -836,9 +835,10 @@ namespace WebApiSgsElavon.Services
 
                         return "OK";
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         transaction.Rollback();
+                        await insertDataTable(ex.ToString(), request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                         return "db";
                     }
                 }
@@ -854,23 +854,23 @@ namespace WebApiSgsElavon.Services
         {
             if (request != null)
             {
-                await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION");
+                await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE INSTALACION (1)");
 
                 #region Validacion Si la Odt se encuentra cerrada o rechazada
 
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
-                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Instalacion");
+                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "ERROR- Instalacion");
                     return "El servicio fue reasignado a otro tecnico";
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
-                    await insertDataTable("La Odt ya esta Cerrada o Rechazada", request.ID_TECNICO, request.ID_AR, "Instalacion");
+                    await insertDataTable("La Odt ya esta Cerrada o Rechazada", request.ID_TECNICO, request.ID_AR, "ERROR -Instalacion");
                     return "La Odt ya esta Cerrada o Rechazada";
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
-                    await insertDataTable("La fecha de cierre no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Instalacion");
+                    await insertDataTable("La fecha de cierre no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "ERROR - Instalacion");
                     return "La FECHA DE CIERRE no puede ser mayor a la fecha actual.";
                 }
                 if (!await ValidateInstalledSeries(request.NO_SERIE))
@@ -1106,7 +1106,7 @@ namespace WebApiSgsElavon.Services
                             await _context.SaveChangesAsync();
                         }
                         #endregion
-
+                        await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "INSTALACION CORRECTA");
                         transaction.Commit();
 
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
@@ -1117,9 +1117,10 @@ namespace WebApiSgsElavon.Services
                         await client.SendAsync(requestHttp);
                         return "OK";
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         transaction.Rollback();
+                        await insertDataTable(ex.ToString(), request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
                         return "DB: " + ex.ToString();
                     }
                 }
@@ -1325,12 +1326,12 @@ namespace WebApiSgsElavon.Services
                 #region Validacion del servicio no se encuentre rechazada o cerrada
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
-                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Sin Movimiento");
+                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "ERROR - SIN MOVIMIENTO");
                     return "El servicio fue reasignado a otro tecnico";
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
-                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sin Movimiento");
+                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "ERROR - SIN MOVIMIENTO");
                     return "La Odt ya esta Cerrada o Rechazada";
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
@@ -1399,7 +1400,10 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
+                        await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SIN MOVIMIENTO");
+
                         transaction.Commit();
+
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
                         requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
                             , Encoding.UTF8
@@ -1409,9 +1413,10 @@ namespace WebApiSgsElavon.Services
 
                         return "OK";
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         transaction.Rollback();
+                        await insertDataTable(ex.ToString(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SIN MOVIMIENTO");
                         return "DB: " + ex.ToString();
                     }
                 }
@@ -1428,24 +1433,33 @@ namespace WebApiSgsElavon.Services
         {
             if (request != null)
             {
+                await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCIONES(1)");
+
                 #region Validacion del servicio no se encuentre rechazada o cerrada
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
-                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Sustitucion");
+                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return "El servicio fue reasignado a otro tecnico";
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
-                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sustitucion");
+                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return "La Odt ya esta Cerrada o Rechazada";
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
+                    await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la actual", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
                 if (!await ValidateInstalledSeries(request.NO_SERIE))
                 {
+                    await insertDataTable($"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
+                }
+                if(!await ValidateSimRetiro(request.NO_SIM_RETIRO))
+                {
+                    await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                    return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
                 }
                 #endregion
 
@@ -1453,7 +1467,7 @@ namespace WebApiSgsElavon.Services
                 {
                     try
                     {
-                        await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCIONES");
+                        
                         #region Informacion del Servicio
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
@@ -2031,6 +2045,7 @@ namespace WebApiSgsElavon.Services
                             }*/
                         }
                         #endregion
+                        await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SUSTITUCIONES");
                         transaction.Commit();
 
                         var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
@@ -2041,9 +2056,10 @@ namespace WebApiSgsElavon.Services
                         await client.SendAsync(requestHttp);
                         return "OK";
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         transaction.Rollback();
+                        await insertDataTable(ex.ToString(), request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCIONES");
                         return "db";
                     }
                 }
@@ -2075,6 +2091,11 @@ namespace WebApiSgsElavon.Services
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
+                }
+                if (!await ValidateSimRetiro(request.NO_SIM_RETIRO))
+                {
+                    await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                    return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
                 }
                 #endregion
 
@@ -2508,6 +2529,18 @@ namespace WebApiSgsElavon.Services
             if(unidad.IdStatusUnidad == 17)
             {
                 return false;
+            }
+            return true;
+        }
+        public async Task<bool> ValidateSimRetiro(string serie)
+        {
+            var Noserie = await _context.BdUnidades.Where(x => x.IdMarca == 10 && x.NoSerie.Trim() == serie.Trim()).FirstOrDefaultAsync();
+            if(Noserie != null)
+            {
+                if(Noserie.IdStatusUnidad == 15)
+                {
+                    return false;
+                }
             }
             return true;
         }

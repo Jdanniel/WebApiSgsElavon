@@ -374,7 +374,7 @@ namespace WebApiSgsElavon.Model
         [Column("ID_CALIFICA_INTENTO_4")]
         public int? IdCalificaIntento4 { get; set; }
         [Column("FOLIO_TELECARGA")]
-        public long? FolioTelecarga { get; set; }
+        public string FolioTelecarga { get; set; }
         [Column("ID_TIPO_EQUIPO")]
         public int? IdTipoEquipo { get; set; }
         [Column("CORREO_EJECUTIVO")]
