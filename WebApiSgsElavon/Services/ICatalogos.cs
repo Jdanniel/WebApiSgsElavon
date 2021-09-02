@@ -27,6 +27,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<Causasrechazos>> GetCausasrechazos();
         Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad();
         Task<IEnumerable<ReglasModelos>> GetReglasModelos();
+        Task<IEnumerable<CausasCancelacion>> GetCausasCancelacion();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -43,7 +44,7 @@ namespace WebApiSgsElavon.Services
             List<CambioStatusAr> cambio = await context
                 .BdCambioStatusAr
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new CambioStatusAr { 
+                .Select(x => new CambioStatusAr {
                     ID_CAMBIO_STATUS_AR = x.IdCambioStatusAr,
                     ID_STATUS_AR_INI = x.IdStatusArIni,
                     ID_STATUS_AR_FIN = x.IdStatusArFin
@@ -57,7 +58,7 @@ namespace WebApiSgsElavon.Services
             List<Causas> causas = await context
                 .CCausas
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Causas { 
+                .Select(x => new Causas {
                     ID_CAUSA = x.IdCausa,
                     DESC_CAUSA = x.DescCausa,
                     DESCRIPCION = x.Descripcion
@@ -71,7 +72,7 @@ namespace WebApiSgsElavon.Services
             List<Conectividades> conectividades = await context
                 .CConectividad
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Conectividades { ID_CONECTIVIDAD = x.IdConectividad, DESC_CONECTIVIDAD = x.DescConectividad, IS_GPRS = x.IsGprs == null ? 0 : x.IsGprs})
+                .Select(x => new Conectividades { ID_CONECTIVIDAD = x.IdConectividad, DESC_CONECTIVIDAD = x.DescConectividad, IS_GPRS = x.IsGprs == null ? 0 : x.IsGprs })
                 .ToListAsync();
             return conectividades;
         }
@@ -89,7 +90,7 @@ namespace WebApiSgsElavon.Services
         {
             List<Marcas> marcas = await context
                 .CMarcas.Where(x => x.Status == "ACTIVO")
-                .Select(x => new Marcas { ID_MARCA = x.IdMarca, DESC_MARCA = x.DescMarca})
+                .Select(x => new Marcas { ID_MARCA = x.IdMarca, DESC_MARCA = x.DescMarca })
                 .ToListAsync();
             return marcas;
         }
@@ -109,7 +110,7 @@ namespace WebApiSgsElavon.Services
             List<MovimientoInventarioServicioFalla> movs = await context
                 .BdValMovimientosInvServicioFalla
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new MovimientoInventarioServicioFalla { ID_VAL_MOVIMIENTOS_INV_SERVICIO_FALLA = x.IdValMovimientosInvServicioFalla, ID_SERVICIO = x.IdServicio, ID_FALLA = x.IdFalla, ID_MOV_INVENTARIO = x.IdMovInventario, STATUS = x.Status})
+                .Select(x => new MovimientoInventarioServicioFalla { ID_VAL_MOVIMIENTOS_INV_SERVICIO_FALLA = x.IdValMovimientosInvServicioFalla, ID_SERVICIO = x.IdServicio, ID_FALLA = x.IdFalla, ID_MOV_INVENTARIO = x.IdMovInventario, STATUS = x.Status })
                 .ToListAsync();
             return movs;
         }
@@ -153,7 +154,7 @@ namespace WebApiSgsElavon.Services
                 .ToListAsync();
             return subs;
         }
-       
+
         public async Task<IEnumerable<Causasrechazos>> GetCausasrechazos()
         {
             List<Causasrechazos> causas = await context
@@ -173,12 +174,12 @@ namespace WebApiSgsElavon.Services
             List<Unidades> unidades = await context
                 .BdUnidades
                 .Where(x => status.Contains(x.IdStatusUnidad) && x.Status == "ACTIVO" && x.IdCliente == 4 && x.IdSim == usuario.IdProveedor)
-                .Select(x => new Unidades { 
-                    ID_UNIDAD = x.IdUnidad, 
-                    ID_APLICATIVO = x.IdAplicativo, 
-                    ID_CONECTIVIDAD = x.IdConectividad, 
-                    ID_MARCA = x.IdMarca, 
-                    ID_MODELO = x.IdModelo, 
+                .Select(x => new Unidades {
+                    ID_UNIDAD = x.IdUnidad,
+                    ID_APLICATIVO = x.IdAplicativo,
+                    ID_CONECTIVIDAD = x.IdConectividad,
+                    ID_MARCA = x.IdMarca,
+                    ID_MODELO = x.IdModelo,
                     NO_SERIE = x.NoSerie.Trim(),
                     ID_STATUS_UNIDAD = x.IdStatusUnidad,
                     IS_NUEVA = x.IsNueva,
@@ -210,7 +211,7 @@ namespace WebApiSgsElavon.Services
             //List<int> idstatusar = new List<int> { 6, 7, 8 };
             var PROVEEDOR = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
             //var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
-            List<Unidades> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null).Select(x => new Unidades 
+            List<Unidades> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null).Select(x => new Unidades
             {
                 ID_UNIDAD = x.IdUnidad,
                 ID_MODELO = x.IdModelo,
@@ -230,7 +231,7 @@ namespace WebApiSgsElavon.Services
         {
             List<ReglasModelos> reglas = await context.BdReglasModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new ReglasModelos { 
+                .Select(x => new ReglasModelos {
                     ID_REGLAS = x.IdReglas,
                     ID_MODELO = x.IdModelo,
                     LETRAS_MIN = x.LetrasMin,
@@ -241,6 +242,16 @@ namespace WebApiSgsElavon.Services
                     LONG_MAX = x.LongMax
                 }).ToListAsync();
             return reglas;
+        }
+        public async Task<IEnumerable<CausasCancelacion>> GetCausasCancelacion()
+        {
+            return await context.CCausaCancelacion.Where(x => x.Status == "ACTIVO")
+                .Select(x => new CausasCancelacion()
+                {
+                    DESC_CAUSA = x.DescCausaCancelacion,
+                    ID_CAUSA_CANCELACION = x.IdCausaCancelacion,
+                    ID_TIPO_CANCELADO = x.IdTipoCancelado.GetValueOrDefault()
+                }).ToListAsync();
         }
     }
 }

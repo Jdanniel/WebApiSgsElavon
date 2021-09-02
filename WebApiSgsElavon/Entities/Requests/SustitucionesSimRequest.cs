@@ -51,6 +51,8 @@ namespace WebApiSgsElavon.Entities.Requests
 
         [JsonProperty("COMENTARIO")]
         public string COMENTARIO { get; set; }
+        [JsonProperty("PEDIR_SIM")]
+        public bool PEDIR_SIM { get; set; }
 
         [JsonProperty("ID_AR")]
         public int ID_AR { get; set; }

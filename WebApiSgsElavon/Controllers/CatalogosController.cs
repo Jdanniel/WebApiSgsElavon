@@ -31,7 +31,7 @@ namespace WebApiSgsElavon.Controllers
             {
                 return BadRequest(ex.ToString());
             }
-            
+
         }
         [HttpGet("marcas")]
         public async Task<IEnumerable<Marcas>> getMarcas()
@@ -59,11 +59,10 @@ namespace WebApiSgsElavon.Controllers
             return await _Catalogosservices.GetUnidades(idusuario);
         }
         [HttpGet("unidadesNegocio/{idusuario}")]
-        public async Task<ActionResult<IEnumerable<Unidades>>> GetUnidadesNegocio(int idusuario)
+        public async Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario)
         {
-            var lista = await _Catalogosservices.GetUnidadesNegocio(idusuario);
-            if (lista.Any()) return Ok(lista);
-            return NotFound();
+            return await _Catalogosservices.GetUnidadesNegocio(idusuario);
+
         }
         [HttpGet("movinventariosf")]
         public async Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas()
@@ -84,7 +83,7 @@ namespace WebApiSgsElavon.Controllers
         public async Task<ActionResult<IEnumerable<CambioStatusAr>>> GetCambioStatusArs()
         {
             var lista = await _Catalogosservices.GetCambioStatusAr();
-            if(lista.Any()) return Ok(lista);
+            if (lista.Any()) return Ok(lista);
             return NotFound();
         }
         [HttpGet("statusar")]
@@ -119,6 +118,13 @@ namespace WebApiSgsElavon.Controllers
         public async Task<ActionResult<ReglasModelos>> GetReglasModelos()
         {
             var lista = await _Catalogosservices.GetReglasModelos();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
+        [HttpGet("causasCancelacion")]
+        public async Task<ActionResult<CausasCancelacion>> GetCausasCancelacion()
+        {
+            var lista = await _Catalogosservices.GetCausasCancelacion();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }

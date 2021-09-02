@@ -86,7 +86,7 @@ namespace WebApiSgsElavon.Services
                 "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
                 "AS DESC_STATUS_AR, " +
                 "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
-                " BD_AR.BITACORA, " +
+                " REPLACE(BD_AR.BITACORA, '''','') AS BITACORA, " +
                 " BD_AR.TELEFONO " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
@@ -385,7 +385,7 @@ namespace WebApiSgsElavon.Services
                     "WHERE SS.ID_STATUS_AR = BD_AR.ID_STATUS_AR) " +
                     "AS DESC_STATUS_AR, " +
                     "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
-                    "BD_AR.BITACORA, " +
+                    "REPLACE(BD_AR.BITACORA, '''','') AS BITACORA, " +
                     "BD_AR.TELEFONO " +
                     "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
@@ -1456,7 +1456,7 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable($"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
                 }
-                if(!await ValidateSimRetiro(request.NO_SIM_RETIRO))
+                if(request.NO_SIM_RETIRO != null && !await ValidateSimRetiro(request.NO_SIM_RETIRO))
                 {
                     await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
@@ -2092,7 +2092,7 @@ namespace WebApiSgsElavon.Services
                 {
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
-                if (!await ValidateSimRetiro(request.NO_SIM_RETIRO))
+                if (request.NO_SIM_RETIRO != null && !await ValidateSimRetiro(request.NO_SIM_RETIRO))
                 {
                     await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
@@ -2226,7 +2226,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso o actualizacion de informacion del sim en BD_UNIDADES y se agrega un registro a BD_RETIROS
-                        if (request.NO_SIM_RETIRO != null)
+                        if (request.NO_SIM_RETIRO != null && request.PEDIR_SIM)
                         {
                             int idSim;
                             int idstatusanteriorSim = 0;
