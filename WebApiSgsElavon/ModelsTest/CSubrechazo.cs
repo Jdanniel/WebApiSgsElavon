@@ -11,5 +11,6 @@ namespace WebApiSgsElavon.ModelsTest
         public int? UsuarioAlta { get; set; }
         public DateTime? FechaAlta { get; set; }
         public int Id { get; set; }
+        public int IsProgramado { get; set; }
     }
 }

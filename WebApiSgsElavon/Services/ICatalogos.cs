@@ -28,6 +28,7 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad();
         Task<IEnumerable<ReglasModelos>> GetReglasModelos();
         Task<IEnumerable<CausasCancelacion>> GetCausasCancelacion();
+        Task<IEnumerable<Soluciones>> GetSoluciones();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -150,7 +151,7 @@ namespace WebApiSgsElavon.Services
             List<Subrechazos> subs = await context
                 .CSubrechazo
                 .Where(x => x.Status == "ACTIVO")
-                .Select(X => new Subrechazos { ID_SUBRECHAZO = X.IdSubrechazo, SUBRECHAZO = X.Subrechazo, ID = X.Id })
+                .Select(X => new Subrechazos { ID_SUBRECHAZO = X.IdSubrechazo, SUBRECHAZO = X.Subrechazo, ID = X.Id, IS_PROGRAMADO = X.IsProgramado })
                 .ToListAsync();
             return subs;
         }
@@ -251,6 +252,16 @@ namespace WebApiSgsElavon.Services
                     DESC_CAUSA = x.DescCausaCancelacion,
                     ID_CAUSA_CANCELACION = x.IdCausaCancelacion,
                     ID_TIPO_CANCELADO = x.IdTipoCancelado.GetValueOrDefault()
+                }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Soluciones>> GetSoluciones()
+        {
+            return await context.CSoluciones.Where(x => x.Status == "ACTIVO")
+                .Select(x => new Soluciones()
+                {
+                   ID_CAUSA_CANCELACION = x.IdSolucion,
+                   DESC_CAUSA = x.DescSolucion
                 }).ToListAsync();
         }
     }

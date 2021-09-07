@@ -12,6 +12,8 @@ namespace WebApiSgsElavon.Entities.Requests
     {
         [JsonProperty("FEC_CIERRE")]
         public string FEC_CIERRE { get; set; }
+        [JsonProperty("FEC_PROGRAMADO")]
+        public string FEC_PROGRAMADO { get; set; }
 
         [JsonProperty("CAUSA_RECHAZO")]
         public string CAUSA_RECHAZO { get; set; }

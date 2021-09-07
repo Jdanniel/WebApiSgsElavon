@@ -128,5 +128,12 @@ namespace WebApiSgsElavon.Controllers
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
+        [HttpGet("soluciones")]
+        public async Task<ActionResult<CausasCancelacion>> GetSoluciones()
+        {
+            var lista = await _Catalogosservices.GetSoluciones();
+            if (lista.Any()) return Ok(lista);
+            return NotFound();
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
@@ -32,6 +33,7 @@ namespace WebApiSgsElavon.Services
         Task<string> CierreRetiro(CierresRetiroRequest request);
         Task<string> CierreSinMovInventario(CierreSinMovInventarioRequest request);
         Task<bool> CierreRechazo(CierreRechazoRequest request);
+        Task<string> Cancelacion(CancelacionRequest request);
         Task<ODT> GetOdtbyId(int idAr);
     }
 
@@ -403,6 +405,112 @@ namespace WebApiSgsElavon.Services
                 return null;
             }
         }
+        public async Task<string> Cancelacion(CancelacionRequest request)
+        {
+            if(request != null)
+            {
+                await insertDataTable(request.ToJson().ToString(), request.IdUsuario, request.IdAr, "CANCELACION SERVICIO APP");
+
+                if (!validaAsignacion(request.IdAr, request.IdUsuario))
+                {
+                    await insertDataTable("El servicio fue reasignado", request.IdUsuario, request.IdAr, "ERROR- CANCELACION");
+                    return "El servicio fue reasignado a otro tecnico";
+                }
+                if (validaStatusAr(request.IdAr))
+                {
+                    await insertDataTable("La Odt ya esta Cerrada o Rechazada", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "La Odt ya esta Cerrada o Rechazada";
+                }
+                if (String.IsNullOrEmpty(request.Comentario.Trim()))
+                {
+                    await insertDataTable("El campo comentario esta vacio", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "El campo comentario esta vacio";
+                }
+                if (String.IsNullOrEmpty(request.DescCausa.Trim()))
+                {
+                    await insertDataTable("El campo Causa esta vacio", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "El campo Causa esta vacio";
+                }
+                if (String.IsNullOrEmpty(request.Fecha.Trim()))
+                {
+                    await insertDataTable("El campo Fecha esta vacio", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "El campo Fecha esta vacio";
+                }
+                if (request.IdAr == null || request.IdAr == 0)
+                {
+                    await insertDataTable("El campo ID_AR esta vacio", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "El campo ID_AR esta vacio";
+                }
+                if (request.IdUsuario == null || request.IdUsuario == 0)
+                {
+                    await insertDataTable("El campo ID_USUARIO esta vacio", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "El campo ID_USUARIO esta vacio";
+                }
+
+                CCausaCancelacion causa = await _context.CCausaCancelacion.FirstOrDefaultAsync(x => Regex.Replace(x.DescCausaCancelacion.ToUpper(), @"\t|\n|\r", "") == Regex.Replace(request.DescCausa.ToUpper(), @"\t|\n|\r", "") && x.Status == "ACTIVO");
+                CUsuarios usuario = await _context.CUsuarios.FirstOrDefaultAsync(x => x.IdUsuario == request.IdUsuario && x.Status == "ACTIVO");
+                BdAr ar = await _context.BdAr.FirstOrDefaultAsync(x => x.IdAr == request.IdAr && x.Status == "PROCESADO");
+
+                if (causa == null)
+                {
+                    await insertDataTable($"La causa '{request.DescCausa}' no existe en la base de Getnet", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return $"La causa '{request.DescCausa}' no existe en la base de Getnet";
+                }
+
+                if (usuario == null)
+                {
+                    await insertDataTable($"El usuario no existe en la base de Getnet", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return "El usuario no existe en la base de Getnet";
+                }
+                if(ar == null)
+                {
+                    await insertDataTable($"La ODT no existe en la base de Getnet", request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return $"La ODT no existe en la base de Getnet";
+                }
+                
+                DateTime valFecha;
+                
+                if(!DateTime.TryParseExact(request.Fecha,"yyyy-MM-dd HH:mm:ss.fff", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None,
+                             out valFecha))
+                {
+                    await insertDataTable($"El fomato de la fecha es incorrecto " + request.Fecha, request.IdUsuario, request.IdAr, "ERROR -CANCELACION");
+                    return $"El fomato de la fecha es incorrecto " + request.Fecha;
+                }
+                BdBitacoraAr bitacora = new BdBitacoraAr()
+                {
+                    IdStatusArIni = ar.IdStatusAr,
+                    IdStatusArFin = 8,
+                    IdAr = ar.IdAr,
+                    FecAlta = DateTime.Now,
+                    IsPda = 0,
+                    Comentario = "Cancelacion Proveedor - APP",
+                    IdUsuarioAlta = usuario.IdUsuario,
+                };
+                await _context.BdBitacoraAr.AddAsync(bitacora);
+                await _context.SaveChangesAsync();
+
+                BdArCausasCancelacion bdArCausasCancelacion = new BdArCausasCancelacion()
+                {
+                    IdAr = ar.IdAr,
+                    IdCausaCancelacion = causa.IdTipoCancelado
+                };
+                await _context.BdArCausasCancelacion.AddAsync(bdArCausasCancelacion);
+                await _context.SaveChangesAsync();
+
+                ar.IdStatusAr = 8;
+                ar.IdTecnico = usuario.IdUsuario;
+                ar.DescripcionTrabajo = request.Comentario;
+                ar.FecCierre = valFecha;
+                _context.BdAr.Update(ar);
+                await _context.SaveChangesAsync();
+                return "OK";
+
+            }
+            else
+            {
+                return "El modelo no puede estar vacio";
+            }
+        }
         #region Cierre por rechazo
         public async Task<bool> CierreRechazo(CierreRechazoRequest request)
         {
@@ -430,26 +538,47 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "Rechazo");
                     //Variables
                     int idAr = request.ID_AR;
-                    var odt = await _context.BdAr.Where(x => x.IdAr == idAr).FirstOrDefaultAsync();
+                    
+                    CSubrechazo subrechazo = await _context.CSubrechazo.Where(x => x.Status == "ACTIVO" && EF.Functions.Like(x.Subrechazo, "%" + request.SUBRECHAZO + "%")).FirstOrDefaultAsync();
+                    BdAr odt = await _context.BdAr.Where(x => x.IdAr == idAr).FirstOrDefaultAsync();
+
                     int? idstatusini = odt.IdStatusAr;
 
                     //Actualizacion de Datos del servicio
                     odt.FecCierre = DateTime.ParseExact(request.FEC_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
                     odt.IdCausaRechazo = (await _context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && EF.Functions.Like(x.DescCausaRechazo, "%" + request.CAUSA_RECHAZO + "%")).Select(x => x.IdTrechazo).FirstOrDefaultAsync());
-                    //odt.IdCausaRechazo = (_context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && x.DescCausaRechazo.TrimEnd() == request.CAUSA_RECHAZO.TrimEnd()).Select(x => x.IdTrechazo).FirstOrDefaultAsync());
-                    odt.CausaRechazo = (await _context.CSubrechazo.Where(x => x.Status == "ACTIVO" && EF.Functions.Like(x.Subrechazo, "%" + request.SUBRECHAZO + "%")).Select(x => x.Id).FirstOrDefaultAsync()).ToString();
+                    odt.CausaRechazo = subrechazo.Id.ToString();
                     odt.IdSolucion = (await _context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion.Trim() == request.TIPO_ATENCION.Trim()).Select(x => x.IdSolucion).FirstOrDefaultAsync());
                     odt.IdTecnico = request.ID_TECNICO;
                     odt.Atiende = request.ATIENDE;
                     odt.DescripcionTrabajo = request.CONCLUSIONES;
-                    odt.IdStatusAr = 7;
+
+                    if(subrechazo.IsProgramado == 1)
+                    {
+                        odt.FecInicio = DateTime.ParseExact(request.FEC_PROGRAMADO, "dd/MM/yyyy HH:mm:ss", null);
+                        odt.FecAlta = DateTime.ParseExact(request.FEC_PROGRAMADO, "dd/MM/yyyy HH:mm:ss", null);
+                        odt.IdStatusAr = 31;
+                    }
+                    else
+                    {
+                        odt.IdStatusAr = 7;
+                    }
+                    _context.BdAr.Update(odt);
                     await _context.SaveChangesAsync();
                     if (odt.IdServicio == 22 && odt.IdFalla == 64)
                     {
                         await RegresarRollos(odt.IdAr);
                     }
-                    //Guardar Datos en bitacora del servicio
-                    await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
+                    if(subrechazo.IsProgramado == 1)
+                    {
+                        
+                        await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 31, "No aplica código de pago para Proveedor no hay visita");
+                    }
+                    else
+                    {
+                        await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
+                    }
+
                     return true;
                 }
                 catch (Exception ex)

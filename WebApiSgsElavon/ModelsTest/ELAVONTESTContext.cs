@@ -24251,6 +24251,8 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.IsProgramado).HasColumnName("IS_PROGRAMADO");
+
                 entity.Property(e => e.Status)
                     .HasColumnName("STATUS")
                     .IsUnicode(false);

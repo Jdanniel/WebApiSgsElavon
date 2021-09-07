@@ -14,5 +14,7 @@ namespace WebApiSgsElavon.Entities
         public string SUBRECHAZO { get; set; }
         [JsonProperty(PropertyName = "ID")]
         public int ID { get; set; }
+        [JsonProperty(PropertyName = "IS_PROGRAMADO")]
+        public int IS_PROGRAMADO { get; set; }
     }
 }

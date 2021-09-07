@@ -119,6 +119,22 @@ namespace WebApiSgsElavon.Controllers
             }
             return BadRequest(msg);
         }
+        [HttpPost("Cancelacion")]
+        public async Task<ActionResult<ODT>> Cancelacion(CancelacionRequest request)
+        {
+            var msg = await _odtService.Cancelacion(request);
+
+            if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
+            {
+                ODT newOdt = await _odtService.GetOdtbyId(request.IdAr);
+                return Ok(newOdt);
+            }
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return BadRequest(msg);
+        }
         [HttpPost("CierreSustitucionSim")]
         public async Task<ActionResult<ODT>> CierreSustitucionSim(SustitucionesSimRequest request)
         {
