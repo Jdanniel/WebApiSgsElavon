@@ -21,5 +21,7 @@ namespace WebApiSgsElavon.Model
         public DateTime? FechaAlta { get; set; }
         [Column("ID")]
         public int Id { get; set; }
+        [Column("IS_PROGRAMADO")]
+        public int? IsProgramado { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace WebApiSgsElavon.Services
         Task<string> CierreSustitucionSim(SustitucionesSimRequest request);
         Task<string> CierreRetiro(CierresRetiroRequest request);
         Task<string> CierreSinMovInventario(CierreSinMovInventarioRequest request);
-        Task<bool> CierreRechazo(CierreRechazoRequest request);
+        Task<string> CierreRechazo(CierreRechazoRequest request);
         Task<string> Cancelacion(CancelacionRequest request);
         Task<ODT> GetOdtbyId(int idAr);
     }
@@ -512,7 +512,7 @@ namespace WebApiSgsElavon.Services
             }
         }
         #region Cierre por rechazo
-        public async Task<bool> CierreRechazo(CierreRechazoRequest request)
+        public async Task<string> CierreRechazo(CierreRechazoRequest request)
         {
             //Validacion de modelo
             if (request != null)
@@ -520,77 +520,132 @@ namespace WebApiSgsElavon.Services
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
                     await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Rechazo");
-                    return false;
+                    return "El servicio fue reasignado";
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Rechazo");
-                    return false;
+                    return "El servicio se encuentra en estatus 6,7,8,31";
                 }
                 if (!validaFecCierre(request.FEC_CIERRE))
                 {
                     await insertDataTable("La fecha de cierre no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "Rechazo");
-                    return false;
+                    return "La fecha de cierre no puede ser mayor a la fecha actual.";
+                }
+                if (string.IsNullOrEmpty(request.CONCLUSIONES))
+                {
+                    await insertDataTable($"El campo CONCLUSIONES no puede estar vacio", request.ID_TECNICO, request.ID_AR, "Rechazo");
+                    return "El campo CONCLUSIONES no puede estar vacio";
+                }
+                else
+                {
+                    if (request.CONCLUSIONES.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo CONCLUSIONES debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "Rechazo");
+                        return "El campo CONCLUSIONES debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 try
                 {
-                    //Guarda informacion enviada en tabla
                     await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "Rechazo");
-                    //Variables
+
                     int idAr = request.ID_AR;
-                    
+
                     CSubrechazo subrechazo = await _context.CSubrechazo.Where(x => x.Status == "ACTIVO" && EF.Functions.Like(x.Subrechazo, "%" + request.SUBRECHAZO + "%")).FirstOrDefaultAsync();
+                    CCausasRechazo causaRechazo = await _context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && EF.Functions.Like(x.DescCausaRechazo, "%" + request.CAUSA_RECHAZO + "%")).FirstOrDefaultAsync();
                     BdAr odt = await _context.BdAr.Where(x => x.IdAr == idAr).FirstOrDefaultAsync();
+                    CSoluciones solucion = await _context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion.Trim() == request.TIPO_ATENCION.Trim()).FirstOrDefaultAsync();
 
-                    int? idstatusini = odt.IdStatusAr;
+                    BdBitacoraAr StatusFinBitacora = await _context.BdBitacoraAr.FirstOrDefaultAsync(x => x.IdStatusArFin == 31 && x.IdAr == idAr);
 
-                    //Actualizacion de Datos del servicio
-                    odt.FecCierre = DateTime.ParseExact(request.FEC_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                    odt.IdCausaRechazo = (await _context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && EF.Functions.Like(x.DescCausaRechazo, "%" + request.CAUSA_RECHAZO + "%")).Select(x => x.IdTrechazo).FirstOrDefaultAsync());
-                    odt.CausaRechazo = subrechazo.Id.ToString();
-                    odt.IdSolucion = (await _context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion.Trim() == request.TIPO_ATENCION.Trim()).Select(x => x.IdSolucion).FirstOrDefaultAsync());
-                    odt.IdTecnico = request.ID_TECNICO;
-                    odt.Atiende = request.ATIENDE;
-                    odt.DescripcionTrabajo = request.CONCLUSIONES;
+                    SqlParameter[] @param = new SqlParameter[]
+                    {
+                        new SqlParameter()
+                        {
+                            ParameterName = "@ID_AR",
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.ID_AR
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@FECHA",
+                            SqlDbType = System.Data.SqlDbType.VarChar,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.FEC_CIERRE
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@CAUSA",
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = causaRechazo.IdTrechazo
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@SUBRECHAZO",
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = subrechazo.Id
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@TIPO_ATENCION",
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = solucion.IdSolucion
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@TECNICO",
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.ID_TECNICO
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@ATIENDE",
+                            SqlDbType = System.Data.SqlDbType.VarChar,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.ATIENDE
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@CONCLUSIONES",
+                            SqlDbType = System.Data.SqlDbType.VarChar,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.CONCLUSIONES
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@ID_USUARIO",
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.ID_TECNICO
+                        },
+                        new SqlParameter()
+                        {
+                            ParameterName = "@FECHA_PROGRAMADO",
+                            SqlDbType = System.Data.SqlDbType.VarChar,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = request.FEC_PROGRAMADO
+                        }
+                    };
 
-                    if(subrechazo.IsProgramado == 1)
-                    {
-                        odt.FecInicio = DateTime.ParseExact(request.FEC_PROGRAMADO, "dd/MM/yyyy HH:mm:ss", null);
-                        odt.FecAlta = DateTime.ParseExact(request.FEC_PROGRAMADO, "dd/MM/yyyy HH:mm:ss", null);
-                        odt.IdStatusAr = 31;
-                    }
-                    else
-                    {
-                        odt.IdStatusAr = 7;
-                    }
-                    _context.BdAr.Update(odt);
-                    await _context.SaveChangesAsync();
-                    if (odt.IdServicio == 22 && odt.IdFalla == 64)
-                    {
-                        await RegresarRollos(odt.IdAr);
-                    }
-                    if(subrechazo.IsProgramado == 1)
-                    {
-                        
-                        await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 31, "No aplica código de pago para Proveedor no hay visita");
-                    }
-                    else
-                    {
-                        await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 7, "Rechazado Aplicación");
-                    }
+                    int res = await _context.Database.ExecuteSqlCommandAsync("EXEC SP_OPCIONES_REINGENIERIA_RECHAZO  @ID_AR,@FECHA,@CAUSA,@SUBRECHAZO,@TIPO_ATENCION,@TECNICO,@ATIENDE,@CONCLUSIONES,@ID_USUARIO, @FECHA_PROGRAMADO", param);
 
-                    return true;
+                    return "Ok";
                 }
                 catch (Exception ex)
                 {
                     //Insertar datos en enviados en base
                     await insertDataTable(ex.ToString(), request.ID_TECNICO, request.ID_AR, "Rechazo");
-                    return false;
+                    return "Ocurrio un error intentalo mas tarde";
                 }
             }
             else
             {
-                return false;
+                return "La solicitud no puede estar vacio";
             }
         }
         #endregion
@@ -654,6 +709,19 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la fecha actual.", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                     return "La FECHA DE CIERRE no puede ser mayor a la fecha actual.";
+                }
+                if (string.IsNullOrEmpty(request.COMENTARIO))
+                {
+                    await insertDataTable($"El campo COMENTARIO no puede estar vacio", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                    return $"El campo COMENTARIO no puede estar vacio";
+                }
+                else
+                {
+                    if (request.COMENTARIO.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo COMENTARIO debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                        return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
@@ -1004,7 +1072,21 @@ namespace WebApiSgsElavon.Services
                 }
                 if (!await ValidateInstalledSeries(request.NO_SERIE))
                 {
+                    await insertDataTable($"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR - Instalacion");
                     return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
+                }
+                if (string.IsNullOrEmpty(request.COMENTARIO))
+                {
+                    await insertDataTable($"El campo COMENTARIO no puede estar vacio", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                    return $"El campo COMENTARIO no puede estar vacio";
+                }
+                else
+                {
+                    if (request.COMENTARIO.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo COMENTARIO debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                        return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 #endregion
 
@@ -1275,11 +1357,26 @@ namespace WebApiSgsElavon.Services
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
+                    await insertDataTable($"La Odt ya esta Cerrada o Rechazada", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION SIM");
                     return "La Odt ya esta Cerrada o Rechazada";
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
+                    await insertDataTable($"La FECHA DE CIERRE no puede ser mayor a la actual", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION SIM");
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
+                }
+                if (string.IsNullOrEmpty(request.COMENTARIO))
+                {
+                    await insertDataTable($"El campo COMENTARIO no puede estar vacio", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION SIM");
+                    return $"El campo COMENTARIO no puede estar vacio";
+                }
+                else
+                {
+                    if (request.COMENTARIO.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo COMENTARIO debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION SIM");
+                        return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 #endregion
 
@@ -1465,7 +1562,21 @@ namespace WebApiSgsElavon.Services
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
+                    await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la actual", request.ID_TECNICO, request.ID_AR, "ERROR - SIN MOVIMIENTO");
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
+                }
+                if (string.IsNullOrEmpty(request.COMENTARIO))
+                {
+                    await insertDataTable($"El campo COMENTARIO no puede estar vacio", request.ID_TECNICO, request.ID_AR, "ERROR - SIN MOVIMIENTO");
+                    return $"El campo COMENTARIO no puede estar vacio";
+                }
+                else
+                {
+                    if (request.COMENTARIO.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo COMENTARIO debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "ERROR - SIN MOVIMIENTO");
+                        return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 #endregion
 
@@ -1589,6 +1700,19 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
+                }
+                if (string.IsNullOrEmpty(request.COMENTARIO))
+                {
+                    await insertDataTable($"El campo COMENTARIO no puede estar vacio", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                    return $"El campo COMENTARIO no puede estar vacio";
+                }
+                else
+                {
+                    if (request.COMENTARIO.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo COMENTARIO debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                        return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 #endregion
 
@@ -1840,6 +1964,9 @@ namespace WebApiSgsElavon.Services
                                         _context.BdBitacoraUnidad.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
 
+                                        #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM");
+                                        #endregion
                                     }
                                 }
                                 else
@@ -2209,22 +2336,36 @@ namespace WebApiSgsElavon.Services
                 #region Validacion del servicio no se encuentre rechazada o cerrada
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
-                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Sustitucion Sim");
+                    await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     return "El servicio fue reasignado a otro tecnico";
                 }
                 if (validaStatusAr(request.ID_AR))
                 {
-                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Sustitucion Sim");
+                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     return "La Odt ya esta Cerrada o Rechazada";
                 }
                 if (!validaFecCierre(request.FECHA_CIERRE))
                 {
+                    await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la actual", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
                 if (request.NO_SIM_RETIRO != null && !await ValidateSimRetiro(request.NO_SIM_RETIRO))
                 {
-                    await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                    await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
+                }
+                if (string.IsNullOrEmpty(request.COMENTARIO))
+                {
+                    await insertDataTable($"El campo COMENTARIO no puede estar vacio", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
+                    return $"El campo COMENTARIO no puede estar vacio";
+                }
+                else
+                {
+                    if(request.COMENTARIO.Trim().Length < 20)
+                    {
+                        await insertDataTable($"El campo COMENTARIO debe contar con un minimo de 20 caracteres", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
+                        return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
+                    }
                 }
                 #endregion
 
@@ -2615,7 +2756,7 @@ namespace WebApiSgsElavon.Services
         }
         public bool validaStatusAr(int idar)
         {
-            List<int> idstatusar = new List<int>() { 6, 7, 8 };
+            List<int> idstatusar = new List<int>() { 6, 7, 8, 31 };
             var valArs = _context.BdAr.Where(x => x.IdAr == idar && idstatusar.Contains(x.IdStatusAr)).Count();
             return valArs > 0 ? true : false;
         }

@@ -76,7 +76,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("GetNuevasOdts")]
         public async Task<ActionResult<IEnumerable<ODT>>> GetNuevasOdts(GetNuevasOdts request)
         {
-            var lista = await _odtService.GetNuevasOdts(request);
+            IEnumerable<ODT> lista = await _odtService.GetNuevasOdts(request);
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
@@ -201,15 +201,17 @@ namespace WebApiSgsElavon.Controllers
         [HttpPost("CierreRechazo")]
         public async Task<ActionResult<ODT>> CierreRechazo(CierreRechazoRequest request)
         {
-            if (await _odtService.CierreRechazo(request))
+            var msg = await _odtService.CierreRechazo(request);
+            if (string.Equals(msg, "OK", StringComparison.InvariantCultureIgnoreCase))
             {
                 ODT newOdt = await _odtService.GetOdtbyId(request.ID_AR);
                 return Ok(newOdt);
             }
-            else
+            else if (string.Equals(msg, "db", StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            return BadRequest(msg);
         }
         [HttpPost("CierreSinMovInventario")]
         public async Task<ActionResult<ODT>> CierreSinMovInventario(CierreSinMovInventarioRequest request)
@@ -229,7 +231,7 @@ namespace WebApiSgsElavon.Controllers
         [HttpGet("GetByIdar/{idAr}")]
         public async Task<ActionResult<ODT>> GetByIdar(int idAr)
         {
-            var odt = await _odtService.GetOdtbyId(idAr);
+            ODT odt = await _odtService.GetOdtbyId(idAr);
 
             if(odt == null)
             {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities
 {
-    public class Causasrechazos
+    public class CausasrechazosDtos
     {
         [JsonProperty(PropertyName = "ID_CAUSA_RECHAZO")]
         public int ID_CAUSA_RECHAZO { get; set; }

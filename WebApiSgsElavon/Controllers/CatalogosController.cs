@@ -2,9 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebApiSgsElavon.Entities;
+using WebApiSgsElavon.Dtos.BdModelosConectividades;
+using WebApiSgsElavon.Dtos.CambioStatusAr;
+using WebApiSgsElavon.Dtos.Causas;
+using WebApiSgsElavon.Dtos.CausasCancelacion;
+using WebApiSgsElavon.Dtos.CausasRechazos;
+using WebApiSgsElavon.Dtos.Conectividades;
+using WebApiSgsElavon.Dtos.Fallas;
+using WebApiSgsElavon.Dtos.Marcas;
+using WebApiSgsElavon.Dtos.Modelos;
+using WebApiSgsElavon.Dtos.MovimientoInventarioServicioFallaDtos;
+using WebApiSgsElavon.Dtos.Servicios;
+using WebApiSgsElavon.Dtos.Softwares;
+using WebApiSgsElavon.Dtos.Soluciones;
+using WebApiSgsElavon.Dtos.StatusAr;
+using WebApiSgsElavon.Dtos.Subrechazos;
+using WebApiSgsElavon.Dtos.Unidades;
 using WebApiSgsElavon.Services;
 
 namespace WebApiSgsElavon.Controllers
@@ -21,11 +35,12 @@ namespace WebApiSgsElavon.Controllers
         }
 
         [HttpGet("modelos")]
-        public async Task<ActionResult<IEnumerable<Modelos>>> getModelos()
+        public async Task<ActionResult<IEnumerable<ModelosDtos>>> getModelos()
         {
             try
             {
-                return Ok(await _Catalogosservices.GetModelos());
+                IEnumerable<ModelosDtos> dtos = await _Catalogosservices.GetModelos();
+                return Ok(dtos);
             }
             catch (Exception ex)
             {
@@ -34,104 +49,121 @@ namespace WebApiSgsElavon.Controllers
 
         }
         [HttpGet("marcas")]
-        public async Task<IEnumerable<Marcas>> getMarcas()
+        public async Task<IEnumerable<MarcasDtos>> getMarcas()
         {
-            return await _Catalogosservices.GetMarcas();
+            IEnumerable<MarcasDtos> dtos = await _Catalogosservices.GetMarcas();
+            return dtos;
         }
         [HttpGet("servicios")]
-        public async Task<IEnumerable<Servicios>> getServicios()
+        public async Task<IEnumerable<ServiciosDtos>> getServicios()
         {
-            return await _Catalogosservices.GetServicios();
+            IEnumerable<ServiciosDtos> dtos = await _Catalogosservices.GetServicios();
+            return dtos;
         }
         [HttpGet("conectividades")]
-        public async Task<IEnumerable<Conectividades>> getConectividades()
+        public async Task<IEnumerable<ConectividadesDtos>> getConectividades()
         {
-            return await _Catalogosservices.GetConectividades();
+            IEnumerable<ConectividadesDtos> dtos = await _Catalogosservices.GetConectividades();
+            return dtos;
         }
         [HttpGet("softwares")]
-        public async Task<IEnumerable<Software>> getSoftwares()
+        public async Task<IEnumerable<SoftwaresDtos>> getSoftwares()
         {
-            return await _Catalogosservices.GetSoftwares();
+            IEnumerable<SoftwaresDtos> dtos = await _Catalogosservices.GetSoftwares();
+            return dtos;
         }
         [HttpGet("unidades/{idusuario}")]
-        public async Task<IEnumerable<Unidades>> GetUnidades(int idusuario)
+        public async Task<IEnumerable<UnidadesDtos>> GetUnidades(int idusuario)
         {
-            return await _Catalogosservices.GetUnidades(idusuario);
+            IEnumerable<UnidadesDtos> dtos = await _Catalogosservices.GetUnidades(idusuario);
+
+            if (dtos.Any())
+            {
+                return dtos;
+            }
+            return null;
         }
         [HttpGet("unidadesNegocio/{idusuario}")]
-        public async Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario)
+        public async Task<IEnumerable<UnidadesDtos>> GetUnidadesNegocio(int idusuario)
         {
-            return await _Catalogosservices.GetUnidadesNegocio(idusuario);
-
+            IEnumerable<UnidadesDtos> dtos = await _Catalogosservices.GetUnidadesNegocio(idusuario);
+            if (dtos.Any())
+            {
+                return dtos;
+            }
+            return null;
         }
         [HttpGet("movinventariosf")]
-        public async Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas()
+        public async Task<IEnumerable<MovimientoInventarioServicioFallaDtos>> GetMovimientoInventarioServicioFallas()
         {
-            return await _Catalogosservices.GetMovimientoInventarioServicioFallas();
+            IEnumerable<MovimientoInventarioServicioFallaDtos> dtos = await _Catalogosservices.GetMovimientoInventarioServicioFallas();
+            return dtos;
         }
         [HttpGet("causas")]
-        public async Task<IEnumerable<Causas>> GetCausas()
+        public async Task<IEnumerable<CausasDtos>> GetCausas()
         {
-            return await _Catalogosservices.GetCausas();
+            IEnumerable<CausasDtos> dtos = await _Catalogosservices.GetCausas();
+            return dtos;
         }
         [HttpGet("fallas")]
-        public async Task<IEnumerable<Fallas>> GetFallas()
+        public async Task<IEnumerable<FallasDtos>> GetFallas()
         {
-            return await _Catalogosservices.GetFallas();
+            IEnumerable<FallasDtos> dtos = await _Catalogosservices.GetFallas();
+            return dtos;
         }
         [HttpGet("cambiostatusar")]
-        public async Task<ActionResult<IEnumerable<CambioStatusAr>>> GetCambioStatusArs()
+        public async Task<ActionResult<IEnumerable<CambioStatusArDtos>>> GetCambioStatusArs()
         {
-            var lista = await _Catalogosservices.GetCambioStatusAr();
-            if (lista.Any()) return Ok(lista);
+            IEnumerable<CambioStatusArDtos> dto = await _Catalogosservices.GetCambioStatusAr();
+            if (dto.Any()) return Ok(dto);
             return NotFound();
         }
         [HttpGet("statusar")]
-        public async Task<ActionResult<IEnumerable<StatusAr>>> GetStatusAr()
+        public async Task<ActionResult<IEnumerable<StatusArDtos>>> GetStatusAr()
         {
-            var lista = await _Catalogosservices.GetStatusAr();
+            IEnumerable<StatusArDtos> lista = await _Catalogosservices.GetStatusAr();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
         [HttpGet("subrechazos")]
-        public async Task<ActionResult<IEnumerable<Subrechazos>>> GetSubrechazos()
+        public async Task<ActionResult<IEnumerable<SubrechazosDtos>>> GetSubrechazos()
         {
-            var lista = await _Catalogosservices.GetSubrechazos();
-            if (lista.Any()) return Ok(lista);
+            IEnumerable<SubrechazosDtos> dtos = await _Catalogosservices.GetSubrechazos();
+            if (dtos.Any()) return Ok(dtos);
             return NotFound();
         }
         [HttpGet("causasrechazos")]
-        public async Task<ActionResult<IEnumerable<Causasrechazos>>> GetCausasRechazos()
+        public async Task<ActionResult<IEnumerable<CausasRechazosDtos>>> GetCausasRechazos()
         {
-            var lista = await _Catalogosservices.GetCausasrechazos();
+            IEnumerable<CausasRechazosDtos> lista = await _Catalogosservices.GetCausasrechazos();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
         [HttpGet("modelosconectividad")]
-        public async Task<ActionResult<BdModelosConectividades>> GetModelosConectividades()
+        public async Task<ActionResult<BdModelosConectividadesDtos>> GetModelosConectividades()
         {
-            var lista = await _Catalogosservices.GetModeloConectividad();
+            IEnumerable<BdModelosConectividadesDtos> lista = await _Catalogosservices.GetModeloConectividad();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
         [HttpGet("reglasmodelos")]
-        public async Task<ActionResult<ReglasModelos>> GetReglasModelos()
+        public async Task<ActionResult<ReglasModelosDtos>> GetReglasModelos()
         {
-            var lista = await _Catalogosservices.GetReglasModelos();
+            IEnumerable<ReglasModelosDtos> lista = await _Catalogosservices.GetReglasModelos();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
         [HttpGet("causasCancelacion")]
-        public async Task<ActionResult<CausasCancelacion>> GetCausasCancelacion()
+        public async Task<ActionResult<CausasCancelacionDtos>> GetCausasCancelacion()
         {
-            var lista = await _Catalogosservices.GetCausasCancelacion();
+            IEnumerable<CausasCancelacionDtos> lista = await _Catalogosservices.GetCausasCancelacion();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }
         [HttpGet("soluciones")]
-        public async Task<ActionResult<CausasCancelacion>> GetSoluciones()
+        public async Task<ActionResult<SolucionesDtos>> GetSoluciones()
         {
-            var lista = await _Catalogosservices.GetSoluciones();
+            IEnumerable<SolucionesDtos> lista = await _Catalogosservices.GetSoluciones();
             if (lista.Any()) return Ok(lista);
             return NotFound();
         }

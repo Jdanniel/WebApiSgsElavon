@@ -1,9 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApiSgsElavon.Entities;
+using WebApiSgsElavon.Dtos.BdModelosConectividades;
+using WebApiSgsElavon.Dtos.CambioStatusAr;
+using WebApiSgsElavon.Dtos.Causas;
+using WebApiSgsElavon.Dtos.CausasCancelacion;
+using WebApiSgsElavon.Dtos.CausasRechazos;
+using WebApiSgsElavon.Dtos.Conectividades;
+using WebApiSgsElavon.Dtos.Fallas;
+using WebApiSgsElavon.Dtos.Marcas;
+using WebApiSgsElavon.Dtos.Modelos;
+using WebApiSgsElavon.Dtos.MovimientoInventarioServicioFallaDtos;
+using WebApiSgsElavon.Dtos.Servicios;
+using WebApiSgsElavon.Dtos.Softwares;
+using WebApiSgsElavon.Dtos.Soluciones;
+using WebApiSgsElavon.Dtos.StatusAr;
+using WebApiSgsElavon.Dtos.Subrechazos;
+using WebApiSgsElavon.Dtos.Unidades;
 //using WebApiSgsElavon.Model;
 using WebApiSgsElavon.ModelsTest;
 
@@ -11,24 +25,24 @@ namespace WebApiSgsElavon.Services
 {
     public interface ICatalogosServices
     {
-        Task<IEnumerable<Modelos>> GetModelos();
-        Task<IEnumerable<Marcas>> GetMarcas();
-        Task<IEnumerable<Servicios>> GetServicios();
-        Task<IEnumerable<Conectividades>> GetConectividades();
-        Task<IEnumerable<Software>> GetSoftwares();
-        Task<IEnumerable<Unidades>> GetUnidades(int idusuario);
-        Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario);
-        Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas();
-        Task<IEnumerable<Causas>> GetCausas();
-        Task<IEnumerable<Fallas>> GetFallas();
-        Task<IEnumerable<StatusAr>> GetStatusAr();
-        Task<IEnumerable<CambioStatusAr>> GetCambioStatusAr();
-        Task<IEnumerable<Subrechazos>> GetSubrechazos();
-        Task<IEnumerable<Causasrechazos>> GetCausasrechazos();
-        Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad();
-        Task<IEnumerable<ReglasModelos>> GetReglasModelos();
-        Task<IEnumerable<CausasCancelacion>> GetCausasCancelacion();
-        Task<IEnumerable<Soluciones>> GetSoluciones();
+        Task<IEnumerable<ModelosDtos>> GetModelos();
+        Task<IEnumerable<MarcasDtos>> GetMarcas();
+        Task<IEnumerable<ServiciosDtos>> GetServicios();
+        Task<IEnumerable<ConectividadesDtos>> GetConectividades();
+        Task<IEnumerable<SoftwaresDtos>> GetSoftwares();
+        Task<IEnumerable<UnidadesDtos>> GetUnidades(int idusuario);
+        Task<IEnumerable<UnidadesDtos>> GetUnidadesNegocio(int idusuario);
+        Task<IEnumerable<MovimientoInventarioServicioFallaDtos>> GetMovimientoInventarioServicioFallas();
+        Task<IEnumerable<CausasDtos>> GetCausas();
+        Task<IEnumerable<FallasDtos>> GetFallas();
+        Task<IEnumerable<StatusArDtos>> GetStatusAr();
+        Task<IEnumerable<CambioStatusArDtos>> GetCambioStatusAr();
+        Task<IEnumerable<SubrechazosDtos>> GetSubrechazos();
+        Task<IEnumerable<CausasRechazosDtos>> GetCausasrechazos();
+        Task<IEnumerable<BdModelosConectividadesDtos>> GetModeloConectividad();
+        Task<IEnumerable<ReglasModelosDtos>> GetReglasModelos();
+        Task<IEnumerable<CausasCancelacionDtos>> GetCausasCancelacion();
+        Task<IEnumerable<SolucionesDtos>> GetSoluciones();
     }
 
     public class CatalogosServices : ICatalogosServices
@@ -40,228 +54,245 @@ namespace WebApiSgsElavon.Services
             context = _context;
         }
 
-        public async Task<IEnumerable<CambioStatusAr>> GetCambioStatusAr()
+        public async Task<IEnumerable<CambioStatusArDtos>> GetCambioStatusAr()
         {
-            List<CambioStatusAr> cambio = await context
+            List<CambioStatusArDtos> cambio = await context
                 .BdCambioStatusAr
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new CambioStatusAr {
-                    ID_CAMBIO_STATUS_AR = x.IdCambioStatusAr,
-                    ID_STATUS_AR_INI = x.IdStatusArIni,
-                    ID_STATUS_AR_FIN = x.IdStatusArFin
+                .Select(x => new CambioStatusArDtos
+                {
+                    IdCambioStatusAr = x.IdCambioStatusAr,
+                    IdStatusArIni = x.IdStatusArIni.GetValueOrDefault(),
+                    IdStatusArFin = x.IdStatusArFin.GetValueOrDefault()
                 })
                 .ToListAsync();
             return cambio;
         }
 
-        public async Task<IEnumerable<Causas>> GetCausas()
+        public async Task<IEnumerable<CausasDtos>> GetCausas()
         {
-            List<Causas> causas = await context
+            List<CausasDtos> causas = await context
                 .CCausas
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Causas {
-                    ID_CAUSA = x.IdCausa,
-                    DESC_CAUSA = x.DescCausa,
-                    DESCRIPCION = x.Descripcion
+                .Select(x => new CausasDtos
+                {
+                    IdCausa = x.IdCausa,
+                    DescCausa = x.DescCausa,
+                    Descripcion = x.Descripcion
                 })
                 .ToListAsync();
             return causas;
         }
 
-        public async Task<IEnumerable<Conectividades>> GetConectividades()
+        public async Task<IEnumerable<ConectividadesDtos>> GetConectividades()
         {
-            List<Conectividades> conectividades = await context
+            List<ConectividadesDtos> conectividades = await context
                 .CConectividad
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Conectividades { ID_CONECTIVIDAD = x.IdConectividad, DESC_CONECTIVIDAD = x.DescConectividad, IS_GPRS = x.IsGprs == null ? 0 : x.IsGprs })
+                .Select(x => new ConectividadesDtos
+                { 
+                    IdConectividad = x.IdConectividad, 
+                    DescConectividad = x.DescConectividad, 
+                    IsGprs = x.IsGprs == null ? 0 : x.IsGprs })
                 .ToListAsync();
             return conectividades;
         }
 
-        public async Task<IEnumerable<Fallas>> GetFallas()
+        public async Task<IEnumerable<FallasDtos>> GetFallas()
         {
-            List<Fallas> fallas = await context
+            List<FallasDtos> fallas = await context
                 .CFallas.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Fallas { ID_FALLA = x.IdFalla, DESC_FALLA = x.DescFalla })
+                .Select(x => new FallasDtos { IdFalla = x.IdFalla, DescFalla = x.DescFalla })
                 .ToListAsync();
             return fallas;
         }
 
-        public async Task<IEnumerable<Marcas>> GetMarcas()
+        public async Task<IEnumerable<MarcasDtos>> GetMarcas()
         {
-            List<Marcas> marcas = await context
+            List<MarcasDtos> marcas = await context
                 .CMarcas.Where(x => x.Status == "ACTIVO")
-                .Select(x => new Marcas { ID_MARCA = x.IdMarca, DESC_MARCA = x.DescMarca })
+                .Select(x => new MarcasDtos { IdMarca = x.IdMarca, DescMarca = x.DescMarca })
                 .ToListAsync();
             return marcas;
         }
 
-        public async Task<IEnumerable<Modelos>> GetModelos()
+        public async Task<IEnumerable<ModelosDtos>> GetModelos()
         {
-            List<Modelos> modelos = await context
+            List<ModelosDtos> modelos = await context
                 .CModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new Modelos { ID_MODELO = x.IdModelo, DESC_MODELO = x.DescModelo, ID_MARCA = x.IdMarca })
+                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca })
                 .ToListAsync();
             return modelos;
         }
 
-        public async Task<IEnumerable<MovimientoInventarioServicioFalla>> GetMovimientoInventarioServicioFallas()
+        public async Task<IEnumerable<MovimientoInventarioServicioFallaDtos>> GetMovimientoInventarioServicioFallas()
         {
-            List<MovimientoInventarioServicioFalla> movs = await context
+            List<MovimientoInventarioServicioFallaDtos> movs = await context
                 .BdValMovimientosInvServicioFalla
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new MovimientoInventarioServicioFalla { ID_VAL_MOVIMIENTOS_INV_SERVICIO_FALLA = x.IdValMovimientosInvServicioFalla, ID_SERVICIO = x.IdServicio, ID_FALLA = x.IdFalla, ID_MOV_INVENTARIO = x.IdMovInventario, STATUS = x.Status })
+                .Select(x => new MovimientoInventarioServicioFallaDtos
+                { 
+                    IdValMovimientosInvServicioFalla = x.IdValMovimientosInvServicioFalla,
+                    IdServicio = x.IdServicio.GetValueOrDefault(), 
+                    IdFalla = x.IdFalla.GetValueOrDefault(), 
+                    IdMovInventario = x.IdMovInventario.GetValueOrDefault(), 
+                    Status = x.Status })
                 .ToListAsync();
             return movs;
         }
 
-        public async Task<IEnumerable<Servicios>> GetServicios()
+        public async Task<IEnumerable<ServiciosDtos>> GetServicios()
         {
-            List<Servicios> servicios = await context
+            List<ServiciosDtos> servicios = await context
                 .CServicios
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Servicios { ID_SERVICIO = x.IdServicio, DESC_SERVICIO = x.DescServicio, IdARNeedNOcheckup = x.IdArneedNocheckup })
+                .Select(x => new ServiciosDtos { IdServicio = x.IdServicio, DescServicio = x.DescServicio, IdARNeedNOcheckup = x.IdArneedNocheckup.GetValueOrDefault() })
                 .ToListAsync();
             return servicios;
         }
 
-        public async Task<IEnumerable<Software>> GetSoftwares()
+        public async Task<IEnumerable<SoftwaresDtos>> GetSoftwares()
         {
-            List<Software> softwares = await context
+            List<SoftwaresDtos> softwares = await context
                 .CSoftware
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Software { ID_APLICATIVO = x.IdSoftware, DESC_APLICATIVO = x.DescSoftware })
+                .Select(x => new SoftwaresDtos { IdAplicativo = x.IdSoftware, DescAplicativo = x.DescSoftware })
                 .ToListAsync();
             return softwares;
         }
 
-        public async Task<IEnumerable<StatusAr>> GetStatusAr()
+        public async Task<IEnumerable<StatusArDtos>> GetStatusAr()
         {
-            List<StatusAr> status = await context
+            List<StatusArDtos> status = await context
                 .CStatusAr
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new StatusAr { ID_STATUS_AR = x.IdStatusAr, DESC_STATUS_AR = x.DescStatusAr })
+                .Select(x => new StatusArDtos { IdStatusAr = x.IdStatusAr, DescStatusAr = x.DescStatusAr })
                 .ToListAsync();
             return status;
         }
 
-        public async Task<IEnumerable<Subrechazos>> GetSubrechazos()
+        public async Task<IEnumerable<SubrechazosDtos>> GetSubrechazos()
         {
-            List<Subrechazos> subs = await context
+            List<SubrechazosDtos> subs = await context
                 .CSubrechazo
                 .Where(x => x.Status == "ACTIVO")
-                .Select(X => new Subrechazos { ID_SUBRECHAZO = X.IdSubrechazo, SUBRECHAZO = X.Subrechazo, ID = X.Id, IS_PROGRAMADO = X.IsProgramado })
+                .Select(X => new SubrechazosDtos { IdSubrechazo = X.IdSubrechazo, Subrechazo = X.Subrechazo, Id = X.Id, IsProgramado = X.IsProgramado.GetValueOrDefault() })
                 .ToListAsync();
             return subs;
         }
 
-        public async Task<IEnumerable<Causasrechazos>> GetCausasrechazos()
+        public async Task<IEnumerable<CausasRechazosDtos>> GetCausasrechazos()
         {
-            List<Causasrechazos> causas = await context
+            List<CausasRechazosDtos> causas = await context
                 .CCausasRechazo
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
-                .Select(x => new Causasrechazos { ID_CAUSA_RECHAZO = x.IdCausaRechazo, DESC_CAUSA_RECHAZO = x.DescCausaRechazo.Replace("\r\n", string.Empty), ID_TRECHAZO = x.IdTrechazo })
+                .Select(x => new CausasRechazosDtos { 
+                    IdCausaRechazo = x.IdCausaRechazo, 
+                    DescCausaRechazo = x.DescCausaRechazo.Replace("\r\n", string.Empty), 
+                    IdTrechazo = x.IdTrechazo })
                 .ToListAsync();
             return causas;
         }
 
-        public async Task<IEnumerable<Unidades>> GetUnidades(int idusuario)
+        public async Task<IEnumerable<UnidadesDtos>> GetUnidades(int idusuario)
         {
             List<int> status = new List<int>();
             status.Add(46);
             status.Add(15);
             var usuario = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
-            List<Unidades> unidades = await context
+            List<UnidadesDtos> unidades = await context
                 .BdUnidades
                 .Where(x => status.Contains(x.IdStatusUnidad) && x.Status == "ACTIVO" && x.IdCliente == 4 && x.IdSim == usuario.IdProveedor)
-                .Select(x => new Unidades {
-                    ID_UNIDAD = x.IdUnidad,
-                    ID_APLICATIVO = x.IdAplicativo,
-                    ID_CONECTIVIDAD = x.IdConectividad,
-                    ID_MARCA = x.IdMarca,
-                    ID_MODELO = x.IdModelo,
-                    NO_SERIE = x.NoSerie.Trim(),
-                    ID_STATUS_UNIDAD = x.IdStatusUnidad,
-                    IS_NUEVA = x.IsNueva,
-                    DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
-                    ID_TIPO_RESPONSABLE = x.IdTipoResponsable,
-                    ID_RESPONSABLE = x.IdResponsable
+                .Select(x => new UnidadesDtos() {
+                    IdUnidad = x.IdUnidad,
+                    IdAplicativo = x.IdAplicativo.GetValueOrDefault(),
+                    IdConectividad = x.IdConectividad.GetValueOrDefault(),
+                    IdMarca = x.IdMarca,
+                    IdModelo = x.IdModelo,
+                    NoSerie = x.NoSerie.Trim(),
+                    IdStatusUnidad = x.IdStatusUnidad,
+                    IsNueva = x.IsNueva,
+                    DescStatusUnidad = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
+                    IdTipoResponsable = x.IdTipoResponsable,
+                    IdResponsable = x.IdResponsable
                 })
                 .ToListAsync();
             return unidades;
         }
 
-        public async Task<IEnumerable<BdModelosConectividades>> GetModeloConectividad()
+        public async Task<IEnumerable<BdModelosConectividadesDtos>> GetModeloConectividad()
         {
-            List<BdModelosConectividades> modelosConectividades = await context
+            List<BdModelosConectividadesDtos> modelosConectividades = await context
                 .BdModeloConectividad
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new BdModelosConectividades
+                .Select(x => new BdModelosConectividadesDtos
                 {
-                    ID_MODELO_CONECTIVIDAD = x.IdModeloConectividad,
-                    ID_MODELO = x.IdModelo,
-                    ID_CONECTIVIDAD = x.IdConectividad
+                    IdModeloConectividad = x.IdModeloConectividad,
+                    IdModelo = x.IdModelo,
+                    IdConectividad = x.IdConectividad
                 })
                 .ToListAsync();
             return modelosConectividades;
         }
 
-        public async Task<IEnumerable<Unidades>> GetUnidadesNegocio(int idusuario)
+        public async Task<IEnumerable<UnidadesDtos>> GetUnidadesNegocio(int idusuario)
         {
             //List<int> idstatusar = new List<int> { 6, 7, 8 };
             var PROVEEDOR = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
             //var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
-            List<Unidades> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null).Select(x => new Unidades
+            List<UnidadesDtos> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null).Select(x => new UnidadesDtos()
             {
-                ID_UNIDAD = x.IdUnidad,
-                ID_MODELO = x.IdModelo,
-                ID_MARCA = x.IdMarca,
-                ID_CONECTIVIDAD = x.IdConectividad,
-                ID_APLICATIVO = x.IdAplicativo,
-                ID_STATUS_UNIDAD = x.IdStatusUnidad,
-                IS_NUEVA = x.IsNueva,
-                NO_SERIE = x.NoSerie.Trim(),
-                DESC_STATUS_UNIDAD = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
-                ID_TIPO_RESPONSABLE = x.IdTipoResponsable,
-                ID_RESPONSABLE = x.IdResponsable
+                IdUnidad = x.IdUnidad,
+                IdModelo = x.IdModelo,
+                IdMarca = x.IdMarca,
+                IdConectividad = x.IdConectividad.GetValueOrDefault(),
+                IdAplicativo = x.IdAplicativo.GetValueOrDefault(),
+                IdStatusUnidad = x.IdStatusUnidad,
+                IsNueva = x.IsNueva,
+                NoSerie = x.NoSerie.Trim(),
+                DescStatusUnidad = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
+                IdTipoResponsable = x.IdTipoResponsable,
+                IdResponsable = x.IdResponsable
             }).ToListAsync();
             return unidadesNegocio;
         }
-        public async Task<IEnumerable<ReglasModelos>> GetReglasModelos()
+        public async Task<IEnumerable<ReglasModelosDtos>> GetReglasModelos()
         {
-            List<ReglasModelos> reglas = await context.BdReglasModelos
+            List<ReglasModelosDtos> reglas = await context.BdReglasModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new ReglasModelos {
-                    ID_REGLAS = x.IdReglas,
-                    ID_MODELO = x.IdModelo,
-                    LETRAS_MIN = x.LetrasMin,
-                    LETRAS_MAX = x.LetrasMax,
-                    NUMERO_MIN = x.NumeroMin,
-                    NUMERO_MAX = x.NumeroMax,
-                    LONG_MIN = x.LongMin,
-                    LONG_MAX = x.LongMax
+                .Select(x => new ReglasModelosDtos
+                {
+                    IdRegla = x.IdReglas,
+                    IdModelo = x.IdModelo,
+                    LetrasMin = x.LetrasMin,
+                    LetrasMax = x.LetrasMax,
+                    NumeroMin = x.NumeroMin,
+                    NumeroMax = x.NumeroMax,
+                    LongMin = x.LongMin,
+                    LongMax = x.LongMax
                 }).ToListAsync();
             return reglas;
         }
-        public async Task<IEnumerable<CausasCancelacion>> GetCausasCancelacion()
+        public async Task<IEnumerable<CausasCancelacionDtos>> GetCausasCancelacion()
         {
             return await context.CCausaCancelacion.Where(x => x.Status == "ACTIVO")
-                .Select(x => new CausasCancelacion()
+                .Select(x => new CausasCancelacionDtos()
                 {
-                    DESC_CAUSA = x.DescCausaCancelacion,
-                    ID_CAUSA_CANCELACION = x.IdCausaCancelacion,
-                    ID_TIPO_CANCELADO = x.IdTipoCancelado.GetValueOrDefault()
+                    DescCausa = x.DescCausaCancelacion,
+                    IdCausaCancelacion = x.IdCausaCancelacion,
+                    IdTipoCancelado = x.IdTipoCancelado.GetValueOrDefault()
                 }).ToListAsync();
         }
 
-        public async Task<IEnumerable<Soluciones>> GetSoluciones()
+        public async Task<IEnumerable<SolucionesDtos>> GetSoluciones()
         {
             return await context.CSoluciones.Where(x => x.Status == "ACTIVO")
-                .Select(x => new Soluciones()
+                .Select(x => new SolucionesDtos()
                 {
-                   ID_CAUSA_CANCELACION = x.IdSolucion,
-                   DESC_CAUSA = x.DescSolucion
+                   IdSolucion = x.IdSolucion,
+                   DescSolucion = x.DescSolucion,
+                   
                 }).ToListAsync();
         }
     }
