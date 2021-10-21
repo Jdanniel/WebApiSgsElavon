@@ -18,8 +18,8 @@ using WebApiSgsElavon.Dtos.Soluciones;
 using WebApiSgsElavon.Dtos.StatusAr;
 using WebApiSgsElavon.Dtos.Subrechazos;
 using WebApiSgsElavon.Dtos.Unidades;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -47,9 +47,9 @@ namespace WebApiSgsElavon.Services
 
     public class CatalogosServices : ICatalogosServices
     {
-        private readonly ELAVONTESTContext context;
+        private readonly ELAVONContext context;
 
-        public CatalogosServices(ELAVONTESTContext _context)
+        public CatalogosServices(ELAVONContext _context)
         {
             context = _context;
         }
