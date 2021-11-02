@@ -10,8 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -39,10 +39,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONContext _context;
+        private readonly ELAVONTESTContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -999,6 +999,8 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
+                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+
                         #region Ingreso en Bitacora del servicio BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Retiro Aplicación");
                         #endregion
@@ -1267,6 +1269,8 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
+                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+
                         #region Ingreso de informacion en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
                         #endregion
@@ -1499,6 +1503,8 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
+                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+
                         #region Ingreso de informacion en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
                         #endregion
@@ -1620,6 +1626,8 @@ namespace WebApiSgsElavon.Services
                         bdar.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
+
+                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
 
                         #region Ingreso de registro en BD_BITACORA_AE
                         await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sin Movimiento de Inventario Aplicación");
@@ -1780,6 +1788,7 @@ namespace WebApiSgsElavon.Services
                         bdar.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
+                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
                         #region Ingreso de registro en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sustitucion Aplicación");
                         #endregion
@@ -2426,6 +2435,9 @@ namespace WebApiSgsElavon.Services
                         bdar.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
+
+                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+
                         #region Ingreso de registro en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sustitucion Aplicación");
                         #endregion
@@ -2813,6 +2825,33 @@ namespace WebApiSgsElavon.Services
                 }
             }
             return true;
+        }
+        public async Task UpdateSpecialProjects(string NoAfiliacion, int IdServicio, int IdFalla)
+        {
+
+            List<BdServiciosFallasProyEspeciales> bdServiciosFallasProys = await _context.BdServiciosFallasProyEspeciales.ToListAsync();
+
+            BdServiciosFallasProyEspeciales fallasProyEspeciale = bdServiciosFallasProys
+                .Where(x => x.IdServicio == IdServicio && x.IdFalla == IdFalla && x.Status == "ACTIVO")
+                .OrderByDescending(x => x.FecAlta)
+                .FirstOrDefault();
+
+            if (bdServiciosFallasProys != null)
+            {
+                List<BdAfiliacionesProyectoEspecial> bdAfiliaciones = await _context.BdAfiliacionesProyectoEspecial.ToListAsync();
+
+                BdAfiliacionesProyectoEspecial bdAfiliacionesProyecto = bdAfiliaciones
+                    .Where(x => x.NoAfiliacion.Trim().Equals(NoAfiliacion.Trim()) &&
+                            x.Status.Equals("ACTIVO") &&
+                            x.IsProcesado.Equals("N") &&
+                            x.IdProyectoEspecial == fallasProyEspeciale.IdProyectoEspecial)
+                    .FirstOrDefault();
+
+                bdAfiliacionesProyecto.IsProcesado = "S";
+
+                _context.BdAfiliacionesProyectoEspecial.Update(bdAfiliacionesProyecto);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
