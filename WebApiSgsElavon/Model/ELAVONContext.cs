@@ -593,6 +593,7 @@ namespace WebApiSgsElavon.Model
         public virtual DbSet<TempNegocios> TempNegocios { get; set; }
         public virtual DbSet<TempUpdateNoInventario> TempUpdateNoInventario { get; set; }
         public virtual DbSet<UnidadesBnmAtm> UnidadesBnmAtm { get; set; }
+        public virtual DbSet<CEvidenceTypes> CEvidenceTypes { get; set; }
 
         // Unable to generate entity type for table 'dbo.TABLA_BANCO_BBVA_REPORTE'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.BD_ABREVIATURA_CP'. Please see the warning messages.
@@ -8870,6 +8871,21 @@ namespace WebApiSgsElavon.Model
                 entity.Property(e => e.PosicionInv).IsUnicode(false);
 
                 entity.Property(e => e.Status).IsUnicode(false);
+            });
+            modelBuilder.Entity<CEvidenceTypes>(entity =>
+            {
+                entity.HasKey(e => e.EvidenceTypeId);
+                entity.ToTable("CEvidenceTypes");
+                entity.Property(e => e.EvidenceTypeId).HasColumnName("EvidenceTypeId");
+                entity.Property(e => e.EvidenceDesc)
+                    .HasColumnName("EvidenceDesc")
+                    .HasMaxLength(100)
+                    .IsUnicode(false); ;
+                entity.Property(e => e.Status).HasColumnName("Status");
+                entity.Property(e => e.UserId).HasColumnName("UserId");
+                entity.Property(e => e.CreateDate)
+                .HasColumnName("CreateDate")
+                .HasColumnType("smalldatetime");
             });
             modelBuilder.Query<SpGetPassword>();
             modelBuilder.Query<ODT>();

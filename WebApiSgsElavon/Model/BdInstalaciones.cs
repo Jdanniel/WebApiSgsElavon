@@ -32,6 +32,10 @@ namespace WebApiSgsElavon.Model
         [Column("TIPO")]
         [StringLength(10)]
         public string Tipo { get; set; }
+        [Column("ID_CONECTIVIDAD")]
+        public int? IdConectividad { get; set; }
+        [Column("ID_APLICATIVO")]
+        public int? IdAplicativo { get; set; }
 
         [ForeignKey("IdClienteIni")]
         [InverseProperty("BdInstalaciones")]

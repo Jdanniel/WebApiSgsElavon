@@ -615,284 +615,7 @@ namespace WebApiSgsElavon.ModelsTest
         public virtual DbSet<TempNegocios> TempNegocios { get; set; }
         public virtual DbSet<TempUpdateNoInventario> TempUpdateNoInventario { get; set; }
         public virtual DbSet<UnidadesBnmAtm> UnidadesBnmAtm { get; set; }
-
-        // Unable to generate entity type for table 'dbo.TABLA_BANCO_BBVA_REPORTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ABREVIATURA_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.ERRORES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TablaTemporalPMO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEST_DEPURA_INSUMO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIO_MULTIVA_FECHA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_PRUEBA_A'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_DHL'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_UPDATE_FEC_CIERRE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_TAREA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_TIPO_PLAZA_CLIENTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_PREPORTE_INVENTARIOS_TPV_VERIFONE_SUSTITUCIONES_FECHA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TMP_CALIFICA_PDF'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_TEMO_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRESUPUESTOS_CUBO_PRODUCTO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TABLA_REMESA_BBVA_REPORTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_NEGOCIOS_PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_INGENICO_BANBAJIO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ALTA_CANCELACION_AR_MASIVO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.tabla_1'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_NOMINA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_licencias_dhl'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_INGENICO_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_NOMINA_DETALLE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SEPOMEX_ANTERIOR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_segmento_banamex'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_INGENICO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPORAL_WINCOR_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_PRUEBA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_horarios_santander'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_MIT'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.tabla_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_OKI_SERVICIOS_CORRECTIVOS_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_CONSECUTIVO_3M'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.respaldo_adam'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_SOLUCION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.ASIENTOS_REGIONALES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ENVIO_UNIDAD_PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_TIPO_CIERRE_TAREA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_TEDISA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temporal_respaldo'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PASO_CONSOLIDADO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PROSA_CORREGIDO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_VERIFON_ELAVON_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SLA_TEMP_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PASO_TPV_REPORTE_SANTANDER_DIARIO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SLA_TEMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PASO_TPV_REPORTE_SANTANDER_DIARIO_FABRICANTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_STATUS_MODELO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SERVICIOS_FEBRERO_2015'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PASO_TPV_REPORTE_SANTANDER_DIARIO_INSTALADO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_MOVMIENTOS_INV_ARCHIVOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SERVICIOS_ENERO_2015'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PASO_TPV_REPORTE_SANTANDER_DIARIO_STOCK'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ENVIOS_CONSOLIDADOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_CANCELAR_AR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRESUPUESTOS_CUBO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ERROR_UNIDADES_DANIADAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SERVICIOS_CERRADOS_MES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.pruebas_errores'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_TIPOS_DE_SERVICIOS_COSTO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SERV_TEC_CLTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ENVIOS_SERVICIO_MENSAJERIAS_PRECIO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SERV_TEC_CLT'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.REFACCIONES_INSTALADAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_adam'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_SERVICIO_RETIRO_SIMS_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_PRODUCTOS_PMO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.DIRECCIONES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.CANT_SERV_PROD_REGION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_respaldo_afiliaciones'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AR_PDF'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ERRORES_CAMBIO_MODELOS_MASIVOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ERROR_MASIVO_CONECTIVIDAD_APLICATIVO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPO_UNIDADES_SIM'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_UNIDADES_ALTA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.VEHICULOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.EXISTENCIA_2_ALMACEN'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_errores_carga'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_INSUMOS_AR_TECNICO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PROVISION_INGRESO_REGION_PROD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AR_SLA_INVENTARIOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRODUCTOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.NOMINA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_OPCIONES_REINGENIERIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ERRORES_MASIVOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.FILL_RATE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_UNIDADES_POR_RECIBIR_ALMACEN2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.MODELO_CONECT'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PRUEBA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_VIATICOS_PMO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.WINCOR_OUTBOX'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.Query'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.prueba_resultado_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.MF_DISPERSION_INGENIERIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEM_RESPALDO_USUARIOS_CORREO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PRUEBA_SP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.WINCOR_INBOX'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_STATUS_DOCTOS_PREFACTURACION_archivo'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRUEBA_FORMATO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.INGRESOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TMP_BODY'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_UNIDADES_REFACCIONES_ALMACEN'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.GUIAS_COSTO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_FALLAS_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.pt_r'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.GASOLINA_AVION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_QUESTS_CALLCENTER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_cARGAS_ARCHIVO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_CARGAS_MOV_RENGENIERIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ARCHIVO1'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.ENVIOS_REGION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_RESPONSABLE_CANCELACION_PROGRAMADO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_CAMBIO_STATUS_UNIDAD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.EDO_RESULTADOS_REGION_PRODUCTO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.EXISTENCIA_1_ALMACEN'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LOG_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_UNIDADES_TEMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.EDO_RESULTADOS_REGION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.EDO_RESULTADOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_MODELOS_VALIDOS_EGLOBAL'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.DISPERSION_NOMINA_CLIENTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_CARGA_LAYOUD_MASIVO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.DISPERSION_NOMINA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.costo_ref_ms'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ERRORES_CAMBIO_NO_SERIE_ACTUAL_NUEVO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_REF_MICROSIP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_IS_2015_02_BIS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_IS_2015_02'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REP_TPV_EGLOBAL_GRAL'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_IS_2015_01'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_INGENIERO_2015_01'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SANTANDER_INBOX_TEMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_INGENIERO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.bd_iata'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.CLIENTE_PROD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.UNIDADES_FUJITSU'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_CONSUMO_TRIMESTRAL_BANCOMER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.RESPALDO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AUDITORIA_REPORTE_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_PRUEBAS_CIERRE_MASIVO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_REPORTE_AUDITORIA_INSUMOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_OKI_SERVICIOS_CORRECTIVOS_OKI'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_STATUS_SIM'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AUDITORIA_REPORTE_2_TRASH'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_REPORTE_AUDITORIA_UNIDAD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AUDITORIA_REPORTE_INSUMO_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRESUPUESTOS_CUBO_NEW_PRODUCTO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_REPORTE_AUDITORIA_UNIDAD_TRASH'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRESUPUESTOS_CUBO_CONCEPTOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TABLA_TEMPORAL_RETIRADA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_TIEMPOS_SERVICIOS_WINCOR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_CAMBIO_NEGOCIO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.UNIDADES_WINCOR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.AUDITORIAS_REALIZADAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPORAL_OKI'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TMP_BD_PRESUPUESTO_EJERCIDO_MENSUAL'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPORAL_MODEM_SOFTEL'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.ZONA_ESTADO_SEPOMEX'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_REPORTES_AUDITORIA_INSUMO_ING_ALM'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_MC_CASETAS_RUTAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_REPORTES_AUDITORIA_UNIDAD_ING_ALM'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.UNIDADES_WINCOR_FUJITSU'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ZONA_DAR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_RESPONSABLE_STATUS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ZONAS_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_MC_BOLETOS_RUTAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BITACORA_ERROR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ERROR_ASIGANACION_AUTOMATICA_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.CAMBIO_ID_SEGMENTO_BANAMEX_TNM'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BITACORA_MENSAJERIA_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_INGRESOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_COMPARATIVO_WINCOR_PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BITACORA_SOLUCION_ERRORES_LEBERACION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_respaldo_usuario_121'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_CAMBIO_CLIENTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_inv_insumos_paso'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_SERVICIO_SEGMENTO_TAREA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_inv_unidades_paso'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TABLA_PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPO_MARCA_MODELO_BANAMEX'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.DAR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TMP_01'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LICENCIAS_REPORTE_ELAVON_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_TIPO_OUTBOX_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_PRESUPUESTOS_CUBO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.DB_Errors'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_COSTOS_MENSAJERIAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_SIM_1'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_SERVICIOS_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_DIAGNOSTICO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_SIM_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.RESULTADO_DIFERENCIAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_SIM_3'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.DIFERENCIAS_ULTIMA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEM_RESPALDO_BD_MENSAJERIA_COSTOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_SIM_4'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_REGIONES_PMO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_EMBARQUES_MENSAJERIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEM_RESPALDO_COSTO_KG_ADD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_SIM_5'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_SIMS_TEMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_INFO_ERRORES_CARGA_MASIVA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.CambioMasivoBdUnidades'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_ERROR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.SI_DASHBOARD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_CONECTIVIDAD_SANTANDER_REPORTE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LOGS_CARGA_MASIVA_TABLA_ERRORES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.CambioMasivoBdUnidades2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AR_PRODUCTOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_HORARIOS_PERSONAL'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_F11_4'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LOG_CARGA_MASIVA_TABLA_TOTAL_PROCESADOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_FILL_RATE_BANCOMER_DISPONIBLE'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_TIPO_REPARACION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.RESPALDO_C_PRODUCTOS_NEGOCIOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_EXTRAVIO_POR_MENSAJERIA_CARGA_MASIVA_PDF'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_NEGOCIOS_BANAMEX_ATM'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_FILL_RATE_BANCOMER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LOGS_CARGA_MASIVA_TABLA_ERRORES_CORREO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_CONSUMO_BANCOMER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_UPDATE_DIRECCIONES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LOGS_CARGA_MASIVA_TABLA_PROCESADOS_CORREO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_DISPONIBLE_BANCOMER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_AR_TECNICO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_DIR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_FILL_RATE_BBVA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.CADENA_NOMINA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_CONTROL_INSUMOS_PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPORAL_WINCOR'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_MENSAJERIA_COSTOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRESUPUESTOS_CUBO_REGION'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_MENSAJERIA_CP_ZONAS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_DIRECCIONES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_OKI_SERVICIOS_CORRECTIVOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_INGRESO_MOV_INVENTARIOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_SOLICITUD_VIATICOS_CONCEPTOS_PASO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_COSTO_REFACCIONES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.cdosysmail_failures'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_COSTO_VIATICOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.prueba_resultado'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.temp_Carga_unidades'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BACKUP_BD_ZONAS_CP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.ERRORES_PMO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.HISTORICO_BBVA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_QUERY_MODELO_CONECTIVIDAD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_LOGS_CARGA_MASIVA_TABLA_ERRORES_CORREO2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.PRESUPUESTOS_CUBO_NEW'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_WINCOR_MEDIDA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_WINCOR_MODULO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_WINCOR_SUBMODULO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.tabla_prueba_consolidado'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_WINCOR_TIPO_MEDIDA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPORAL_REPORTE_RETIROS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.UNIDADES_DISPONIBLES'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.RESPALDO_TABLA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMPORAL_2'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.UNIDADES_TRANSITO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.FILL_RATE_ELAVON'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.FILL_RATE_OTROS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.COSTO_KG_ADD'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.REPORTE_F11'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_ORDENES_COMPRA_EVIDENCIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_SOLICITUDES_VIATICOS_CONCEPTOS_TEMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_STATUS_USUARIO'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_SURTIDO_MENSAJERIA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_MODELOS_HOMOLOGADOS_SANTANDER'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.C_BANCOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_MODELOS_MODIFICADOS'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TMP_3M'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_MULTIVA_DIARIO_TMP'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.BD_BITACORA_CAMBIO_MASIVO_DANIADA'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_NEGOCIOS_BANAMEX'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.TEMP_REPORTE_INVENTARIOS_BANAMEX_TNM_FECHA'. Please see the warning messages.
-
+        public virtual DbSet<CEvidenceTypes> CEvidenceTypes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -12870,6 +12593,10 @@ namespace WebApiSgsElavon.ModelsTest
 
                 entity.Property(e => e.IsNueva).HasColumnName("IS_NUEVA");
 
+                entity.Property(e => e.IdConectividad).HasColumnName("ID_CONECTIVIDAD");
+
+                entity.Property(e => e.IdAplicativo).HasColumnName("ID_APLICATIVO");
+
                 entity.Property(e => e.Tipo)
                     .HasColumnName("TIPO")
                     .HasMaxLength(10)
@@ -16407,6 +16134,10 @@ namespace WebApiSgsElavon.ModelsTest
                 entity.Property(e => e.IsDaniada).HasColumnName("IS_DANIADA");
 
                 entity.Property(e => e.IsNueva).HasColumnName("IS_NUEVA");
+
+                entity.Property(e => e.IdConectividad).HasColumnName("ID_CONECTIVIDAD");
+
+                entity.Property(e => e.IdAplicativo).HasColumnName("ID_APLICATIVO");
 
                 entity.Property(e => e.Tipo)
                     .HasColumnName("TIPO")
@@ -22480,7 +22211,21 @@ namespace WebApiSgsElavon.ModelsTest
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
-
+            modelBuilder.Entity<CEvidenceTypes>(entity =>
+            {
+                entity.HasKey(e => e.EvidenceTypeId);
+                entity.ToTable("CEvidenceTypes");
+                entity.Property(e => e.EvidenceTypeId).HasColumnName("EvidenceTypeId");
+                entity.Property(e => e.EvidenceDesc)
+                    .HasColumnName("EvidenceDesc")
+                    .HasMaxLength(100)
+                    .IsUnicode(false); ;
+                entity.Property(e => e.Status).HasColumnName("Status");
+                entity.Property(e => e.UserId).HasColumnName("UserId");
+                entity.Property(e => e.CreateDate)
+                .HasColumnName("CreateDate")
+                .HasColumnType("smalldatetime");
+            });
             modelBuilder.Entity<CPlazas>(entity =>
             {
                 entity.HasKey(e => e.IdPlaza);

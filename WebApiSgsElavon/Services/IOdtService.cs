@@ -10,8 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -39,10 +39,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly ELAVONContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -93,7 +93,7 @@ namespace WebApiSgsElavon.Services
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO' " +
-                "AND BD_AR.FEC_ATENCION IS NOT NULL " +
+                "AND BD_AR.FEC_ATENCION IS NOT NULL AND BD_AR.FEC_GARANTIA IS NOT NULL" +
                 " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario).ToListAsync();
 
             //var totalYears = odt.GroupBy(x => x.AA).Count();
@@ -628,7 +628,7 @@ namespace WebApiSgsElavon.Services
                             ParameterName = "@FECHA_PROGRAMADO",
                             SqlDbType = System.Data.SqlDbType.VarChar,
                             Direction = System.Data.ParameterDirection.Input,
-                            Value = request.FEC_PROGRAMADO
+                            Value = request.FEC_PROGRAMADO ?? ""
                         }
                     };
 
@@ -695,6 +695,7 @@ namespace WebApiSgsElavon.Services
             if (request != null)
             {
                 await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CIERRE RETIRO(1)");
+
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
                     await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
@@ -746,6 +747,22 @@ namespace WebApiSgsElavon.Services
                         int idunidadretirar = 0;
 
                         #endregion
+                        /*
+                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividad.Where(x => x.IdModelo == idmodeloretiro && x.IdConectividad == idconectividadretirada).FirstOrDefaultAsync();
+
+                        if (modeloConectividad == null)
+                        {
+                            await insertDataTable($"La conectividad no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                            return $"La conectividad no esta relacionada con el modelo";
+                        }
+
+                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftware.Where(x => x.IdModelo == idmodeloretiro && x.IdSoftware == idaplicativoretirada).FirstOrDefaultAsync();
+
+                        if (modeloSoftware == null)
+                        {
+                            await insertDataTable($"El aplicativo no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                            return $"El aplicativo no esta relacionada con el modelo";
+                        }*/
 
                         #region Actualizacion o creacion de unidad
                         if (bdunidadRetirada == null || request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
@@ -873,7 +890,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso de unidad retirada en BD_RETIROS
-                        await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idunidadretirar, "TPV");
+                        await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idunidadretirar, "TPV", idconectividadretirada, idaplicativoretirada);
                         #endregion
 
                         #region Si la conectividad seleccionada cuenta con el campo IS_GPRS = 1 se actualizara o creara un nuevo registro en BD_UNIDADES
@@ -882,7 +899,7 @@ namespace WebApiSgsElavon.Services
                             int idSim;
                             int idstatusanteriorSim = 0;
 
-                            if (request.NO_SIM != null)
+                            if (!String.IsNullOrEmpty(request.NO_SIM))
                             {
                                 var simretiro = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM && x.IdMarca == 10).FirstOrDefaultAsync();
 
@@ -931,7 +948,7 @@ namespace WebApiSgsElavon.Services
                                     await _context.SaveChangesAsync();
                                     idSim = simretiro.IdUnidad;
                                 }
-                                await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM");
+                                await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM",0,0);
                                 #region Bitacora del Sim
                                 if (simretiro == null)
                                 {
@@ -1114,13 +1131,13 @@ namespace WebApiSgsElavon.Services
 
                         int idconectividadinstalada = await _context
                             .CConectividad
-                            .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.IdCliente == 4)
+                            .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.IdCliente == 4 && x.Status == "ACTIVO")
                             .Select(x => x.IdConectividad)
                             .FirstOrDefaultAsync();
 
                         int idaplicativoinstalado = await _context
                             .CSoftware
-                            .Where(x => x.DescSoftware == request.APLICATIVO && x.IdCliente == 4)
+                            .Where(x => x.DescSoftware == request.APLICATIVO && x.IdCliente == 4 && x.Status == "ACTIVO")
                             .Select(x => x.IdSoftware)
                             .FirstOrDefaultAsync();
 
@@ -1130,8 +1147,26 @@ namespace WebApiSgsElavon.Services
                         int idunidadInstalar = bdunidad.IdUnidad;
                         #endregion
 
+                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividad.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdConectividad == idconectividadinstalada).FirstOrDefaultAsync();
+
+                        if (modeloConectividad == null)
+                        {
+                            await insertDataTable($"La conectividad no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                            return $"La conectividad no esta relacionada con el modelo";
+                        }
+
+                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftware.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdSoftware == idaplicativoinstalado).FirstOrDefaultAsync();
+
+                        if (modeloSoftware == null)
+                        {
+                            await insertDataTable($"El aplicativo no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                            return $"El aplicativo no esta relacionada con el modelo";
+                        }
+
+                        CModelos modelos = await _context.CModelos.Where(x => x.Status == "ACTIVO" && x.IdModelo == bdunidad.IdModelo).FirstOrDefaultAsync();
+
                         #region Ingreso de informacion en  BD_INSTALACIONES
-                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, bdunidad.IdUnidad, "TPV");
+                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, bdunidad.IdUnidad, "TPV",idconectividadinstalada,idaplicativoinstalado);
                         #endregion
 
                         #region Actualizacion de informacion de la unidad Instalada BD_UNIDADES
@@ -1161,9 +1196,9 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Si la conectividad seleccionada cuenta con el campo IS_GPRS = 1 se debe actualizar o crear el Sim en BD_UNIDADES
-                        if (isgprs == 1)
+                        if(modelos.IdAccess == 1 && isgprs != 1)
                         {
-                            if (request.NO_SIM != null)
+                            if (!String.IsNullOrEmpty(request.NO_SIM))
                             {
                                 var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
 
@@ -1185,7 +1220,9 @@ namespace WebApiSgsElavon.Services
                                             IdClienteIni = 4,
                                             IdUsuarioAlta = ID_TECNICO,
                                             FecAlta = DateTime.Now,
-                                            Tipo = "SIM"
+                                            Tipo = "SIM",
+                                            IdConectividad = 0,
+                                            IdAplicativo = 0
                                         };
                                         _context.BdInstalaciones.Add(instalacionesSim);
                                         await _context.SaveChangesAsync();
@@ -1216,11 +1253,73 @@ namespace WebApiSgsElavon.Services
                                     }
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (isgprs == 1)
                             {
-                                return "ID SIM no puede estar vacio cuando la conectividad es IS_GPRS";
+                                if (!String.IsNullOrEmpty(request.NO_SIM))
+                                {
+                                    var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
+
+                                    if (sim != null)
+                                    {
+                                        var idmodelosim = await GetCarrier(sim.NoSerie.Trim());
+                                        if (sim.IdStatusUnidad == 15)
+                                        {
+                                            int idstatussimInstalar = sim.IdStatusUnidad;
+                                            int idsimInstalar = sim.IdUnidad;
+
+                                            BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                            {
+                                                IdAr = ID_AR,
+                                                IdTecnico = ID_TECNICO,
+                                                IdNegocio = bdar.IdNegocio,
+                                                IdUnidad = sim.IdUnidad,
+                                                IsNueva = 0,
+                                                IdClienteIni = 4,
+                                                IdUsuarioAlta = ID_TECNICO,
+                                                FecAlta = DateTime.Now,
+                                                Tipo = "SIM",
+                                                IdConectividad = 0,
+                                                IdAplicativo = 0
+                                            };
+                                            _context.BdInstalaciones.Add(instalacionesSim);
+                                            await _context.SaveChangesAsync();
+
+                                            sim.IdStatusUnidad = 17;
+                                            sim.IdTipoResponsable = 4;
+                                            sim.IdResponsable = idnegocio;
+                                            sim.IdSim = bdar.IdProveedor;
+                                            sim.IdModelo = idmodelosim;
+                                            await _context.SaveChangesAsync();
+
+                                            BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                            {
+                                                IdStatusUnidadIni = idstatussimInstalar,
+                                                IdStatusUnidadFin = 17,
+                                                IdUnidad = idsimInstalar,
+                                                IdTipoResponsable = 4,
+                                                IdResponsable = idnegocio,
+                                                IdUsuarioAlta = ID_TECNICO,
+                                                FecAlta = DateTime.Now
+                                            };
+                                            _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                            await _context.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            return "El SIM no esta en el estatus correcto";
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    return "ID SIM no puede estar vacio cuando la conectividad es IS_GPRS";
+                                }
                             }
                         }
+
                         #endregion
 
                         #region Actualizacion de la informacion del servicio en BD_AR
@@ -1406,7 +1505,7 @@ namespace WebApiSgsElavon.Services
 
                         #region Se valida que exista el sim y se agrega registro en BD_UNIDADES
 
-                        if (request.NO_SIM != null)
+                        if (!String.IsNullOrEmpty(request.NO_SIM))
                         {
                             var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
                             if (sim != null)
@@ -1425,7 +1524,9 @@ namespace WebApiSgsElavon.Services
                                     IdClienteIni = 4,
                                     IdUsuarioAlta = ID_TECNICO,
                                     FecAlta = DateTime.Now,
-                                    Tipo = "SIM"
+                                    Tipo = "SIM",
+                                    IdConectividad = 0,
+                                    IdAplicativo = 0
                                 };
                                 _context.BdInstalaciones.Add(instalacionesSim);
                                 await _context.SaveChangesAsync();
@@ -1704,7 +1805,7 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable($"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
                 }
-                if(request.NO_SIM_RETIRO != null && !await ValidateSimRetiro(request.NO_SIM_RETIRO))
+                if(!String.IsNullOrEmpty(request.NO_SIM_RETIRO)&& !await ValidateSimRetiro(request.NO_SIM_RETIRO))
                 {
                     await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
                     return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
@@ -1860,14 +1961,34 @@ namespace WebApiSgsElavon.Services
 
                         int idconectividadinstalada = await _context
                             .CConectividad
-                            .Where(x => x.DescConectividad == request.CONECTIVIDAD)
+                            .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdConectividad)
                             .FirstOrDefaultAsync();
+
                         int idaplicativoinstalado = await _context
                             .CSoftware
-                            .Where(x => x.DescSoftware == request.APLICATIVO)
+                            .Where(x => x.DescSoftware == request.APLICATIVO && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdSoftware)
                             .FirstOrDefaultAsync();
+
+                        int idAccess = await _context.CModelos.Where(x => x.IdModelo == bdunidad.IdModelo).Select(x => x.IdAccess.GetValueOrDefault()).FirstOrDefaultAsync();
+
+                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividad.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdConectividad == idconectividadinstalada).FirstOrDefaultAsync();
+
+                        if (modeloConectividad == null)
+                        {
+                            await insertDataTable($"La conectividad no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION");
+                            return $"La conectividad no esta relacionada con el modelo";
+                        }
+
+                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftware.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdSoftware == idaplicativoinstalado).FirstOrDefaultAsync();
+
+                        if (modeloSoftware == null)
+                        {
+                            await insertDataTable($"El aplicativo no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION");
+                            return $"El aplicativo no esta relacionada con el modelo";
+                        }
+
                         #endregion
                         #region Ingreso de registro de unidad instalada en BD_INSTALACIONES
                         BdInstalaciones instalaciones = new BdInstalaciones()
@@ -1880,7 +2001,9 @@ namespace WebApiSgsElavon.Services
                             IdClienteIni = 4,
                             IdUsuarioAlta = ID_TECNICO,
                             FecAlta = DateTime.Now,
-                            Tipo = "TPV"
+                            Tipo = "TPV",
+                            IdConectividad = idconectividadinstalada,
+                            IdAplicativo = idaplicativoinstalado
                         };
                         _context.BdInstalaciones.Add(instalaciones);
                         await _context.SaveChangesAsync();
@@ -1913,9 +2036,9 @@ namespace WebApiSgsElavon.Services
                         #region Si la conectividad seleccionada en la instalacion es IS_GPRS = 1 se ingresara o actualizara el registro del sim en BD_UNIDADES
                         var isgprs = await _context.CConectividad.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs == null ? 0 : x.IsGprs).FirstOrDefaultAsync();
 
-                        if (isgprs == 1)
+                        if ((isgprs == 1) || (isgprs != 1 && idAccess == 1))
                         {
-                            if (request.NO_SIM != null)
+                            if (!String.IsNullOrEmpty(request.NO_SIM))
                             {
                                 var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
                                 if (sim != null)
@@ -1948,7 +2071,7 @@ namespace WebApiSgsElavon.Services
                                         await _context.SaveChangesAsync();
 
                                         #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM");
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM",0,0);
                                         #endregion
                                     }
                                     else
@@ -1974,7 +2097,7 @@ namespace WebApiSgsElavon.Services
                                         await _context.SaveChangesAsync();
 
                                         #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM");
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM",0,0);
                                         #endregion
                                     }
                                 }
@@ -2018,7 +2141,7 @@ namespace WebApiSgsElavon.Services
                                         await _context.SaveChangesAsync();
 
                                         #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, simnuevo.IdUnidad, "SIM");
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, simnuevo.IdUnidad, "SIM",0,0);
                                         #endregion
                                     }
                                     else
@@ -2029,7 +2152,10 @@ namespace WebApiSgsElavon.Services
                             }
                             else
                             {
-                                return "NO SIM no puede estar vacio cuando la conectividad es GRPS";
+                                if(isgprs == 1)
+                                {
+                                    return "NO SIM no puede estar vacio cuando la conectividad es GRPS";
+                                }
                             }
                         }
                         #endregion
@@ -2041,28 +2167,44 @@ namespace WebApiSgsElavon.Services
                             .FirstOrDefaultAsync();
                         int idconectividadretirada = await _context
                             .CConectividad
-                            .Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim())
+                            .Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim() && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdConectividad)
                             .FirstOrDefaultAsync();
                         int idaplicativoretirada = await _context
                             .CSoftware
-                            .Where(x => x.DescSoftware == request.APLICATIVO_RETIRO.Trim())
+                            .Where(x => x.DescSoftware == request.APLICATIVO_RETIRO.Trim() && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdSoftware)
                             .FirstOrDefaultAsync();
                         int idmarcaretiro = await _context
                             .CMarcas
-                            .Where(x => x.DescMarca == request.MARCA_RETIRO.Trim())
+                            .Where(x => x.DescMarca == request.MARCA_RETIRO.Trim() && x.Status == "ACTIVO")
                             .Select(x => x.IdMarca)
                             .FirstOrDefaultAsync();
                         int idmodeloretiro = await _context
                             .CModelos
-                            .Where(x => x.DescModelo == request.MODELO_RETIRO.Trim())
+                            .Where(x => x.DescModelo == request.MODELO_RETIRO.Trim() && x.Status == "ACTIVO")
                             .Select(x => x.IdModelo)
                             .FirstOrDefaultAsync();
 
                         int idunidadRetirada = 0;
                         int? idstatusunidadretirada = null;
                         #endregion
+                        /*
+                        BdModeloConectividad modeloConectividadR = await _context.BdModeloConectividad.Where(x => x.IdModelo == idmodeloretiro && x.IdConectividad == idconectividadretirada).FirstOrDefaultAsync();
+
+                        if (modeloConectividadR == null)
+                        {
+                            await insertDataTable($"La conectividad no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION");
+                            return $"La conectividad no esta relacionada con el modelo";
+                        }
+
+                        BdModeloSoftware modeloSoftwareR = await _context.BdModeloSoftware.Where(x => x.IdModelo == idmodeloretiro && x.IdSoftware == idaplicativoretirada).FirstOrDefaultAsync();
+
+                        if (modeloSoftwareR == null)
+                        {
+                            await insertDataTable($"El aplicativo no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION");
+                            return $"El aplicativo no esta relacionada con el modelo";
+                        }*/
 
                         #region Ingreso o actualizacion de la unidad retirada, Si el numero de serie contiene el dato ILEGIBLE se creara un numero de serie aleatorio
                         if (bdunidadRetirada == null || request.NO_SERIE_RETIRO.ToUpper().Trim() == "ILEGIBLE")
@@ -2144,7 +2286,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso de registro de la unidad retirada en BD_RETIROS
-                        await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada, "TPV");
+                        await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada, "TPV", idconectividadretirada, idaplicativoretirada);
                         #endregion
 
                         #region Si la unidad cuenta con el numero de serie = "ILEGIBLE" se agrega a la bitacora con un comentario distinto en BD_BITACORA_UNIDAD de lo contrario no lleva comenatrio
@@ -2188,7 +2330,7 @@ namespace WebApiSgsElavon.Services
                         {
                             if (request.IS_INSTALACION_SIM || (!request.IS_INSTALACION_SIM && isgprs == 1) || (!request.IS_INSTALACION_SIM && isgprs != 1))
                             {
-                                if (request.NO_SIM_RETIRO != null)
+                                if (!String.IsNullOrEmpty(request.NO_SIM_RETIRO))
                                 {
                                     int idSim;
                                     var simretiro = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM_RETIRO && x.IdMarca == 10).FirstOrDefaultAsync();
@@ -2240,7 +2382,7 @@ namespace WebApiSgsElavon.Services
                                         await _context.SaveChangesAsync();
                                         idSim = simretiro.IdUnidad;
                                     }
-                                    await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM");
+                                    await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM",0,0);
 
                                     #region Bitacora del Sim
                                     if (simretiro == null)
@@ -2358,7 +2500,7 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable("La FECHA DE CIERRE no puede ser mayor a la actual", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     return "La FECHA DE CIERRE no puede ser mayor a la actual";
                 }
-                if (request.NO_SIM_RETIRO != null && !await ValidateSimRetiro(request.NO_SIM_RETIRO))
+                if (!String.IsNullOrEmpty(request.NO_SIM_RETIRO) && !await ValidateSimRetiro(request.NO_SIM_RETIRO))
                 {
                     await insertDataTable($"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "CIERRE SUSTITUCION SIM");
                     return $"El Sim a Retirar '{request.NO_SIM_RETIRO}' se encuentra en un estatus incorrecto";
@@ -2456,7 +2598,7 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
                         #region Ingreso o actualizacion de la informacion del sim en BD_UNIDADES y se agrega registro en BD_INSTALACIONES
-                        if (request.NO_SIM != null)
+                        if (!String.IsNullOrEmpty(request.NO_SIM))
                         {
                             var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
                             if (sim != null)
@@ -2475,7 +2617,9 @@ namespace WebApiSgsElavon.Services
                                     IdClienteIni = 4,
                                     IdUsuarioAlta = ID_TECNICO,
                                     FecAlta = DateTime.Now,
-                                    Tipo = "SIM"
+                                    Tipo = "SIM",
+                                    IdConectividad = 0,
+                                    IdAplicativo = 0
                                 };
                                 _context.BdInstalaciones.Add(instalacionesSim);
                                 await _context.SaveChangesAsync();
@@ -2508,7 +2652,7 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Ingreso o actualizacion de informacion del sim en BD_UNIDADES y se agrega un registro a BD_RETIROS
-                        if (request.NO_SIM_RETIRO != null && request.PEDIR_SIM)
+                        if (!String.IsNullOrEmpty(request.NO_SIM_RETIRO) && request.PEDIR_SIM)
                         {
                             int idSim;
                             int idstatusanteriorSim = 0;
@@ -2589,7 +2733,7 @@ namespace WebApiSgsElavon.Services
                             }
                             #endregion
 
-                            await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM");
+                            await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM",0,0);
                         }
                         #endregion
                         transaction.Commit();
@@ -2682,7 +2826,7 @@ namespace WebApiSgsElavon.Services
         }
         #endregion
         #region Ingreso de informacion en  BD_INSTALACIONES
-        public async Task insertarBdinstalacion(int IDAR, int IDTECNICO, int IDNEGOCIO, int IDUNIDAD, string tipo)
+        public async Task insertarBdinstalacion(int IDAR, int IDTECNICO, int IDNEGOCIO, int IDUNIDAD, string tipo, int IdConectividad, int IdAplicativo)
         {
             BdInstalaciones instalaciones = new BdInstalaciones()
             {
@@ -2694,14 +2838,16 @@ namespace WebApiSgsElavon.Services
                 IdClienteIni = 4,
                 IdUsuarioAlta = IDTECNICO,
                 FecAlta = DateTime.Now,
-                Tipo = tipo
+                Tipo = tipo,
+                IdConectividad = IdConectividad,
+                IdAplicativo = IdAplicativo
             };
             _context.BdInstalaciones.Add(instalaciones);
             await _context.SaveChangesAsync();
         }
         #endregion
         #region Ingreso de informacion en BD_RETIROS
-        public async Task insertarBdRetiros(int idar, int idtecnico, int idnegocio, int idunidad, string tipo)
+        public async Task insertarBdRetiros(int idar, int idtecnico, int idnegocio, int idunidad, string tipo, int idconectividad, int idaplicativo)
         {
             BdRetiros retiros = new BdRetiros()
             {
@@ -2713,7 +2859,9 @@ namespace WebApiSgsElavon.Services
                 IsNueva = 0,
                 IdUsuarioAlta = idtecnico,
                 FecAlta = DateTime.Now,
-                Tipo = tipo
+                Tipo = tipo,
+                IdConectividad = idconectividad,
+                IdAplicativo = idaplicativo
             };
             _context.BdRetiros.Add(retiros);
             await _context.SaveChangesAsync();
@@ -2847,10 +2995,13 @@ namespace WebApiSgsElavon.Services
                             x.IdProyectoEspecial == fallasProyEspeciale.IdProyectoEspecial)
                     .FirstOrDefault();
 
-                bdAfiliacionesProyecto.IsProcesado = "S";
+                if (bdAfiliacionesProyecto != null)
+                {
+                    bdAfiliacionesProyecto.IsProcesado = "S";
 
-                _context.BdAfiliacionesProyectoEspecial.Update(bdAfiliacionesProyecto);
-                await _context.SaveChangesAsync();
+                    _context.BdAfiliacionesProyectoEspecial.Update(bdAfiliacionesProyecto);
+                    await _context.SaveChangesAsync();
+                }
             }
         }
     }

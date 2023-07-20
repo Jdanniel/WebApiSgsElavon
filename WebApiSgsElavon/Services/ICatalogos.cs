@@ -18,8 +18,8 @@ using WebApiSgsElavon.Dtos.Soluciones;
 using WebApiSgsElavon.Dtos.StatusAr;
 using WebApiSgsElavon.Dtos.Subrechazos;
 using WebApiSgsElavon.Dtos.Unidades;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+using WebApiSgsElavon.Model;
+//using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -43,13 +43,14 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<ReglasModelosDtos>> GetReglasModelos();
         Task<IEnumerable<CausasCancelacionDtos>> GetCausasCancelacion();
         Task<IEnumerable<SolucionesDtos>> GetSoluciones();
+        Task<List<CEvidenceTypes>> GetEvidenceTypes();
     }
 
     public class CatalogosServices : ICatalogosServices
     {
-        private readonly ELAVONTESTContext context;
+        private readonly ELAVONContext context;
 
-        public CatalogosServices(ELAVONTESTContext _context)
+        public CatalogosServices(ELAVONContext _context)
         {
             context = _context;
         }
@@ -67,6 +68,15 @@ namespace WebApiSgsElavon.Services
                 })
                 .ToListAsync();
             return cambio;
+        }
+
+        public async Task<List<CEvidenceTypes>> GetEvidenceTypes()
+        {
+            List<CEvidenceTypes> evidences = await context
+                .CEvidenceTypes
+                .Where(x => x.Status == 1)
+                .ToListAsync();
+            return evidences;
         }
 
         public async Task<IEnumerable<CausasDtos>> GetCausas()
@@ -121,7 +131,7 @@ namespace WebApiSgsElavon.Services
             List<ModelosDtos> modelos = await context
                 .CModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca })
+                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca, IdAccess = x.IdAccess })
                 .ToListAsync();
             return modelos;
         }
@@ -238,10 +248,13 @@ namespace WebApiSgsElavon.Services
 
         public async Task<IEnumerable<UnidadesDtos>> GetUnidadesNegocio(int idusuario)
         {
-            //List<int> idstatusar = new List<int> { 6, 7, 8 };
+            List<int> idstatusar = new List<int> { 6, 7, 8 };
             var PROVEEDOR = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
+            List<int> negocios = await context.BdAr.Where(x => !idstatusar.Contains(x.IdStatusAr) && x.IdTecnico == idusuario).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
             //var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
-            List<UnidadesDtos> unidadesNegocio = await context.BdUnidades.Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null).Select(x => new UnidadesDtos()
+            List<UnidadesDtos> unidadesNegocio = await context.BdUnidades
+                .Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null
+                && x.IdTipoResponsable==4 && negocios.Contains(x.IdResponsable)).Select(x => new UnidadesDtos()
             {
                 IdUnidad = x.IdUnidad,
                 IdModelo = x.IdModelo,

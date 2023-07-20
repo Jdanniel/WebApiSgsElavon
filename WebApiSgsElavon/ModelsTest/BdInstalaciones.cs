@@ -14,6 +14,8 @@ namespace WebApiSgsElavon.ModelsTest
         public int? IdParent { get; set; }
         public int? IdClienteIni { get; set; }
         public int? IdUsuarioAlta { get; set; }
+        public int? IdConectividad { get; set; }
+        public int? IdAplicativo { get; set; }
         public DateTime? FecAlta { get; set; }
         public string Tipo { get; set; }
 

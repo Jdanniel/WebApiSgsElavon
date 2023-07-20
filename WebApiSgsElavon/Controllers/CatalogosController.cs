@@ -19,6 +19,7 @@ using WebApiSgsElavon.Dtos.Soluciones;
 using WebApiSgsElavon.Dtos.StatusAr;
 using WebApiSgsElavon.Dtos.Subrechazos;
 using WebApiSgsElavon.Dtos.Unidades;
+using WebApiSgsElavon.Model;
 using WebApiSgsElavon.Services;
 
 namespace WebApiSgsElavon.Controllers
@@ -71,6 +72,12 @@ namespace WebApiSgsElavon.Controllers
         {
             IEnumerable<SoftwaresDtos> dtos = await _Catalogosservices.GetSoftwares();
             return dtos;
+        }
+        [HttpGet("evidenceTypes")]
+        public async Task<IEnumerable<CEvidenceTypes>> GetEvidenceTypes()
+        {
+            IEnumerable<CEvidenceTypes> evidences = await _Catalogosservices.GetEvidenceTypes();
+            return evidences;
         }
         [HttpGet("unidades/{idusuario}")]
         public async Task<IEnumerable<UnidadesDtos>> GetUnidades(int idusuario)
