@@ -10,8 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-using WebApiSgsElavon.Model;
-//using WebApiSgsElavon.ModelsTest;
+//using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -39,10 +39,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONContext _context;
+        private readonly ELAVONTESTContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONContext context, IHttpClientFactory httpClient)
+        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -737,6 +737,13 @@ namespace WebApiSgsElavon.Services
 
                         var bdunidadRetirada = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
 
+                        if (bdunidadRetirada != null && bdunidadRetirada.IdStatusUnidad != 17)
+                        {
+                            transaction.Rollback();
+                            await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                            return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                        }
+
                         int? idstatusini = bdar.IdStatusAr;
                         int idconectividadretirada = await _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IdConectividad).FirstOrDefaultAsync();
                         int isgprs = await _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefaultAsync();
@@ -937,6 +944,14 @@ namespace WebApiSgsElavon.Services
                                 }
                                 else
                                 {
+
+                                    if (simretiro.IdStatusUnidad != 17)
+                                    {
+                                        transaction.Rollback();
+                                        await insertDataTable($"El numero de sim `{simretiro.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                        return $"El numero de sim `{simretiro.NoSerie}` no se encuentra en estatus correcto para retirar";
+                                    }
+
                                     var idmodelossim = await GetCarrier(simretiro.NoSerie.Trim());
                                     idstatusanteriorSim = simretiro.IdStatusUnidad;
                                     simretiro.IdStatusUnidad = 15;
@@ -2165,6 +2180,14 @@ namespace WebApiSgsElavon.Services
                             .BdUnidades
                             .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim())
                             .FirstOrDefaultAsync();
+                        
+                        if (bdunidadRetirada != null && bdunidadRetirada.IdStatusUnidad != 17)
+                        {
+                            transaction.Rollback();
+                            await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                            return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                        }
+
                         int idconectividadretirada = await _context
                             .CConectividad
                             .Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim() && x.Status == "ACTIVO" && x.IdCliente == 4)
@@ -2371,6 +2394,14 @@ namespace WebApiSgsElavon.Services
                                     }
                                     else
                                     {
+
+                                        if (simretiro.IdStatusUnidad != 17)
+                                        {
+                                            transaction.Rollback();
+                                            await insertDataTable($"El numero de sim `{simretiro.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                            return $"El numero de sim `{simretiro.NoSerie}` no se encuentra en estatus correcto para retirar";
+                                        }
+
                                         var idmodelosim = await GetCarrier(simretiro.NoSerie.Trim());
                                         idstatusanteriorSim = simretiro.IdStatusUnidad;
                                         simretiro.IdStatusUnidad = 15;

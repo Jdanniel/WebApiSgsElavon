@@ -19,7 +19,7 @@ using WebApiSgsElavon.Dtos.Soluciones;
 using WebApiSgsElavon.Dtos.StatusAr;
 using WebApiSgsElavon.Dtos.Subrechazos;
 using WebApiSgsElavon.Dtos.Unidades;
-using WebApiSgsElavon.Model;
+using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Services;
 
 namespace WebApiSgsElavon.Controllers
