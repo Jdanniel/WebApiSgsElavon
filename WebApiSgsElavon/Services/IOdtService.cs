@@ -1264,7 +1264,8 @@ namespace WebApiSgsElavon.Services
                                     }
                                     else
                                     {
-                                        return "El SIM no esta en el estatus correcto";
+                                        await insertDataTable($"El Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                                        return $"La Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto";
                                     }
                                 }
                             }
@@ -2062,7 +2063,7 @@ namespace WebApiSgsElavon.Services
                                     int idsimInstalar = sim.IdUnidad;
                                     var idmodelosim = await GetCarrier(sim.NoSerie.Trim());
 
-                                    if (sim.IdStatusUnidad != 17)
+                                    if (sim.IdStatusUnidad == 15)
                                     {
 
                                         sim.IdStatusUnidad = 17;
@@ -2091,29 +2092,33 @@ namespace WebApiSgsElavon.Services
                                     }
                                     else
                                     {
-                                        //09/07/2020
-                                        sim.IdTipoResponsable = 4;
-                                        sim.IdResponsable = idnegocioar;
-                                        sim.IdSim = bdar.IdProveedor;
-                                        sim.IdModelo = idmodelosim;
-                                        await _context.SaveChangesAsync();
+                                        //23/11/2023 Se retira proceso para solo regresar mensaje de error
+                                        ////09/07/2020
+                                        //sim.IdTipoResponsable = 4;
+                                        //sim.IdResponsable = idnegocioar;
+                                        //sim.IdSim = bdar.IdProveedor;
+                                        //sim.IdModelo = idmodelosim;
+                                        //await _context.SaveChangesAsync();
 
-                                        BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
-                                        {
-                                            IdStatusUnidadIni = idstatussimInstalar,
-                                            IdStatusUnidadFin = 17,
-                                            IdUnidad = idsimInstalar,
-                                            IdTipoResponsable = 4,
-                                            IdResponsable = idnegocioar,
-                                            IdUsuarioAlta = ID_TECNICO,
-                                            FecAlta = DateTime.Now
-                                        };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
-                                        await _context.SaveChangesAsync();
+                                        //BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                        //{
+                                        //    IdStatusUnidadIni = idstatussimInstalar,
+                                        //    IdStatusUnidadFin = 17,
+                                        //    IdUnidad = idsimInstalar,
+                                        //    IdTipoResponsable = 4,
+                                        //    IdResponsable = idnegocioar,
+                                        //    IdUsuarioAlta = ID_TECNICO,
+                                        //    FecAlta = DateTime.Now
+                                        //};
+                                        //_context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        //await _context.SaveChangesAsync();
 
-                                        #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM",0,0);
-                                        #endregion
+                                        //#region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
+                                        //await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM",0,0);
+                                        //#endregion
+
+                                        await insertDataTable($"El Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                                        return $"La Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto";
                                     }
                                 }
                                 else
