@@ -735,7 +735,7 @@ namespace WebApiSgsElavon.Services
                         int ID_TECNICO = request.ID_TECNICO;
 
 
-                        var bdunidadRetirada = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
+                        var bdunidadRetirada = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
 
                         if (bdunidadRetirada != null && bdunidadRetirada.IdStatusUnidad != 17)
                         {
@@ -908,7 +908,7 @@ namespace WebApiSgsElavon.Services
 
                             if (!String.IsNullOrEmpty(request.NO_SIM))
                             {
-                                var simretiro = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM && x.IdMarca == 10).FirstOrDefaultAsync();
+                                var simretiro = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM && x.IdMarca == 10 && x.Status == "ACTIVO").FirstOrDefaultAsync();
 
                                 if (simretiro == null)
                                 {
@@ -1142,7 +1142,7 @@ namespace WebApiSgsElavon.Services
                             .Select(x => x.IdNegocio)
                             .FirstOrDefaultAsync();
 
-                        var bdunidad = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
+                        var bdunidad = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
 
                         int idconectividadinstalada = await _context
                             .CConectividad
@@ -1215,7 +1215,7 @@ namespace WebApiSgsElavon.Services
                         {
                             if (!String.IsNullOrEmpty(request.NO_SIM))
                             {
-                                var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
+                                var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
 
                                 if (sim != null)
                                 {
@@ -1276,7 +1276,7 @@ namespace WebApiSgsElavon.Services
                             {
                                 if (!String.IsNullOrEmpty(request.NO_SIM))
                                 {
-                                    var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
+                                    var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
 
                                     if (sim != null)
                                     {
@@ -1523,7 +1523,7 @@ namespace WebApiSgsElavon.Services
 
                         if (!String.IsNullOrEmpty(request.NO_SIM))
                         {
-                            var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
+                            var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
                             if (sim != null)
                             {
                                 int idstatussimInstalar = sim.IdStatusUnidad;
@@ -1971,7 +1971,7 @@ namespace WebApiSgsElavon.Services
                         #region Informacion de la unidad instalada
                         var bdunidad = await _context
                             .BdUnidades
-                            .Where(x => x.NoSerie == request.NO_SERIE.Trim())
+                            .Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO")
                             .FirstOrDefaultAsync();
                         int idstatusunidadiniinstalada = bdunidad.IdStatusUnidad;
 
@@ -2094,31 +2094,31 @@ namespace WebApiSgsElavon.Services
                                     {
                                         //23/11/2023 Se retira proceso para solo regresar mensaje de error
                                         ////09/07/2020
-                                        //sim.IdTipoResponsable = 4;
-                                        //sim.IdResponsable = idnegocioar;
-                                        //sim.IdSim = bdar.IdProveedor;
-                                        //sim.IdModelo = idmodelosim;
-                                        //await _context.SaveChangesAsync();
+                                        sim.IdTipoResponsable = 4;
+                                        sim.IdResponsable = idnegocioar;
+                                        sim.IdSim = bdar.IdProveedor;
+                                        sim.IdModelo = idmodelosim;
+                                        await _context.SaveChangesAsync();
 
-                                        //BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
-                                        //{
-                                        //    IdStatusUnidadIni = idstatussimInstalar,
-                                        //    IdStatusUnidadFin = 17,
-                                        //    IdUnidad = idsimInstalar,
-                                        //    IdTipoResponsable = 4,
-                                        //    IdResponsable = idnegocioar,
-                                        //    IdUsuarioAlta = ID_TECNICO,
-                                        //    FecAlta = DateTime.Now
-                                        //};
-                                        //_context.BdBitacoraUnidad.Add(bitacoraSim);
-                                        //await _context.SaveChangesAsync();
+                                        BdBitacoraUnidad bitacoraSim = new BdBitacoraUnidad()
+                                        {
+                                            IdStatusUnidadIni = idstatussimInstalar,
+                                            IdStatusUnidadFin = 17,
+                                            IdUnidad = idsimInstalar,
+                                            IdTipoResponsable = 4,
+                                            IdResponsable = idnegocioar,
+                                            IdUsuarioAlta = ID_TECNICO,
+                                            FecAlta = DateTime.Now
+                                        };
+                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        await _context.SaveChangesAsync();
 
-                                        //#region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        //await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM",0,0);
-                                        //#endregion
+                                        #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM", 0, 0);
+                                        #endregion
 
-                                        await insertDataTable($"El Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
-                                        return $"La Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto";
+                                        //await insertDataTable($"El Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
+                                        //return $"La Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto";
                                     }
                                 }
                                 else
@@ -2183,7 +2183,7 @@ namespace WebApiSgsElavon.Services
                         #region Informacion de la unidad Retirada
                         var bdunidadRetirada = await _context
                             .BdUnidades
-                            .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim())
+                            .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim() && x.Status == "ACTIVO")
                             .FirstOrDefaultAsync();
                         
                         if (bdunidadRetirada != null && bdunidadRetirada.IdStatusUnidad != 17)
@@ -2636,7 +2636,7 @@ namespace WebApiSgsElavon.Services
                         #region Ingreso o actualizacion de la informacion del sim en BD_UNIDADES y se agrega registro en BD_INSTALACIONES
                         if (!String.IsNullOrEmpty(request.NO_SIM))
                         {
-                            var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim()).FirstOrDefaultAsync();
+                            var sim = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SIM.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
                             if (sim != null)
                             {
                                 int idstatussimInstalar = sim.IdStatusUnidad;
