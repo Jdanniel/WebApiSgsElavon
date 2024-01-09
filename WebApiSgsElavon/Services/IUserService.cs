@@ -8,10 +8,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiSgsElavon.DataTTOSD;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Helpers;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -31,9 +30,9 @@ namespace WebApiSgsElavon.Services
         };
 
         private readonly AppSettings _appSettings;
-        private readonly ELAVONTESTContext _context;
+        private readonly GetnetContext _context;
 
-        public UserService(IOptions<AppSettings> appSettings, ELAVONTESTContext context)
+        public UserService(IOptions<AppSettings> appSettings, GetnetContext context)
         {
             _appSettings = appSettings.Value;
             _context = context;
@@ -102,7 +101,7 @@ namespace WebApiSgsElavon.Services
 
         public async Task<bool> ValidatePassword(int idUsuario,string passwordApp)
         {
-            SpGetPassword procedure = await _context.Query<SpGetPassword>().FromSql("EXEC SP_GET_PASSWORD @p0", idUsuario).SingleOrDefaultAsync();
+            SpGetPassword procedure = await _context.SpGetPasswords.FromSqlRaw("EXEC SP_GET_PASSWORD @p0", idUsuario).SingleOrDefaultAsync();
 
             if (!procedure.pw.Equals(passwordApp))
             {

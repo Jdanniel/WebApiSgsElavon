@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiSgsElavon.DataTTOSD;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -16,9 +15,9 @@ namespace WebApiSgsElavon.Services
 
     public class NegocioService : INegocioService
     {
-        private readonly ELAVONTESTContext context;
+        private readonly GetnetContext context;
 
-        public NegocioService(ELAVONTESTContext _context)
+        public NegocioService(GetnetContext _context)
         {
             context = _context;
         }
@@ -30,8 +29,8 @@ namespace WebApiSgsElavon.Services
                 negocios.Latitud = request.LATITUD;
                 negocios.Longitud = request.LONGITUD;
                 await context.SaveChangesAsync();
-                var idstatusar = await context.BdAr.Where(x => x.IdAr == request.ID_AR).Select(x => x.IdStatusAr).FirstOrDefaultAsync();
-                BdBitacoraNegociosCoordenadas coordenadas = new BdBitacoraNegociosCoordenadas();
+                var idstatusar = await context.BdArs.Where(x => x.IdAr == request.ID_AR).Select(x => x.IdStatusAr).FirstOrDefaultAsync();
+                BdBitacoraNegociosCoordenada coordenadas = new BdBitacoraNegociosCoordenada();
                 coordenadas.IdNegocio = request.ID_NEGOCIO;
                 coordenadas.IdAr = request.ID_AR;
                 coordenadas.Latitud = request.LATITUD;

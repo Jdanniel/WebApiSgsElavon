@@ -140,6 +140,11 @@ namespace WebApiSgsElavon.Entities.Requests
 
         [JsonProperty("IS_INSTALACION_SIM")]
         public bool IS_INSTALACION_SIM { get; set; }
+        //AGREGAR LISTA DE ACCESORIOS
+        [JsonProperty("ACCESSORIES_INST")]
+        public List<int> AccessoriesInst {  get; set; }
+        [JsonProperty("ACCESSORIES_REMO")]
+        public List<int> AccessoriesRemo { get; set; }
     }
 
     public partial class SustitucionesRequest

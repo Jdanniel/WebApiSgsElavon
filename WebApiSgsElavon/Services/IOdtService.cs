@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,10 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WebApiSgsElavon.DataTTOSD;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
+
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -39,10 +40,10 @@ namespace WebApiSgsElavon.Services
 
     public class OdtServices : IOdtService
     {
-        private readonly ELAVONTESTContext _context;
+        private readonly GetnetContext _context;
         private readonly IHttpClientFactory _client;
 
-        public OdtServices(ELAVONTESTContext context, IHttpClientFactory httpClient)
+        public OdtServices(GetnetContext context, IHttpClientFactory httpClient)
         {
             _context = context;
             _client = httpClient;
@@ -50,7 +51,7 @@ namespace WebApiSgsElavon.Services
 
         public totalODT totalODTS(int idusuario)
         {
-            int tnuevas = _context.BdAr
+            int tnuevas = _context.BdArs
                 .Where(x => x.IdTecnico == idusuario && x.IdStatusAr == 3 && x.Status == "PROCESADO")
                 .Count();
             return new totalODT
@@ -61,7 +62,7 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<ODT>> getOdts(int idusuario)
         {
 
-            List<ODT> odt = await _context.Query<ODT>().FromSql("SELECT ID_AR, " +
+            List<ODT> odt = await _context.Odts.FromSqlRaw("SELECT ID_AR, " +
                 "BD_NEGOCIOS.ID_NEGOCIO, " +
                 "NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO, " +
@@ -94,7 +95,9 @@ namespace WebApiSgsElavon.Services
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO' " +
                 "AND BD_AR.FEC_ATENCION IS NOT NULL AND BD_AR.FEC_GARANTIA IS NOT NULL" +
-                " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario).ToListAsync();
+                " ORDER BY BD_AR.FEC_ATENCION ASC", idusuario)
+                .AsNoTracking()
+                .ToListAsync();
 
             //var totalYears = odt.GroupBy(x => x.AA).Count();
 
@@ -106,16 +109,16 @@ namespace WebApiSgsElavon.Services
             {
                 if (!validaAsignacion(model.ID_AR, model.ID_USUARIO))
                 {
-                    insertDataTable("El servicio fue reasignado", model.ID_USUARIO, model.ID_AR, "Retiro");
+                    await insertDataTable("El servicio fue reasignado", model.ID_USUARIO, model.ID_AR, "Retiro");
                     return 3;
                 }
                 if (validaStatusAr(model.ID_AR))
                 {
-                    insertDataTable("El servicio se encuentra  en estatus 6,7,8", model.ID_USUARIO, model.ID_AR, "Retiro");
+                    await insertDataTable("El servicio se encuentra  en estatus 6,7,8", model.ID_USUARIO, model.ID_AR, "Retiro");
                     return 4;
                 }
 
-                var ar = await _context.BdAr.Where(x => x.IdAr == model.ID_AR && x.IdStatusAr != model.ID_STATUS_AR_P).FirstOrDefaultAsync();
+                var ar = await _context.BdArs.Where(x => x.IdAr == model.ID_AR && x.IdStatusAr != model.ID_STATUS_AR_P).FirstOrDefaultAsync();
 
                 if (ar == null) return 2;
 
@@ -132,7 +135,7 @@ namespace WebApiSgsElavon.Services
                     IdUsuarioAlta = model.ID_USUARIO,
                     FecAlta = DateTime.Now
                 };
-                _context.BdBitacoraAr.Add(bitacora);
+                _context.BdBitacoraArs.Add(bitacora);
                 _context.SaveChanges();
                 return 1;
             }
@@ -144,7 +147,7 @@ namespace WebApiSgsElavon.Services
         }
         public async Task<string> GetNewOdts(int idusuario)
         {
-            List<ODT> odts = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+            List<ODT> odts = await _context.Odts.FromSqlRaw("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO, " +
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
@@ -191,7 +194,7 @@ namespace WebApiSgsElavon.Services
                     IdUsuarioAlta = request.ID_USUARIO,
                     FecAlta = DateTime.Now
                 };
-                _context.BdComentarioAr.Add(ar);
+                _context.BdComentarioArs.Add(ar);
                 _context.SaveChanges();
                 return 1;
             }
@@ -205,7 +208,7 @@ namespace WebApiSgsElavon.Services
         {
             List<OdtEvent> eventos = new List<OdtEvent>();
 
-            List<ODT> odts = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+            List<ODT> odts = await _context.Odts.FromSqlRaw("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO, " +
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
@@ -289,7 +292,7 @@ namespace WebApiSgsElavon.Services
         {
             List<OdtEvent2> eventos = new List<OdtEvent2>();
 
-            List<ODT> odts = await _context.Query<ODT>().FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+            List<ODT> odts = await _context.Odts.FromSqlRaw("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO, " +
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
@@ -360,9 +363,7 @@ namespace WebApiSgsElavon.Services
             };
             try
             {
-                odts = await _context
-                    .Query<ODT>()
-                    .FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+                odts = await _context.Odts.FromSqlRaw("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
                     "BD_NEGOCIOS.DESC_NEGOCIO, " +
                     "BD_NEGOCIOS.NO_AFILIACION, " +
                     "BD_NEGOCIOS.ESTADO, " +
@@ -447,9 +448,9 @@ namespace WebApiSgsElavon.Services
                     return "El campo ID_USUARIO esta vacio";
                 }
 
-                CCausaCancelacion causa = await _context.CCausaCancelacion.FirstOrDefaultAsync(x => Regex.Replace(x.DescCausaCancelacion.ToUpper(), @"\t|\n|\r", "") == Regex.Replace(request.DescCausa.ToUpper(), @"\t|\n|\r", "") && x.Status == "ACTIVO");
-                CUsuarios usuario = await _context.CUsuarios.FirstOrDefaultAsync(x => x.IdUsuario == request.IdUsuario && x.Status == "ACTIVO");
-                BdAr ar = await _context.BdAr.FirstOrDefaultAsync(x => x.IdAr == request.IdAr && x.Status == "PROCESADO");
+                CCausaCancelacion causa = await _context.CCausaCancelacions.FirstOrDefaultAsync(x => Regex.Replace(x.DescCausaCancelacion.ToUpper(), @"\t|\n|\r", "") == Regex.Replace(request.DescCausa.ToUpper(), @"\t|\n|\r", "") && x.Status == "ACTIVO");
+                CUsuario usuario = await _context.CUsuarios.FirstOrDefaultAsync(x => x.IdUsuario == request.IdUsuario && x.Status == "ACTIVO");
+                BdAr ar = await _context.BdArs.FirstOrDefaultAsync(x => x.IdAr == request.IdAr && x.Status == "PROCESADO");
 
                 if (causa == null)
                 {
@@ -486,22 +487,22 @@ namespace WebApiSgsElavon.Services
                     Comentario = "Cancelacion Proveedor - APP",
                     IdUsuarioAlta = usuario.IdUsuario,
                 };
-                await _context.BdBitacoraAr.AddAsync(bitacora);
+                await _context.BdBitacoraArs.AddAsync(bitacora);
                 await _context.SaveChangesAsync();
 
-                BdArCausasCancelacion bdArCausasCancelacion = new BdArCausasCancelacion()
+                BdArCausasCancelacion BdArsCausasCancelacion = new BdArCausasCancelacion()
                 {
                     IdAr = ar.IdAr,
                     IdCausaCancelacion = causa.IdTipoCancelado
                 };
-                await _context.BdArCausasCancelacion.AddAsync(bdArCausasCancelacion);
+                await _context.BdArCausasCancelacions.AddAsync(BdArsCausasCancelacion);
                 await _context.SaveChangesAsync();
 
                 ar.IdStatusAr = 8;
                 ar.IdTecnico = usuario.IdUsuario;
                 ar.DescripcionTrabajo = request.Comentario;
                 ar.FecCierre = valFecha;
-                _context.BdAr.Update(ar);
+                _context.BdArs.Update(ar);
                 await _context.SaveChangesAsync();
                 return "OK";
 
@@ -551,12 +552,12 @@ namespace WebApiSgsElavon.Services
 
                     int idAr = request.ID_AR;
 
-                    CSubrechazo subrechazo = await _context.CSubrechazo.Where(x => x.Status == "ACTIVO" && EF.Functions.Like(x.Subrechazo, "%" + request.SUBRECHAZO + "%")).FirstOrDefaultAsync();
-                    CCausasRechazo causaRechazo = await _context.CCausasRechazo.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && EF.Functions.Like(x.DescCausaRechazo, "%" + request.CAUSA_RECHAZO + "%")).FirstOrDefaultAsync();
-                    BdAr odt = await _context.BdAr.Where(x => x.IdAr == idAr).FirstOrDefaultAsync();
-                    CSoluciones solucion = await _context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion.Trim() == request.TIPO_ATENCION.Trim()).FirstOrDefaultAsync();
+                    CSubrechazo subrechazo = await _context.CSubrechazos.Where(x => x.Status == "ACTIVO" && EF.Functions.Like(x.Subrechazo, "%" + request.SUBRECHAZO + "%")).FirstOrDefaultAsync();
+                    CCausasRechazo causaRechazo = await _context.CCausasRechazos.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4 && EF.Functions.Like(x.DescCausaRechazo, "%" + request.CAUSA_RECHAZO + "%")).FirstOrDefaultAsync();
+                    BdAr odt = await _context.BdArs.Where(x => x.IdAr == idAr).FirstOrDefaultAsync();
+                    CSolucione solucion = await _context.CSoluciones.Where(x => x.IdCliente == 4 && x.Status == "ACTIVO" && x.DescSolucion.Trim() == request.TIPO_ATENCION.Trim()).FirstOrDefaultAsync();
 
-                    BdBitacoraAr StatusFinBitacora = await _context.BdBitacoraAr.FirstOrDefaultAsync(x => x.IdStatusArFin == 31 && x.IdAr == idAr);
+                    BdBitacoraAr StatusFinBitacora = await _context.BdBitacoraArs.FirstOrDefaultAsync(x => x.IdStatusArFin == 31 && x.IdAr == idAr);
 
                     SqlParameter[] @param = new SqlParameter[]
                     {
@@ -632,7 +633,7 @@ namespace WebApiSgsElavon.Services
                         }
                     };
 
-                    int res = await _context.Database.ExecuteSqlCommandAsync("EXEC SP_OPCIONES_REINGENIERIA_RECHAZO  @ID_AR,@FECHA,@CAUSA,@SUBRECHAZO,@TIPO_ATENCION,@TECNICO,@ATIENDE,@CONCLUSIONES,@ID_USUARIO, @FECHA_PROGRAMADO", param);
+                    int res = await _context.Database.ExecuteSqlRawAsync("EXEC SP_OPCIONES_REINGENIERIA_RECHAZO  @ID_AR,@FECHA,@CAUSA,@SUBRECHAZO,@TIPO_ATENCION,@TECNICO,@ATIENDE,@CONCLUSIONES,@ID_USUARIO, @FECHA_PROGRAMADO", param);
 
                     return "Ok";
                 }
@@ -654,7 +655,7 @@ namespace WebApiSgsElavon.Services
         {
             try
             {
-                //var ii = _context.BdAr.Where(x => x.IdAr == request.ID_AR).Select(x => x.FolioTelecarga).FirstOrDefaultAsync();
+                //var ii = _context.BdArs.Where(x => x.IdAr == request.ID_AR).Select(x => x.FolioTelecarga).FirstOrDefaultAsync();
                 if (!validaAsignacion(request.ID_AR, request.ID_TECNICO))
                 {
                     await insertDataTable("El servicio fue reasignado", request.ID_TECNICO, request.ID_AR, "Aceptar/Rechazar");
@@ -665,7 +666,7 @@ namespace WebApiSgsElavon.Services
                     await insertDataTable("El servicio se encuentra  en estatus 6,7,8", request.ID_TECNICO, request.ID_AR, "Aceptar/Rechazar");
                     return 3;
                 }
-                var odt = await _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
+                var odt = await _context.BdArs.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
                 var idstatusini = odt.IdStatusAr;
                 if (request.ID_STATUS_AR == 35)
                 {
@@ -729,7 +730,7 @@ namespace WebApiSgsElavon.Services
                     try
                     {
                         #region Obtener datos del servicio y la unidad a retirar
-                        var bdar = await _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
+                        var BdArs = await _context.BdArs.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
 
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
@@ -744,10 +745,10 @@ namespace WebApiSgsElavon.Services
                             return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
                         }
 
-                        int? idstatusini = bdar.IdStatusAr;
-                        int idconectividadretirada = await _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IdConectividad).FirstOrDefaultAsync();
-                        int isgprs = await _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefaultAsync();
-                        int idaplicativoretirada = await _context.CSoftware.Where(x => x.DescSoftware == request.APLICATIVO.Trim()).Select(x => x.IdSoftware).FirstOrDefaultAsync();
+                        int? idstatusini = BdArs.IdStatusAr;
+                        int idconectividadretirada = await _context.CConectividads.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IdConectividad).FirstOrDefaultAsync();
+                        int isgprs = await _context.CConectividads.Where(x => x.DescConectividad == request.CONECTIVIDAD.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefaultAsync();
+                        int idaplicativoretirada = await _context.CSoftwares.Where(x => x.DescSoftware == request.APLICATIVO.Trim()).Select(x => x.IdSoftware).FirstOrDefaultAsync();
                         int idmarcaretiro = await _context.CMarcas.Where(x => x.DescMarca == request.MARCA.Trim()).Select(x => x.IdMarca).FirstOrDefaultAsync();
                         int idmodeloretiro = await _context.CModelos.Where(x => x.DescModelo == request.MODELO.Trim()).Select(x => x.IdModelo).FirstOrDefaultAsync();
                         int? idstatusunidadiniretirar = null;
@@ -778,12 +779,12 @@ namespace WebApiSgsElavon.Services
 
                             if (bdunidadretiradaUniverso != null && request.NO_SERIE.ToUpper().Trim() != "ILEGIBLE")
                             {
-                                BdUnidades unidad = new BdUnidades()
+                                BdUnidade unidad = new BdUnidade()
                                 {
                                     NoSerie = request.NO_SERIE,
                                     IdCliente = 4,
                                     IdProducto = 1,
-                                    IdSim = bdar.IdProveedor,
+                                    IdSim = BdArs.IdProveedor,
                                     IdModelo = idmodeloretiro,
                                     IdMarca = idmarcaretiro,
                                     IdAplicativo = idaplicativoretirada,
@@ -802,12 +803,12 @@ namespace WebApiSgsElavon.Services
                             {
                                 if (request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
                                 {
-                                    BdUnidades unidadNueva = new BdUnidades()
+                                    BdUnidade unidadNueva = new BdUnidade()
                                     {
                                         NoSerie = Randoms.AlphaNumeric(9) + "-" + Randoms.AlphaNumeric(1),
                                         IdCliente = 4,
                                         IdProducto = 1,
-                                        IdSim = bdar.IdProveedor,
+                                        IdSim = BdArs.IdProveedor,
                                         IdModelo = idmodeloretiro,
                                         IdMarca = idmarcaretiro,
                                         IdAplicativo = idaplicativoretirada,
@@ -840,7 +841,7 @@ namespace WebApiSgsElavon.Services
                             bdunidadRetirada.IdStatusUnidad = 30;
                             bdunidadRetirada.IdTipoResponsable = 2;
                             bdunidadRetirada.IdResponsable = request.ID_TECNICO;
-                            bdunidadRetirada.IdSim = bdar.IdProveedor;
+                            bdunidadRetirada.IdSim = BdArs.IdProveedor;
 
                             await _context.SaveChangesAsync();
                         }
@@ -860,7 +861,7 @@ namespace WebApiSgsElavon.Services
                                 FecAlta = DateTime.Now,
                                 Comentario = "UNIDAD DADA DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE TPVS"
                             };
-                            _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
                             await _context.SaveChangesAsync();
                         }
                         else if (request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
@@ -876,7 +877,7 @@ namespace WebApiSgsElavon.Services
                                 FecAlta = DateTime.Now,
                                 Comentario = "UNIDAD AUTOGENERADA POR EL SISTEMA"
                             };
-                            _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
                             await _context.SaveChangesAsync();
                         }
                         else
@@ -891,13 +892,19 @@ namespace WebApiSgsElavon.Services
                                 IdUsuarioAlta = ID_TECNICO,
                                 FecAlta = DateTime.Now
                             };
-                            _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
                             await _context.SaveChangesAsync();
                         }
                         #endregion
 
                         #region Ingreso de unidad retirada en BD_RETIROS
-                        await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idunidadretirar, "TPV", idconectividadretirada, idaplicativoretirada);
+                        await insertarBdRetiros(ID_AR, ID_TECNICO, BdArs
+                            .IdNegocio
+                            .GetValueOrDefault(), 
+                            idunidadretirar, 
+                            "TPV", 
+                            idconectividadretirada, 
+                            idaplicativoretirada);
                         #endregion
 
                         #region Si la conectividad seleccionada cuenta con el campo IS_GPRS = 1 se actualizara o creara un nuevo registro en BD_UNIDADES
@@ -918,7 +925,7 @@ namespace WebApiSgsElavon.Services
                                     {
                                         var idmodelossim = await GetCarrier(simretirouniverso.Sim.Trim());
 
-                                        BdUnidades sim = new BdUnidades()
+                                        BdUnidade sim = new BdUnidade()
                                         {
                                             IdCliente = 4,
                                             NoSerie = request.NO_SIM,
@@ -929,7 +936,7 @@ namespace WebApiSgsElavon.Services
                                             IdTipoResponsable = 2,
                                             IdModelo = idmodelossim,
                                             IdResponsable = request.ID_TECNICO,
-                                            IdSim = bdar.IdProveedor,
+                                            IdSim = BdArs.IdProveedor,
                                             FecAlta = DateTime.Now,
                                             Status = "ACTIVO"
                                         };
@@ -958,12 +965,12 @@ namespace WebApiSgsElavon.Services
                                     simretiro.IsNueva = 0;
                                     simretiro.IdTipoResponsable = 2;
                                     simretiro.IdResponsable = request.ID_TECNICO;
-                                    simretiro.IdSim = bdar.IdProveedor;
+                                    simretiro.IdSim = BdArs.IdProveedor;
                                     simretiro.IdModelo = idmodelossim;
                                     await _context.SaveChangesAsync();
                                     idSim = simretiro.IdUnidad;
                                 }
-                                await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM",0,0);
+                                await insertarBdRetiros(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), idSim, "SIM",0,0);
                                 #region Bitacora del Sim
                                 if (simretiro == null)
                                 {
@@ -978,7 +985,7 @@ namespace WebApiSgsElavon.Services
                                         FecAlta = DateTime.Now,
                                         Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
                                     };
-                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.BdBitacoraUnidads.Add(bitacoraSim);
                                     await _context.SaveChangesAsync();
                                 }
                                 else
@@ -993,7 +1000,7 @@ namespace WebApiSgsElavon.Services
                                         IdUsuarioAlta = ID_TECNICO,
                                         FecAlta = DateTime.Now
                                     };
-                                    _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                    _context.BdBitacoraUnidads.Add(bitacoraSim);
                                     _context.SaveChanges();
                                 }
                                 #endregion
@@ -1002,20 +1009,20 @@ namespace WebApiSgsElavon.Services
                         #endregion
 
                         #region Actualizacion de la informacion del servicio BD_AR
-                        bdar.Atiende = request.ATIENDE;
-                        bdar.IdSolucion = 9;
-                        bdar.IsRetiro = 1;
-                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                        bdar.NoEquipo = request.VERSION;
-                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        //bdar.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
-                        bdar.Caja = request.CAJA.ToString();
-                        bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                        bdar.IdStatusAr = 6;
-                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        BdArs.Atiende = request.ATIENDE;
+                        BdArs.IdSolucion = 9;
+                        BdArs.IsRetiro = 1;
+                        BdArs.OtorganteVobo = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        BdArs.NoEquipo = request.VERSION;
+                        BdArs.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        //BdArs.NoInventarioFalla = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        BdArs.Caja = request.CAJA.ToString();
+                        BdArs.DescripcionTrabajo = request.COMENTARIO;
+                        BdArs.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        BdArs.IdStatusAr = 6;
+                        BdArs.CadenaCierre += "APLICACION:" + request.APLICATIVO
                         + " VERSION: " + request.VERSION
                         + " CAJA: " + request.CAJA
                         + " ROLLOS INSTALADOS: " + request.ROLLOS
@@ -1031,14 +1038,14 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+                        await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
                         #region Ingreso en Bitacora del servicio BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Retiro Aplicación");
                         #endregion
 
                         #region Ingreso de informacion en BD_AR_ACCESORIOS
-                        BdArAccesorios accesoriosRetirados = new BdArAccesorios()
+                        BdArAccesorio accesoriosRetirados = new BdArAccesorio()
                         {
                             IdAr = ID_AR,
                             Bateria = (request.BATERIA ? "SI" : "NO"),
@@ -1132,37 +1139,37 @@ namespace WebApiSgsElavon.Services
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
 
-                        var bdar = await _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefaultAsync();
+                        var BdArs = await _context.BdArs.Where(x => x.IdAr == ID_AR).FirstOrDefaultAsync();
 
-                        int? idstatusini = bdar.IdStatusAr;
+                        int? idstatusini = BdArs.IdStatusAr;
 
                         int idnegocio = await _context
                             .BdNegocios
-                            .Where(x => x.NoAfiliacion == bdar.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
+                            .Where(x => x.NoAfiliacion == BdArs.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdNegocio)
                             .FirstOrDefaultAsync();
 
                         var bdunidad = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
 
                         int idconectividadinstalada = await _context
-                            .CConectividad
+                            .CConectividads
                             .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.IdCliente == 4 && x.Status == "ACTIVO")
                             .Select(x => x.IdConectividad)
                             .FirstOrDefaultAsync();
 
                         int idaplicativoinstalado = await _context
-                            .CSoftware
+                            .CSoftwares
                             .Where(x => x.DescSoftware == request.APLICATIVO && x.IdCliente == 4 && x.Status == "ACTIVO")
                             .Select(x => x.IdSoftware)
                             .FirstOrDefaultAsync();
 
-                        var isgprs = await _context.CConectividad.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs == null ? 0 : x.IsGprs).FirstOrDefaultAsync();
+                        var isgprs = await _context.CConectividads.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs == null ? 0 : x.IsGprs).FirstOrDefaultAsync();
 
                         int idstatusunidadInstalar = bdunidad.IdStatusUnidad;
                         int idunidadInstalar = bdunidad.IdUnidad;
                         #endregion
 
-                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividad.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdConectividad == idconectividadinstalada).FirstOrDefaultAsync();
+                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividads.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdConectividad == idconectividadinstalada).FirstOrDefaultAsync();
 
                         if (modeloConectividad == null)
                         {
@@ -1170,7 +1177,7 @@ namespace WebApiSgsElavon.Services
                             return $"La conectividad no esta relacionada con el modelo";
                         }
 
-                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftware.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdSoftware == idaplicativoinstalado).FirstOrDefaultAsync();
+                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftwares.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdSoftware == idaplicativoinstalado).FirstOrDefaultAsync();
 
                         if (modeloSoftware == null)
                         {
@@ -1178,10 +1185,10 @@ namespace WebApiSgsElavon.Services
                             return $"El aplicativo no esta relacionada con el modelo";
                         }
 
-                        CModelos modelos = await _context.CModelos.Where(x => x.Status == "ACTIVO" && x.IdModelo == bdunidad.IdModelo).FirstOrDefaultAsync();
+                        CModelo modelos = await _context.CModelos.Where(x => x.Status == "ACTIVO" && x.IdModelo == bdunidad.IdModelo).FirstOrDefaultAsync();
 
                         #region Ingreso de informacion en  BD_INSTALACIONES
-                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, bdunidad.IdUnidad, "TPV",idconectividadinstalada,idaplicativoinstalado);
+                        await insertarBdinstalacion(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), bdunidad.IdUnidad, "TPV",idconectividadinstalada,idaplicativoinstalado);
                         #endregion
 
                         #region Actualizacion de informacion de la unidad Instalada BD_UNIDADES
@@ -1190,7 +1197,7 @@ namespace WebApiSgsElavon.Services
                         bdunidad.IdStatusUnidad = 17;
                         bdunidad.IdTipoResponsable = 4;
                         bdunidad.IdResponsable = idnegocio;
-                        bdunidad.IdSim = bdar.IdProveedor;
+                        bdunidad.IdSim = BdArs.IdProveedor;
                         bdunidad.FolioTelmex = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         await _context.SaveChangesAsync();
                         #endregion
@@ -1206,7 +1213,7 @@ namespace WebApiSgsElavon.Services
                             IdUsuarioAlta = ID_TECNICO,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                        _context.BdBitacoraUnidads.Add(bitacoraUnidad);
                         await _context.SaveChangesAsync();
                         #endregion
 
@@ -1225,11 +1232,11 @@ namespace WebApiSgsElavon.Services
                                         int idstatussimInstalar = sim.IdStatusUnidad;
                                         int idsimInstalar = sim.IdUnidad;
 
-                                        BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                        BdInstalacione instalacionesSim = new BdInstalacione()
                                         {
                                             IdAr = ID_AR,
                                             IdTecnico = ID_TECNICO,
-                                            IdNegocio = bdar.IdNegocio,
+                                            IdNegocio = BdArs.IdNegocio.GetValueOrDefault(),
                                             IdUnidad = sim.IdUnidad,
                                             IsNueva = 0,
                                             IdClienteIni = 4,
@@ -1245,7 +1252,7 @@ namespace WebApiSgsElavon.Services
                                         sim.IdStatusUnidad = 17;
                                         sim.IdTipoResponsable = 4;
                                         sim.IdResponsable = idnegocio;
-                                        sim.IdSim = bdar.IdProveedor;
+                                        sim.IdSim = BdArs.IdProveedor;
                                         sim.IdModelo = idmodelosim;
                                         await _context.SaveChangesAsync();
 
@@ -1259,7 +1266,7 @@ namespace WebApiSgsElavon.Services
                                             IdUsuarioAlta = ID_TECNICO,
                                             FecAlta = DateTime.Now
                                         };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        _context.BdBitacoraUnidads.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
                                     }
                                     else
@@ -1286,11 +1293,11 @@ namespace WebApiSgsElavon.Services
                                             int idstatussimInstalar = sim.IdStatusUnidad;
                                             int idsimInstalar = sim.IdUnidad;
 
-                                            BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                            BdInstalacione instalacionesSim = new BdInstalacione()
                                             {
                                                 IdAr = ID_AR,
                                                 IdTecnico = ID_TECNICO,
-                                                IdNegocio = bdar.IdNegocio,
+                                                IdNegocio = BdArs.IdNegocio.GetValueOrDefault(),
                                                 IdUnidad = sim.IdUnidad,
                                                 IsNueva = 0,
                                                 IdClienteIni = 4,
@@ -1306,7 +1313,7 @@ namespace WebApiSgsElavon.Services
                                             sim.IdStatusUnidad = 17;
                                             sim.IdTipoResponsable = 4;
                                             sim.IdResponsable = idnegocio;
-                                            sim.IdSim = bdar.IdProveedor;
+                                            sim.IdSim = BdArs.IdProveedor;
                                             sim.IdModelo = idmodelosim;
                                             await _context.SaveChangesAsync();
 
@@ -1320,7 +1327,7 @@ namespace WebApiSgsElavon.Services
                                                 IdUsuarioAlta = ID_TECNICO,
                                                 FecAlta = DateTime.Now
                                             };
-                                            _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                            _context.BdBitacoraUnidads.Add(bitacoraSim);
                                             await _context.SaveChangesAsync();
                                         }
                                         else
@@ -1344,19 +1351,19 @@ namespace WebApiSgsElavon.Services
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
                         string getnet = request.GETNET == 1 ? "SI" : "NO";
 
-                        bdar.NoInventario = request.VERSION;
-                        bdar.Atiende = request.ATIENDE;
-                        bdar.IdSolucion = 9;
-                        bdar.IsInstalacion = 1;
-                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
-                        bdar.Caja = request.CAJA.ToString();
-                        bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                        BdArs.NoInventario = request.VERSION;
+                        BdArs.Atiende = request.ATIENDE;
+                        BdArs.IdSolucion = 9;
+                        BdArs.IsInstalacion = 1;
+                        BdArs.OtorganteVobo = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        BdArs.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        BdArs.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        BdArs.Caja = request.CAJA.ToString();
+                        BdArs.DescripcionTrabajo = request.COMENTARIO;
+                        BdArs.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        BdArs.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
                                             + promociones
@@ -1366,7 +1373,7 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        BdArs.CadenaCierre += "APLICACION:" + request.APLICATIVO
                         + " VERSION: " + request.VERSION
                         + " CAJA: " + request.CAJA
                         + " ROLLOS INSTALADOS: " + request.ROLLOS
@@ -1379,12 +1386,12 @@ namespace WebApiSgsElavon.Services
                         + " AFILIACION AMEX: " + request.AFILIACION_AMEX
                         + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
                         + " CONCLUSIONES: " + request.COMENTARIO;
-                        bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
-                        bdar.IdStatusAr = 6;
+                        BdArs.TerminalAmex = (request.IS_AMEX ? 1 : 0);
+                        BdArs.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+                        await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
                         #region Ingreso de informacion en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
@@ -1401,12 +1408,12 @@ namespace WebApiSgsElavon.Services
                             Telefono2 = request.TELEFONO_2,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdArMiComercio.Add(micomercio);
+                        _context.BdArMiComercios.Add(micomercio);
                         await _context.SaveChangesAsync();
                         #endregion
 
                         #region Ingreso de nuevo registro en BD_AR_ACCESORIOS
-                        BdArAccesorios accesoriosInstalados = new BdArAccesorios()
+                        BdArAccesorio accesoriosInstalados = new BdArAccesorio()
                         {
                             IdAr = ID_AR,
                             Bateria = (request.BATERIA ? "SI" : "NO"),
@@ -1432,19 +1439,11 @@ namespace WebApiSgsElavon.Services
                                 IdUsuarioAlta = ID_TECNICO,
                                 FecAlta = DateTime.Now
                             };
-                            _context.BdArTerminalAsociadaAmex.Add(terminal);
+                            _context.BdArTerminalAsociadaAmexes.Add(terminal);
                             await _context.SaveChangesAsync();
                         }
                         #endregion
                         await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "INSTALACION CORRECTA");
-                        transaction.Commit();
-
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
-                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
-                            , Encoding.UTF8
-                            , "application/json");
-                        var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (SqlException ex)
@@ -1507,13 +1506,13 @@ namespace WebApiSgsElavon.Services
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
 
-                        var bdar = await _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefaultAsync();
+                        var BdArs = await _context.BdArs.Where(x => x.IdAr == ID_AR).FirstOrDefaultAsync();
 
-                        int? idstatusini = bdar.IdStatusAr;
+                        int? idstatusini = BdArs.IdStatusAr;
 
                         int idnegocio = await _context
                             .BdNegocios
-                            .Where(x => x.NoAfiliacion == bdar.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
+                            .Where(x => x.NoAfiliacion == BdArs.NoAfiliacion && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdNegocio)
                             .FirstOrDefaultAsync();
 
@@ -1530,11 +1529,11 @@ namespace WebApiSgsElavon.Services
                                 int idsimInstalar = sim.IdUnidad;
                                 var idmodelosim = await GetCarrier(sim.NoSerie.Trim());
 
-                                BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                BdInstalacione instalacionesSim = new BdInstalacione()
                                 {
                                     IdAr = ID_AR,
                                     IdTecnico = ID_TECNICO,
-                                    IdNegocio = bdar.IdNegocio,
+                                    IdNegocio = BdArs.IdNegocio.GetValueOrDefault(),
                                     IdUnidad = sim.IdUnidad,
                                     IsNueva = 0,
                                     IdClienteIni = 4,
@@ -1550,7 +1549,7 @@ namespace WebApiSgsElavon.Services
                                 sim.IdStatusUnidad = 17;
                                 sim.IdTipoResponsable = 4;
                                 sim.IdResponsable = idnegocio;
-                                sim.IdSim = bdar.IdProveedor;
+                                sim.IdSim = BdArs.IdProveedor;
                                 sim.IdModelo = idmodelosim;
                                 await _context.SaveChangesAsync();
 
@@ -1564,7 +1563,7 @@ namespace WebApiSgsElavon.Services
                                     IdUsuarioAlta = ID_TECNICO,
                                     FecAlta = DateTime.Now
                                 };
-                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.BdBitacoraUnidads.Add(bitacoraSim);
                                 await _context.SaveChangesAsync();
                             }
                         }
@@ -1581,19 +1580,19 @@ namespace WebApiSgsElavon.Services
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
                         string getnet = request.GETNET == 1 ? "SI" : "NO";
 
-                        bdar.Atiende = request.ATIENDE;
-                        bdar.IdSolucion = 9;
-                        bdar.IsInstalacion = 1;
-                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        //bdar.DigitoVerificador = request.DISCOVER.ToString();
-                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
-                        bdar.Caja = request.CAJA.ToString();
-                        bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                        BdArs.Atiende = request.ATIENDE;
+                        BdArs.IdSolucion = 9;
+                        BdArs.IsInstalacion = 1;
+                        BdArs.OtorganteVobo = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        BdArs.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        //BdArs.DigitoVerificador = request.DISCOVER.ToString();
+                        BdArs.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        BdArs.Caja = request.CAJA.ToString();
+                        BdArs.DescripcionTrabajo = request.COMENTARIO;
+                        BdArs.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        BdArs.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
                                             + promociones
@@ -1603,7 +1602,7 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += "APLICACION:"
+                        BdArs.CadenaCierre += "APLICACION:"
                         + " VERSION: "
                         + " CAJA: " + request.CAJA
                         + " ROLLOS INSTALADOS: " + request.ROLLOS
@@ -1616,11 +1615,11 @@ namespace WebApiSgsElavon.Services
                         + " AFILIACION AMEX: "
                         + " CONCLUSION AMEX: "
                         + " CONCLUSIONES: " + request.COMENTARIO;
-                        bdar.IdStatusAr = 6;
+                        BdArs.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+                        await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
                         #region Ingreso de informacion en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Instalación Aplicación");
@@ -1637,18 +1636,11 @@ namespace WebApiSgsElavon.Services
                             Telefono2 = request.TELEFONO_2,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdArMiComercio.Add(micomercio);
+                        _context.BdArMiComercios.Add(micomercio);
                         await _context.SaveChangesAsync();
                         #endregion
 
                         transaction.Commit();
-
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
-                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = 10794, idUsuario = 300 })
-                            , Encoding.UTF8
-                            , "application/json");
-                        var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
@@ -1708,29 +1700,29 @@ namespace WebApiSgsElavon.Services
                     try
                     {
                         #region Actualizacion del servicio en BD_AR
-                        var bdar = await _context.BdAr.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
+                        var BdArs = await _context.BdArs.Where(x => x.IdAr == request.ID_AR).FirstOrDefaultAsync();
 
-                        int? idstatusini = bdar.IdStatusAr;
+                        int? idstatusini = BdArs.IdStatusAr;
 
                         string notificado = request.NOTIFICADO ? "SI" : "NO";
                         string promociones = request.PROMOCIONES ? "SI" : "NO";
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
                         string getnet = request.GETNET == 1 ? "SI" : "NO";
 
-                        bdar.Atiende = request.ATIENDE;
-                        bdar.IdSolucion = 9;
-                        bdar.IsInstalacion = 0;
-                        bdar.IsRetiro = 0;
-                        bdar.IsSustitucion = 0;
-                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
-                        bdar.Caja = request.CAJA.ToString();
-                        bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                        BdArs.Atiende = request.ATIENDE;
+                        BdArs.IdSolucion = 9;
+                        BdArs.IsInstalacion = 0;
+                        BdArs.IsRetiro = 0;
+                        BdArs.IsSustitucion = 0;
+                        BdArs.OtorganteVobo = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        BdArs.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        BdArs.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        BdArs.Caja = request.CAJA.ToString();
+                        BdArs.DescripcionTrabajo = request.COMENTARIO;
+                        BdArs.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        BdArs.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
                                             + promociones
@@ -1740,11 +1732,11 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.IdStatusAr = 6;
+                        BdArs.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+                        await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
                         #region Ingreso de registro en BD_BITACORA_AE
                         await insertBitacoraAr(request.ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sin Movimiento de Inventario Aplicación");
@@ -1761,20 +1753,13 @@ namespace WebApiSgsElavon.Services
                             Telefono2 = request.TELEFONO_2,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdArMiComercio.Add(micomercio);
+                        _context.BdArMiComercios.Add(micomercio);
                         await _context.SaveChangesAsync();
                         #endregion
 
                         await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SIN MOVIMIENTO");
 
                         transaction.Commit();
-
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
-                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
-                            , Encoding.UTF8
-                            , "application/json");
-                        var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
 
                         return "OK";
                     }
@@ -1850,11 +1835,11 @@ namespace WebApiSgsElavon.Services
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
                         int idcausa = await _context.CCausas.Where(x => x.DescCausa == request.DESC_CAUSA && x.IdCliente == 4 && x.Status == "ACTIVO").Select(x => x.IdCausa).FirstOrDefaultAsync();
-                        var bdar = await _context.BdAr.Where(x => x.IdAr == ID_AR && x.Status == "PROCESADO").FirstOrDefaultAsync();
-                        int? idstatusini = bdar.IdStatusAr;
+                        var BdArs = await _context.BdArs.Where(x => x.IdAr == ID_AR && x.Status == "PROCESADO").FirstOrDefaultAsync();
+                        int? idstatusini = BdArs.IdStatusAr;
                         int idnegocioar = await _context
                             .BdNegocios
-                            .Where(x => x.NoAfiliacion == bdar.NoAfiliacion)
+                            .Where(x => x.NoAfiliacion == BdArs.NoAfiliacion)
                             .Select(x => x.IdNegocio)
                             .FirstOrDefaultAsync();
 
@@ -1864,21 +1849,21 @@ namespace WebApiSgsElavon.Services
                         string getnet = request.GETNET == 1 ? "SI" : "NO";
                         #endregion
                         #region Actualizacion de la informacion del servcio en BD_AR
-                        bdar.NoInventario = request.VERSION;
-                        bdar.Atiende = request.ATIENDE;
-                        bdar.IdSolucion = 9;
-                        bdar.IsSustitucion = 1;
-                        bdar.IdCausa = idcausa;
-                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                        bdar.NoEquipo = request.VERSION_RETIRO;
-                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        bdar.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
-                        bdar.Caja = request.CAJA.ToString();
-                        bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                        BdArs.NoInventario = request.VERSION;
+                        BdArs.Atiende = request.ATIENDE;
+                        BdArs.IdSolucion = 9;
+                        BdArs.IsSustitucion = 1;
+                        BdArs.IdCausa = idcausa;
+                        BdArs.OtorganteVobo = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        BdArs.NoEquipo = request.VERSION_RETIRO;
+                        BdArs.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        BdArs.NoInventarioFalla = getnet; //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        BdArs.Caja = request.CAJA.ToString();
+                        BdArs.DescripcionTrabajo = request.COMENTARIO;
+                        BdArs.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        BdArs.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
                                             + promociones
@@ -1888,7 +1873,7 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += "APLICACION:" + request.APLICATIVO
+                        BdArs.CadenaCierre += "APLICACION:" + request.APLICATIVO
                             + " VERSION: " + request.VERSION
                             + " CAJA: " + request.CAJA
                             + " ROLLOS INSTALADOS: " + request.ROLLOS
@@ -1901,11 +1886,11 @@ namespace WebApiSgsElavon.Services
                             + " AFILIACION AMEX: " + request.AFILIACION_AMEX
                             + " CONCLUSION AMEX: " + request.CONCLUSIONES_AMEX
                             + " CONCLUSIONES: " + request.COMENTARIO;
-                        bdar.TerminalAmex = (request.IS_AMEX ? 1 : 0);
-                        bdar.IdStatusAr = 6;
+                        BdArs.TerminalAmex = (request.IS_AMEX ? 1 : 0);
+                        BdArs.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
-                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+                        await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
                         #region Ingreso de registro en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sustitucion Aplicación");
                         #endregion
@@ -1920,11 +1905,11 @@ namespace WebApiSgsElavon.Services
                             Telefono2 = request.TELEFONO_2,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdArMiComercio.Add(micomercio);
+                        _context.BdArMiComercios.Add(micomercio);
                         await _context.SaveChangesAsync();
                         #endregion
                         #region Ingreso de informacion en BD_AR_ACCESORIOS de unidad Instalada
-                        BdArAccesorios accesoriosInstalados = new BdArAccesorios()
+                        BdArAccesorio accesoriosInstalados = new BdArAccesorio()
                         {
                             IdAr = ID_AR,
                             Bateria = (request.BATERIA ? "SI" : "NO"),
@@ -1939,7 +1924,7 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
                         #region Ingreso de informacion en BD_AR_ACCESORIOS de unidad Retirad
-                        BdArAccesorios accesoriosRetirados = new BdArAccesorios()
+                        BdArAccesorio accesoriosRetirados = new BdArAccesorio()
                         {
                             IdAr = ID_AR,
                             Bateria = (request.BATERIA_RETIRO ? "SI" : "NO"),
@@ -1964,7 +1949,7 @@ namespace WebApiSgsElavon.Services
                                 IdUsuarioAlta = ID_TECNICO,
                                 FecAlta = DateTime.Now
                             };
-                            _context.BdArTerminalAsociadaAmex.Add(terminal);
+                            _context.BdArTerminalAsociadaAmexes.Add(terminal);
                             await _context.SaveChangesAsync();
                         }
                         #endregion
@@ -1976,20 +1961,20 @@ namespace WebApiSgsElavon.Services
                         int idstatusunidadiniinstalada = bdunidad.IdStatusUnidad;
 
                         int idconectividadinstalada = await _context
-                            .CConectividad
+                            .CConectividads
                             .Where(x => x.DescConectividad == request.CONECTIVIDAD && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdConectividad)
                             .FirstOrDefaultAsync();
 
                         int idaplicativoinstalado = await _context
-                            .CSoftware
+                            .CSoftwares
                             .Where(x => x.DescSoftware == request.APLICATIVO && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdSoftware)
                             .FirstOrDefaultAsync();
 
                         int idAccess = await _context.CModelos.Where(x => x.IdModelo == bdunidad.IdModelo).Select(x => x.IdAccess.GetValueOrDefault()).FirstOrDefaultAsync();
 
-                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividad.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdConectividad == idconectividadinstalada).FirstOrDefaultAsync();
+                        BdModeloConectividad modeloConectividad = await _context.BdModeloConectividads.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdConectividad == idconectividadinstalada).FirstOrDefaultAsync();
 
                         if (modeloConectividad == null)
                         {
@@ -1997,7 +1982,7 @@ namespace WebApiSgsElavon.Services
                             return $"La conectividad no esta relacionada con el modelo";
                         }
 
-                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftware.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdSoftware == idaplicativoinstalado).FirstOrDefaultAsync();
+                        BdModeloSoftware modeloSoftware = await _context.BdModeloSoftwares.Where(x => x.IdModelo == bdunidad.IdModelo && x.IdSoftware == idaplicativoinstalado).FirstOrDefaultAsync();
 
                         if (modeloSoftware == null)
                         {
@@ -2007,7 +1992,7 @@ namespace WebApiSgsElavon.Services
 
                         #endregion
                         #region Ingreso de registro de unidad instalada en BD_INSTALACIONES
-                        BdInstalaciones instalaciones = new BdInstalaciones()
+                        BdInstalacione instalaciones = new BdInstalacione()
                         {
                             IdAr = ID_AR,
                             IdTecnico = ID_TECNICO,
@@ -2031,7 +2016,7 @@ namespace WebApiSgsElavon.Services
                         bdunidad.IdStatusUnidad = 17;
                         bdunidad.IdTipoResponsable = 4;
                         bdunidad.IdResponsable = idnegocioar;
-                        bdunidad.IdSim = bdar.IdProveedor;
+                        bdunidad.IdSim = BdArs.IdProveedor;
                         bdunidad.FolioTelmex = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
                         await _context.SaveChangesAsync();
                         #endregion
@@ -2046,11 +2031,11 @@ namespace WebApiSgsElavon.Services
                             FecAlta = DateTime.Now,
                             IdUsuarioAlta = ID_TECNICO
                         };
-                        _context.BdBitacoraUnidad.Add(bitacoraunidadindstalada);
+                        _context.BdBitacoraUnidads.Add(bitacoraunidadindstalada);
                         await _context.SaveChangesAsync();
                         #endregion
                         #region Si la conectividad seleccionada en la instalacion es IS_GPRS = 1 se ingresara o actualizara el registro del sim en BD_UNIDADES
-                        var isgprs = await _context.CConectividad.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs == null ? 0 : x.IsGprs).FirstOrDefaultAsync();
+                        var isgprs = await _context.CConectividads.Where(x => x.IdConectividad == idconectividadinstalada).Select(x => x.IsGprs == null ? 0 : x.IsGprs).FirstOrDefaultAsync();
 
                         if ((isgprs == 1) || (isgprs != 1 && idAccess == 1))
                         {
@@ -2069,7 +2054,7 @@ namespace WebApiSgsElavon.Services
                                         sim.IdStatusUnidad = 17;
                                         sim.IdTipoResponsable = 4;
                                         sim.IdResponsable = idnegocioar;
-                                        sim.IdSim = bdar.IdProveedor;
+                                        sim.IdSim = BdArs.IdProveedor;
                                         sim.IdModelo = idmodelosim;
                                         await _context.SaveChangesAsync();
 
@@ -2083,11 +2068,11 @@ namespace WebApiSgsElavon.Services
                                             IdUsuarioAlta = ID_TECNICO,
                                             FecAlta = DateTime.Now
                                         };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        _context.BdBitacoraUnidads.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
 
                                         #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM",0,0);
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), idsimInstalar, "SIM",0,0);
                                         #endregion
                                     }
                                     else
@@ -2096,7 +2081,7 @@ namespace WebApiSgsElavon.Services
                                         ////09/07/2020
                                         sim.IdTipoResponsable = 4;
                                         sim.IdResponsable = idnegocioar;
-                                        sim.IdSim = bdar.IdProveedor;
+                                        sim.IdSim = BdArs.IdProveedor;
                                         sim.IdModelo = idmodelosim;
                                         await _context.SaveChangesAsync();
 
@@ -2110,11 +2095,11 @@ namespace WebApiSgsElavon.Services
                                             IdUsuarioAlta = ID_TECNICO,
                                             FecAlta = DateTime.Now
                                         };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        _context.BdBitacoraUnidads.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
 
                                         #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, idsimInstalar, "SIM", 0, 0);
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), idsimInstalar, "SIM", 0, 0);
                                         #endregion
 
                                         //await insertDataTable($"El Sim a Instalar '{request.NO_SIM}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR SUSTITUCIONES");
@@ -2123,11 +2108,11 @@ namespace WebApiSgsElavon.Services
                                 }
                                 else
                                 {
-                                    BdUniversoSims universoSims = await _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM.Trim()).FirstOrDefaultAsync();
+                                    BdUniversoSim universoSims = await _context.BdUniversoSims.Where(x => x.Sim == request.NO_SIM.Trim()).FirstOrDefaultAsync();
                                     if (universoSims != null)
                                     {
                                         var idmodelosim = await GetCarrier(universoSims.Sim.Trim());
-                                        BdUnidades simnuevo = new BdUnidades()
+                                        BdUnidade simnuevo = new BdUnidade()
                                         {
                                             IdCliente = 4,
                                             NoSerie = request.NO_SIM.Trim(),
@@ -2136,8 +2121,8 @@ namespace WebApiSgsElavon.Services
                                             IdStatusUnidad = 17,
                                             IsNueva = 0,
                                             IdTipoResponsable = 4,
-                                            IdResponsable = bdar.IdNegocio,
-                                            IdSim = bdar.IdProveedor,
+                                            IdResponsable = BdArs.IdNegocio,
+                                            IdSim = BdArs.IdProveedor,
                                             IdModelo = idmodelosim,
                                             FecAlta = DateTime.Now,
                                             Status = "ACTIVO"
@@ -2152,16 +2137,16 @@ namespace WebApiSgsElavon.Services
                                             IdStatusUnidadFin = 17,
                                             IdUnidad = simnuevo.IdUnidad,
                                             IdTipoResponsable = 4,
-                                            IdResponsable = bdar.IdNegocio,
+                                            IdResponsable = BdArs.IdNegocio,
                                             IdUsuarioAlta = ID_TECNICO,
                                             FecAlta = DateTime.Now,
                                             Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
                                         };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        _context.BdBitacoraUnidads.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
 
                                         #region Ingresar informacion en BD_INSTALACIONES PARA EL SIM
-                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, simnuevo.IdUnidad, "SIM",0,0);
+                                        await insertarBdinstalacion(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), simnuevo.IdUnidad, "SIM",0,0);
                                         #endregion
                                     }
                                     else
@@ -2194,12 +2179,12 @@ namespace WebApiSgsElavon.Services
                         }
 
                         int idconectividadretirada = await _context
-                            .CConectividad
+                            .CConectividads
                             .Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim() && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdConectividad)
                             .FirstOrDefaultAsync();
                         int idaplicativoretirada = await _context
-                            .CSoftware
+                            .CSoftwares
                             .Where(x => x.DescSoftware == request.APLICATIVO_RETIRO.Trim() && x.Status == "ACTIVO" && x.IdCliente == 4)
                             .Select(x => x.IdSoftware)
                             .FirstOrDefaultAsync();
@@ -2244,11 +2229,11 @@ namespace WebApiSgsElavon.Services
 
                             if (bdunidadretiradaUniverso != null && request.NO_SERIE_RETIRO.ToUpper().Trim() != "ILEGIBLE")
                             {
-                                BdUnidades unidad = new BdUnidades()
+                                BdUnidade unidad = new BdUnidade()
                                 {
                                     NoSerie = request.NO_SERIE_RETIRO,
                                     IdCliente = 4,
-                                    IdSim = bdar.IdProveedor,
+                                    IdSim = BdArs.IdProveedor,
                                     IdModelo = idmodeloretiro,
                                     IdMarca = idmarcaretiro,
                                     IdAplicativo = idaplicativoretirada,
@@ -2269,12 +2254,12 @@ namespace WebApiSgsElavon.Services
                             {
                                 if (request.NO_SERIE_RETIRO.ToUpper().Trim() == "ILEGIBLE")
                                 {
-                                    BdUnidades unidadNueva = new BdUnidades()
+                                    BdUnidade unidadNueva = new BdUnidade()
                                     {
                                         NoSerie = Randoms.AlphaNumeric(9) + "-" + Randoms.AlphaNumeric(1),
                                         IdCliente = 4,
                                         IdProducto = 1,
-                                        IdSim = bdar.IdProveedor,
+                                        IdSim = BdArs.IdProveedor,
                                         IdModelo = idmodeloretiro,
                                         IdMarca = idmarcaretiro,
                                         IdAplicativo = idaplicativoretirada,
@@ -2308,13 +2293,13 @@ namespace WebApiSgsElavon.Services
                             bdunidadRetirada.IdTipoResponsable = 2;
                             bdunidadRetirada.IdResponsable = request.ID_TECNICO;
                             bdunidadRetirada.IdStatusUnidad = 30;
-                            bdunidadRetirada.IdSim = bdar.IdProveedor;
+                            bdunidadRetirada.IdSim = BdArs.IdProveedor;
                             await _context.SaveChangesAsync();
                         }
                         #endregion
 
                         #region Ingreso de registro de la unidad retirada en BD_RETIROS
-                        await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada, "TPV", idconectividadretirada, idaplicativoretirada);
+                        await insertarBdRetiros(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), idunidadRetirada == 0 ? bdunidadRetirada.IdUnidad : idunidadRetirada, "TPV", idconectividadretirada, idaplicativoretirada);
                         #endregion
 
                         #region Si la unidad cuenta con el numero de serie = "ILEGIBLE" se agrega a la bitacora con un comentario distinto en BD_BITACORA_UNIDAD de lo contrario no lleva comenatrio
@@ -2331,7 +2316,7 @@ namespace WebApiSgsElavon.Services
                                 FecAlta = DateTime.Now,
                                 Comentario = "UNIDAD DADA DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE TPVS"
                             };
-                            _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
                             await _context.SaveChangesAsync();
                         }
                         else
@@ -2346,13 +2331,13 @@ namespace WebApiSgsElavon.Services
                                 IdUsuarioAlta = ID_TECNICO,
                                 FecAlta = DateTime.Now
                             };
-                            _context.BdBitacoraUnidad.Add(bitacoraUnidad);
+                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
                             await _context.SaveChangesAsync();
                         }
                         #endregion
 
                         #region Si la conectividad es IS_GPRS = 1 se ingresara el registro de un sim nuevo o se actualizara la informacion
-                        int isgprsretiro = await _context.CConectividad.Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefaultAsync();
+                        int isgprsretiro = await _context.CConectividads.Where(x => x.DescConectividad == request.CONECTIVIDAD_RETIRO.Trim()).Select(x => x.IsGprs == null ? 0 : 1).FirstOrDefaultAsync();
                         int idstatusanteriorSim = 0;
                         if (isgprsretiro == 1)
                         {
@@ -2373,7 +2358,7 @@ namespace WebApiSgsElavon.Services
                                             var idmodelosim = await GetCarrier(simretirouniverso.Sim.Trim());
                                             //var idcarrier = await _context.CModelos.Where(x => x.DescModelo == simretirouniverso.Carrier.TrimEnd() && x.Status == "ACTIVO").Select(x => x.IdModelo).FirstOrDefaultAsync();
 
-                                            BdUnidades sim = new BdUnidades()
+                                            BdUnidade sim = new BdUnidade()
                                             {
                                                 IdCliente = 4,
                                                 NoSerie = request.NO_SIM_RETIRO,
@@ -2383,7 +2368,7 @@ namespace WebApiSgsElavon.Services
                                                 IdMarca = 10,
                                                 IdProducto = 1,
                                                 IdModelo = idmodelosim,
-                                                IdSim = bdar.IdProveedor,
+                                                IdSim = BdArs.IdProveedor,
                                                 IdResponsable = request.ID_TECNICO,
                                                 FecAlta = DateTime.Now,
                                                 Status = "ACTIVO"
@@ -2413,12 +2398,12 @@ namespace WebApiSgsElavon.Services
                                         simretiro.IsNueva = 0;
                                         simretiro.IdTipoResponsable = 2;
                                         simretiro.IdResponsable = request.ID_TECNICO;
-                                        simretiro.IdSim = bdar.IdProveedor;
+                                        simretiro.IdSim = BdArs.IdProveedor;
                                         simretiro.IdModelo = idmodelosim;
                                         await _context.SaveChangesAsync();
                                         idSim = simretiro.IdUnidad;
                                     }
-                                    await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM",0,0);
+                                    await insertarBdRetiros(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), idSim, "SIM",0,0);
 
                                     #region Bitacora del Sim
                                     if (simretiro == null)
@@ -2434,7 +2419,7 @@ namespace WebApiSgsElavon.Services
                                             FecAlta = DateTime.Now,
                                             Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
                                         };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        _context.BdBitacoraUnidads.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
                                     }
                                     else
@@ -2449,7 +2434,7 @@ namespace WebApiSgsElavon.Services
                                             IdUsuarioAlta = ID_TECNICO,
                                             FecAlta = DateTime.Now
                                         };
-                                        _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                        _context.BdBitacoraUnidads.Add(bitacoraSim);
                                         await _context.SaveChangesAsync();
                                     }
                                     #endregion
@@ -2462,11 +2447,11 @@ namespace WebApiSgsElavon.Services
                                 //SE AGREGA CAMBIO PARA QUE SI NO SE AGREGO SIM PERO YA ESTA INSTALADFO EN EL NEGOCIO SOLO AGREGUE A BITACORA E INSTALACION 
                                  
 
-                                var simnegocio = await _context.BdUnidades.FirstOrDefaultAsync(x => x.IdTipoResponsable == 4 && x.IdResponsable == bdar.IdNegocio);
+                                var simnegocio = await _context.BdUnidades.FirstOrDefaultAsync(x => x.IdTipoResponsable == 4 && x.IdResponsable == BdArs.IdNegocio);
 
                                 if (simnegocio != null)
                                 {
-                                    await insertarBdinstalacion(ID_AR, ID_TECNICO, bdar.IdNegocio, simnegocio.IdUnidad, "SIM");
+                                    await insertarBdinstalacion(ID_AR, ID_TECNICO, BdArs.IdNegocio, simnegocio.IdUnidad, "SIM");
 
                                     BdBitacoraUnidad bitacoraSimNegocio = new BdBitacoraUnidad()
                                     {
@@ -2474,7 +2459,7 @@ namespace WebApiSgsElavon.Services
                                         IdStatusUnidadFin = 17,
                                         IdUnidad = simnegocio.IdUnidad,
                                         IdTipoResponsable = 4,
-                                        IdResponsable = bdar.IdNegocio,
+                                        IdResponsable = BdArs.IdNegocio,
                                         IdUsuarioAlta = ID_TECNICO,
                                         FecAlta = DateTime.Now,
                                     };
@@ -2491,12 +2476,6 @@ namespace WebApiSgsElavon.Services
                         await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SUSTITUCIONES");
                         transaction.Commit();
 
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
-                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
-                            , Encoding.UTF8
-                            , "application/json");
-                        var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (SqlException ex)
@@ -2563,11 +2542,11 @@ namespace WebApiSgsElavon.Services
                         #region Informacion del servicio
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
-                        var bdar = await _context.BdAr.Where(x => x.IdAr == ID_AR).FirstOrDefaultAsync();
-                        int? idstatusini = bdar.IdStatusAr;
+                        var BdArs = await _context.BdArs.Where(x => x.IdAr == ID_AR).FirstOrDefaultAsync();
+                        int? idstatusini = BdArs.IdStatusAr;
                         int idnegocioar = await _context
                             .BdNegocios
-                            .Where(x => x.NoAfiliacion == bdar.NoAfiliacion)
+                            .Where(x => x.NoAfiliacion == BdArs.NoAfiliacion)
                             .Select(x => x.IdNegocio)
                             .FirstOrDefaultAsync();
 
@@ -2576,18 +2555,18 @@ namespace WebApiSgsElavon.Services
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
                         #endregion
                         #region Actualizacion del servicio en BD_AR
-                        bdar.Atiende = request.ATIENDE;
-                        bdar.IdSolucion = 9;
-                        bdar.IsSustitucion = 1;
-                        bdar.OtorganteVobo = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
-                        bdar.OtorganteVoboCliente = request.OTORGANTE_VOBO;
-                        bdar.IntensidadSenial = Convert.ToString(request.ROLLOS);
-                        //bdar.DigitoVerificador = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
-                        bdar.Caja = request.CAJA.ToString();
-                        bdar.DescripcionTrabajo = request.COMENTARIO;
-                        bdar.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
-                        bdar.MiComercio = "COMERCIO NOTIFICADO: "
+                        BdArs.Atiende = request.ATIENDE;
+                        BdArs.IdSolucion = 9;
+                        BdArs.IsSustitucion = 1;
+                        BdArs.OtorganteVobo = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboTerceros = request.OTORGANTE_VOBO;
+                        BdArs.OtorganteVoboCliente = request.OTORGANTE_VOBO;
+                        BdArs.IntensidadSenial = Convert.ToString(request.ROLLOS);
+                        //BdArs.DigitoVerificador = request.GETNET.ToString(); //30/04/2020 SE QUITA CAMPO DE DISCOVER QUE SE ALMACENABA EN DIGITO_VERIFICADOR
+                        BdArs.Caja = request.CAJA.ToString();
+                        BdArs.DescripcionTrabajo = request.COMENTARIO;
+                        BdArs.FecCierre = DateTime.ParseExact(request.FECHA_CIERRE, "dd/MM/yyyy HH:mm:ss", null);
+                        BdArs.MiComercio = "COMERCIO NOTIFICADO: "
                                             + notificado
                                             + " / PROMOCIONES: "
                                             + promociones
@@ -2597,7 +2576,7 @@ namespace WebApiSgsElavon.Services
                                             + request.TELEFONO_1
                                             + " / "
                                             + request.TELEFONO_2;
-                        bdar.CadenaCierre += "APLICACION:"
+                        BdArs.CadenaCierre += "APLICACION:"
                             + " VERSION: "
                             + " CAJA: " + request.CAJA
                             + " ROLLOS INSTALADOS: " + request.ROLLOS
@@ -2610,11 +2589,11 @@ namespace WebApiSgsElavon.Services
                             + " AFILIACION AMEX: "
                             + " CONCLUSION AMEX: "
                             + " CONCLUSIONES: " + request.COMENTARIO;
-                        bdar.IdStatusAr = 6;
+                        BdArs.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        await UpdateSpecialProjects(bdar.NoAfiliacion.Trim(), bdar.IdServicio.GetValueOrDefault(), bdar.IdFalla.GetValueOrDefault());
+                        await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
                         #region Ingreso de registro en BD_BITACORA_AR
                         await insertBitacoraAr(ID_AR, request.ID_TECNICO, idstatusini, 6, "Cierre Sustitucion Aplicación");
@@ -2630,7 +2609,7 @@ namespace WebApiSgsElavon.Services
                             Telefono2 = request.TELEFONO_2,
                             FecAlta = DateTime.Now
                         };
-                        _context.BdArMiComercio.Add(micomercio);
+                        _context.BdArMiComercios.Add(micomercio);
                         await _context.SaveChangesAsync();
                         #endregion
                         #region Ingreso o actualizacion de la informacion del sim en BD_UNIDADES y se agrega registro en BD_INSTALACIONES
@@ -2643,11 +2622,11 @@ namespace WebApiSgsElavon.Services
                                 int idsimInstalar = sim.IdUnidad;
                                 var idmodelosim = await GetCarrier(sim.NoSerie.Trim());
 
-                                BdInstalaciones instalacionesSim = new BdInstalaciones()
+                                BdInstalacione instalacionesSim = new BdInstalacione()
                                 {
                                     IdAr = ID_AR,
                                     IdTecnico = ID_TECNICO,
-                                    IdNegocio = bdar.IdNegocio,
+                                    IdNegocio = BdArs.IdNegocio.GetValueOrDefault(),
                                     IdUnidad = sim.IdUnidad,
                                     IsNueva = 0,
                                     IdClienteIni = 4,
@@ -2663,7 +2642,7 @@ namespace WebApiSgsElavon.Services
                                 sim.IdStatusUnidad = 17;
                                 sim.IdTipoResponsable = 4;
                                 sim.IdResponsable = idnegocioar;
-                                sim.IdSim = bdar.IdProveedor;
+                                sim.IdSim = BdArs.IdProveedor;
                                 sim.IdModelo = idmodelosim;
                                 await _context.SaveChangesAsync();
 
@@ -2677,7 +2656,7 @@ namespace WebApiSgsElavon.Services
                                     IdUsuarioAlta = ID_TECNICO,
                                     FecAlta = DateTime.Now
                                 };
-                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.BdBitacoraUnidads.Add(bitacoraSim);
                                 await _context.SaveChangesAsync();
                             }
                         }
@@ -2700,12 +2679,12 @@ namespace WebApiSgsElavon.Services
                                 if (simretirouniverso != null)
                                 {
                                     var idmodelosim = await GetCarrier(simretirouniverso.Sim.Trim());
-                                    BdUnidades sim = new BdUnidades()
+                                    BdUnidade sim = new BdUnidade()
                                     {
                                         IdCliente = 4,
                                         IdProducto = 1,
                                         IdMarca = 10,
-                                        IdSim = bdar.IdProveedor,
+                                        IdSim = BdArs.IdProveedor,
                                         NoSerie = request.NO_SIM_RETIRO,
                                         IdTipoResponsable = 2,
                                         IdResponsable = request.ID_TECNICO,
@@ -2730,7 +2709,7 @@ namespace WebApiSgsElavon.Services
                                 simretiro.IdStatusUnidad = 15;
                                 simretiro.IdTipoResponsable = 2;
                                 simretiro.IdResponsable = request.ID_TECNICO;
-                                simretiro.IdSim = bdar.IdProveedor;
+                                simretiro.IdSim = BdArs.IdProveedor;
                                 simretiro.IdModelo = idmodelosim;
                                 await _context.SaveChangesAsync();
                                 idSim = simretiro.IdUnidad;
@@ -2749,7 +2728,7 @@ namespace WebApiSgsElavon.Services
                                     FecAlta = DateTime.Now,
                                     Comentario = "SIM DADO DE ALTA AL NO EXISTIR EN BD_UNIDADES PERO SI EN UNIVERSO DE SIMS"
                                 };
-                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.BdBitacoraUnidads.Add(bitacoraSim);
                                 await _context.SaveChangesAsync();
                             }
                             else
@@ -2764,22 +2743,16 @@ namespace WebApiSgsElavon.Services
                                     IdUsuarioAlta = ID_TECNICO,
                                     FecAlta = DateTime.Now
                                 };
-                                _context.BdBitacoraUnidad.Add(bitacoraSim);
+                                _context.BdBitacoraUnidads.Add(bitacoraSim);
                                 await _context.SaveChangesAsync();
                             }
                             #endregion
 
-                            await insertarBdRetiros(ID_AR, ID_TECNICO, bdar.IdNegocio, idSim, "SIM",0,0);
+                            await insertarBdRetiros(ID_AR, ID_TECNICO, BdArs.IdNegocio.GetValueOrDefault(), idSim, "SIM",0,0);
                         }
                         #endregion
                         transaction.Commit();
 
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
-                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
-                            , Encoding.UTF8
-                            , "application/json");
-                        var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
                         return "OK";
                     }
                     catch (Exception ex)
@@ -2811,7 +2784,7 @@ namespace WebApiSgsElavon.Services
                     IdUsuarioAlta = idusuario,
                     FecAlta = DateTime.Now
                 };
-                _context.BdBitacoraAr.Add(bitacora);
+                _context.BdBitacoraArs.Add(bitacora);
                 await _context.SaveChangesAsync();
                 return 1;
             }
@@ -2827,9 +2800,9 @@ namespace WebApiSgsElavon.Services
         {
             try
             {
-                BdAr ar = await _context.BdAr.Where(x => x.IdAr == idar).FirstOrDefaultAsync();
+                BdAr ar = await _context.BdArs.Where(x => x.IdAr == idar).FirstOrDefaultAsync();
 
-                BdBloqueos bloqueo = await _context.BdBloqueos.Where(x => x.NoAfiliacion == ar.NoAfiliacion).FirstOrDefaultAsync();
+                BdBloqueo bloqueo = await _context.BdBloqueos.Where(x => x.NoAfiliacion == ar.NoAfiliacion).FirstOrDefaultAsync();
                 int total = 0;
                 if (ar.Insumos.HasValue)
                 {
@@ -2857,14 +2830,14 @@ namespace WebApiSgsElavon.Services
                 IdUsuario = idusuario,
                 IdAr = idar
             };
-            _context.BdDatosCierresAplicacion.Add(cierre);
+            _context.BdDatosCierresAplicacions.Add(cierre);
             await _context.SaveChangesAsync();
         }
         #endregion
         #region Ingreso de informacion en  BD_INSTALACIONES
         public async Task insertarBdinstalacion(int IDAR, int IDTECNICO, int IDNEGOCIO, int IDUNIDAD, string tipo, int IdConectividad, int IdAplicativo)
         {
-            BdInstalaciones instalaciones = new BdInstalaciones()
+            BdInstalacione instalaciones = new BdInstalacione()
             {
                 IdAr = IDAR,
                 IdTecnico = IDTECNICO,
@@ -2885,7 +2858,7 @@ namespace WebApiSgsElavon.Services
         #region Ingreso de informacion en BD_RETIROS
         public async Task insertarBdRetiros(int idar, int idtecnico, int idnegocio, int idunidad, string tipo, int idconectividad, int idaplicativo)
         {
-            BdRetiros retiros = new BdRetiros()
+            BdRetiro retiros = new BdRetiro()
             {
                 IdAr = idar,
                 IdTecnico = idtecnico,
@@ -2908,9 +2881,7 @@ namespace WebApiSgsElavon.Services
             var parametros = new[]{
                 new SqlParameter("@p0", System.Data.SqlDbType.Int){Value = idAr}
             };
-            var newodt = await _context
-                .Query<ODT>()
-                .FromSql("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
+            var newodt = await _context.Odts.FromSqlRaw("SELECT ID_AR, BD_NEGOCIOS.ID_NEGOCIO, NO_AR AS NO_ODT, " +
                 "BD_NEGOCIOS.DESC_NEGOCIO, " +
                 "BD_NEGOCIOS.NO_AFILIACION, " +
                 "BD_NEGOCIOS.ESTADO, " +
@@ -2947,13 +2918,13 @@ namespace WebApiSgsElavon.Services
         }
         public bool validaAsignacion(int idar, int idtecnico)
         {
-            var ar = _context.BdAr.Where(x => x.IdAr == idar && x.IdTecnico == idtecnico).Count();
+            var ar = _context.BdArs.Where(x => x.IdAr == idar && x.IdTecnico == idtecnico).Count();
             return ar > 0 ? true : false;
         }
         public bool validaStatusAr(int idar)
         {
             List<int> idstatusar = new List<int>() { 6, 7, 8, 31 };
-            var valArs = _context.BdAr.Where(x => x.IdAr == idar && idstatusar.Contains(x.IdStatusAr)).Count();
+            var valArs = _context.BdArs.Where(x => x.IdAr == idar && idstatusar.Contains(x.IdStatusAr.GetValueOrDefault())).Count();
             return valArs > 0 ? true : false;
         }
         public bool validaFecCierre(string fechcierre)
@@ -2970,10 +2941,10 @@ namespace WebApiSgsElavon.Services
         public async Task<int> GetCarrier(string sim)
         {
             string simsix = sim?.Substring(0, 6);
-            CCarrier carrier = await _context.CCarrier.FirstOrDefaultAsync(x => x.DigitoVerificador == Convert.ToInt32(simsix));
+            CCarrier carrier = await _context.CCarriers.FirstOrDefaultAsync(x => x.DigitoVerificador == Convert.ToInt32(simsix));
             if (carrier != null)
             {
-                CModelos modelo = await _context.CModelos.FirstOrDefaultAsync(x => x.IdMarca == 10 && x.DescModelo.Equals(carrier.DescCarrier));
+                CModelo modelo = await _context.CModelos.FirstOrDefaultAsync(x => x.IdMarca == 10 && x.DescModelo.Equals(carrier.DescCarrier));
                 if (modelo != null)
                 {
                     return modelo.IdModelo;
@@ -2991,7 +2962,7 @@ namespace WebApiSgsElavon.Services
         }
         public async Task<bool> ValidateInstalledSeries(string serie)
         {
-            BdUnidades unidad = await _context.BdUnidades.FirstOrDefaultAsync(x => x.NoSerie == serie.Trim());
+            BdUnidade unidad = await _context.BdUnidades.FirstOrDefaultAsync(x => x.NoSerie == serie.Trim());
             if(unidad.IdStatusUnidad == 17)
             {
                 return false;
@@ -3013,16 +2984,16 @@ namespace WebApiSgsElavon.Services
         public async Task UpdateSpecialProjects(string NoAfiliacion, int IdServicio, int IdFalla)
         {
 
-            List<BdServiciosFallasProyEspeciales> bdServiciosFallasProys = await _context.BdServiciosFallasProyEspeciales.ToListAsync();
+            List<BdServiciosFallasProyEspeciale> bdServiciosFallasProys = await _context.BdServiciosFallasProyEspeciales.ToListAsync();
 
-            BdServiciosFallasProyEspeciales fallasProyEspeciale = bdServiciosFallasProys
+            BdServiciosFallasProyEspeciale fallasProyEspeciale = bdServiciosFallasProys
                 .Where(x => x.IdServicio == IdServicio && x.IdFalla == IdFalla && x.Status == "ACTIVO")
                 .OrderByDescending(x => x.FecAlta)
                 .FirstOrDefault();
 
             if (bdServiciosFallasProys != null)
             {
-                List<BdAfiliacionesProyectoEspecial> bdAfiliaciones = await _context.BdAfiliacionesProyectoEspecial.ToListAsync();
+                List<BdAfiliacionesProyectoEspecial> bdAfiliaciones = await _context.BdAfiliacionesProyectoEspecials.ToListAsync();
 
                 BdAfiliacionesProyectoEspecial bdAfiliacionesProyecto = bdAfiliaciones
                     .Where(x => x.NoAfiliacion.Trim().Equals(NoAfiliacion.Trim()) &&
@@ -3035,7 +3006,7 @@ namespace WebApiSgsElavon.Services
                 {
                     bdAfiliacionesProyecto.IsProcesado = "S";
 
-                    _context.BdAfiliacionesProyectoEspecial.Update(bdAfiliacionesProyecto);
+                    _context.BdAfiliacionesProyectoEspecials.Update(bdAfiliacionesProyecto);
                     await _context.SaveChangesAsync();
                 }
             }

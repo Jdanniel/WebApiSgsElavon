@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using WebApiSgsElavon.Entities;
@@ -28281,3 +28281,4 @@ namespace WebApiSgsElavon.ModelsTest
         }
     }
 }
+*/

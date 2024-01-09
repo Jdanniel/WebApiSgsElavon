@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiSgsElavon.DataTTOSD;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.ModelsTest;
 
@@ -14,7 +15,7 @@ namespace WebApiSgsElavon.Services
 
     public class UnidadService : IUnidadService
     {
-        public ELAVONTESTContext _context;
+        public GetnetContext _context;
 
         public Task<List<UnidadTecnico>> GetUnidadesTecnico(int idusuario)
         {

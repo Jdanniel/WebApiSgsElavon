@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiSgsElavon.Data;
+using WebApiSgsElavon.DataTTOSD;
 using WebApiSgsElavon.Dtos.BdModelosConectividades;
 using WebApiSgsElavon.Dtos.CambioStatusAr;
 using WebApiSgsElavon.Dtos.Causas;
@@ -18,8 +20,6 @@ using WebApiSgsElavon.Dtos.Soluciones;
 using WebApiSgsElavon.Dtos.StatusAr;
 using WebApiSgsElavon.Dtos.Subrechazos;
 using WebApiSgsElavon.Dtos.Unidades;
-//using WebApiSgsElavon.Model;
-using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {
@@ -43,14 +43,14 @@ namespace WebApiSgsElavon.Services
         Task<IEnumerable<ReglasModelosDtos>> GetReglasModelos();
         Task<IEnumerable<CausasCancelacionDtos>> GetCausasCancelacion();
         Task<IEnumerable<SolucionesDtos>> GetSoluciones();
-        Task<List<CEvidenceTypes>> GetEvidenceTypes();
+        Task<List<CevidenceType>> GetEvidenceTypes();
     }
 
     public class CatalogosServices : ICatalogosServices
     {
-        private readonly ELAVONTESTContext context;
+        private readonly GetnetContext context;
 
-        public CatalogosServices(ELAVONTESTContext _context)
+        public CatalogosServices(GetnetContext _context)
         {
             context = _context;
         }
@@ -58,7 +58,7 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<CambioStatusArDtos>> GetCambioStatusAr()
         {
             List<CambioStatusArDtos> cambio = await context
-                .BdCambioStatusAr
+                .BdCambioStatusArs
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new CambioStatusArDtos
                 {
@@ -70,10 +70,10 @@ namespace WebApiSgsElavon.Services
             return cambio;
         }
 
-        public async Task<List<CEvidenceTypes>> GetEvidenceTypes()
+        public async Task<List<CevidenceType>> GetEvidenceTypes()
         {
-            List<CEvidenceTypes> evidences = await context
-                .CEvidenceTypes
+            List<CevidenceType> evidences = await context
+                .CevidenceTypes
                 .Where(x => x.Status == 1)
                 .ToListAsync();
             return evidences;
@@ -97,13 +97,13 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<ConectividadesDtos>> GetConectividades()
         {
             List<ConectividadesDtos> conectividades = await context
-                .CConectividad
+                .CConectividads
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new ConectividadesDtos
                 { 
                     IdConectividad = x.IdConectividad, 
                     DescConectividad = x.DescConectividad, 
-                    IsGprs = x.IsGprs == null ? 0 : x.IsGprs })
+                    IsGprs = x.IsGprs.GetValueOrDefault() })
                 .ToListAsync();
             return conectividades;
         }
@@ -131,7 +131,7 @@ namespace WebApiSgsElavon.Services
             List<ModelosDtos> modelos = await context
                 .CModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca, IdAccess = x.IdAccess })
+                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca.GetValueOrDefault(), IdAccess = x.IdAccess })
                 .ToListAsync();
             return modelos;
         }
@@ -139,7 +139,7 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<MovimientoInventarioServicioFallaDtos>> GetMovimientoInventarioServicioFallas()
         {
             List<MovimientoInventarioServicioFallaDtos> movs = await context
-                .BdValMovimientosInvServicioFalla
+                .BdValMovimientosInvServicioFallas
                 .Where(x => x.Status == "ACTIVO")
                 .Select(x => new MovimientoInventarioServicioFallaDtos
                 { 
@@ -165,7 +165,7 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<SoftwaresDtos>> GetSoftwares()
         {
             List<SoftwaresDtos> softwares = await context
-                .CSoftware
+                .CSoftwares
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new SoftwaresDtos { IdAplicativo = x.IdSoftware, DescAplicativo = x.DescSoftware })
                 .ToListAsync();
@@ -175,7 +175,7 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<StatusArDtos>> GetStatusAr()
         {
             List<StatusArDtos> status = await context
-                .CStatusAr
+                .CStatusArs
                 .Where(x => x.Status == "ACTIVO")
                 .Select(x => new StatusArDtos { IdStatusAr = x.IdStatusAr, DescStatusAr = x.DescStatusAr })
                 .ToListAsync();
@@ -185,9 +185,9 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<SubrechazosDtos>> GetSubrechazos()
         {
             List<SubrechazosDtos> subs = await context
-                .CSubrechazo
+                .CSubrechazos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(X => new SubrechazosDtos { IdSubrechazo = X.IdSubrechazo, Subrechazo = X.Subrechazo, Id = X.Id, IsProgramado = X.IsProgramado.GetValueOrDefault() })
+                .Select(X => new SubrechazosDtos { IdSubrechazo = X.IdSubrechazo, Subrechazo = X.Subrechazo, Id = X.Id.GetValueOrDefault(), IsProgramado = X.IsProgramado.GetValueOrDefault() })
                 .ToListAsync();
             return subs;
         }
@@ -195,12 +195,12 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<CausasRechazosDtos>> GetCausasrechazos()
         {
             List<CausasRechazosDtos> causas = await context
-                .CCausasRechazo
+                .CCausasRechazos
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new CausasRechazosDtos { 
                     IdCausaRechazo = x.IdCausaRechazo, 
                     DescCausaRechazo = x.DescCausaRechazo.Replace("\r\n", string.Empty), 
-                    IdTrechazo = x.IdTrechazo })
+                    IdTrechazo = x.IdTrechazo.GetValueOrDefault() })
                 .ToListAsync();
             return causas;
         }
@@ -223,9 +223,9 @@ namespace WebApiSgsElavon.Services
                     NoSerie = x.NoSerie.Trim(),
                     IdStatusUnidad = x.IdStatusUnidad,
                     IsNueva = x.IsNueva,
-                    DescStatusUnidad = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
-                    IdTipoResponsable = x.IdTipoResponsable,
-                    IdResponsable = x.IdResponsable
+                    DescStatusUnidad = (context.CStatusUnidads.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
+                    IdTipoResponsable = x.IdTipoResponsable.GetValueOrDefault(),
+                    IdResponsable = x.IdResponsable.GetValueOrDefault()
                 })
                 .ToListAsync();
             return unidades;
@@ -234,13 +234,13 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<BdModelosConectividadesDtos>> GetModeloConectividad()
         {
             List<BdModelosConectividadesDtos> modelosConectividades = await context
-                .BdModeloConectividad
+                .BdModeloConectividads
                 .Where(x => x.Status == "ACTIVO")
                 .Select(x => new BdModelosConectividadesDtos
                 {
                     IdModeloConectividad = x.IdModeloConectividad,
-                    IdModelo = x.IdModelo,
-                    IdConectividad = x.IdConectividad
+                    IdModelo = x.IdModelo.GetValueOrDefault(),
+                    IdConectividad = x.IdConectividad.GetValueOrDefault()
                 })
                 .ToListAsync();
             return modelosConectividades;
@@ -250,11 +250,11 @@ namespace WebApiSgsElavon.Services
         {
             List<int> idstatusar = new List<int> { 6, 7, 8 };
             var PROVEEDOR = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
-            List<int> negocios = await context.BdAr.Where(x => !idstatusar.Contains(x.IdStatusAr) && x.IdTecnico == idusuario).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
+            List<int> negocios = await context.BdArs.Where(x => !idstatusar.Contains(x.IdStatusAr.GetValueOrDefault()) && x.IdTecnico == idusuario).Select(x => x.IdNegocio.GetValueOrDefault()).ToListAsync();
             //var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
             List<UnidadesDtos> unidadesNegocio = await context.BdUnidades
                 .Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null
-                && x.IdTipoResponsable==4 && negocios.Contains(x.IdResponsable)).Select(x => new UnidadesDtos()
+                && x.IdTipoResponsable==4 && negocios.Contains(x.IdResponsable.GetValueOrDefault())).Select(x => new UnidadesDtos()
             {
                 IdUnidad = x.IdUnidad,
                 IdModelo = x.IdModelo,
@@ -264,9 +264,9 @@ namespace WebApiSgsElavon.Services
                 IdStatusUnidad = x.IdStatusUnidad,
                 IsNueva = x.IsNueva,
                 NoSerie = x.NoSerie.Trim(),
-                DescStatusUnidad = (context.CStatusUnidad.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
-                IdTipoResponsable = x.IdTipoResponsable,
-                IdResponsable = x.IdResponsable
+                DescStatusUnidad = (context.CStatusUnidads.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
+                IdTipoResponsable = x.IdTipoResponsable.GetValueOrDefault(),
+                IdResponsable = x.IdResponsable.GetValueOrDefault()
             }).ToListAsync();
             return unidadesNegocio;
         }
@@ -277,19 +277,19 @@ namespace WebApiSgsElavon.Services
                 .Select(x => new ReglasModelosDtos
                 {
                     IdRegla = x.IdReglas,
-                    IdModelo = x.IdModelo,
-                    LetrasMin = x.LetrasMin,
-                    LetrasMax = x.LetrasMax,
-                    NumeroMin = x.NumeroMin,
-                    NumeroMax = x.NumeroMax,
-                    LongMin = x.LongMin,
-                    LongMax = x.LongMax
+                    IdModelo = x.IdModelo.GetValueOrDefault(),
+                    LetrasMin = x.LetrasMin.GetValueOrDefault(),
+                    LetrasMax = x.LetrasMax.GetValueOrDefault(),
+                    NumeroMin = x.NumeroMin.GetValueOrDefault(),
+                    NumeroMax = x.NumeroMax.GetValueOrDefault(),
+                    LongMin = x.LongMin.GetValueOrDefault(),
+                    LongMax = x.LongMax.GetValueOrDefault()
                 }).ToListAsync();
             return reglas;
         }
         public async Task<IEnumerable<CausasCancelacionDtos>> GetCausasCancelacion()
         {
-            return await context.CCausaCancelacion.Where(x => x.Status == "ACTIVO")
+            return await context.CCausaCancelacions.Where(x => x.Status == "ACTIVO")
                 .Select(x => new CausasCancelacionDtos()
                 {
                     DescCausa = x.DescCausaCancelacion,

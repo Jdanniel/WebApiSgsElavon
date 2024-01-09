@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WebApiSgsElavon.Data;
 using WebApiSgsElavon.Dtos.BdModelosConectividades;
 using WebApiSgsElavon.Dtos.CambioStatusAr;
 using WebApiSgsElavon.Dtos.Causas;
@@ -19,7 +20,6 @@ using WebApiSgsElavon.Dtos.Soluciones;
 using WebApiSgsElavon.Dtos.StatusAr;
 using WebApiSgsElavon.Dtos.Subrechazos;
 using WebApiSgsElavon.Dtos.Unidades;
-using WebApiSgsElavon.ModelsTest;
 using WebApiSgsElavon.Services;
 
 namespace WebApiSgsElavon.Controllers
@@ -74,9 +74,9 @@ namespace WebApiSgsElavon.Controllers
             return dtos;
         }
         [HttpGet("evidenceTypes")]
-        public async Task<IEnumerable<CEvidenceTypes>> GetEvidenceTypes()
+        public async Task<IEnumerable<CevidenceType>> GetEvidenceTypes()
         {
-            IEnumerable<CEvidenceTypes> evidences = await _Catalogosservices.GetEvidenceTypes();
+            IEnumerable<CevidenceType> evidences = await _Catalogosservices.GetEvidenceTypes();
             return evidences;
         }
         [HttpGet("unidades/{idusuario}")]

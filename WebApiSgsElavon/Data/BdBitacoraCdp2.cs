@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace WebApiSgsElavon.DataTTOSD;
+
+public partial class BdBitacoraCdp2
+{
+    public int IdBitacoraCdp { get; set; }
+
+    public long? IdAr { get; set; }
+
+    public DateTime? FechaAlta { get; set; }
+
+    public string NoAfiliacion { get; set; }
+
+    public string RfcFiscal { get; set; }
+}
