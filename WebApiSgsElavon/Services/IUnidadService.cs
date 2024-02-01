@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApiSgsElavon.DataTTOSD;
+using WebApiSgsElavon.Data;
 using WebApiSgsElavon.Entities;
-using WebApiSgsElavon.ModelsTest;
 
 namespace WebApiSgsElavon.Services
 {

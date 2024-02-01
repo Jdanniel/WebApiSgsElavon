@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CMoneda
 {
@@ -16,8 +16,6 @@ public partial class CMoneda
     public int? IdUsuarioAlta { get; set; }
 
     public virtual ICollection<BdModeloPrecio> BdModeloPrecios { get; set; } = new List<BdModeloPrecio>();
-
-    public virtual ICollection<BdSparePartPrecio> BdSparePartPrecios { get; set; } = new List<BdSparePartPrecio>();
 
     public virtual ICollection<CModelo> CModelos { get; set; } = new List<CModelo>();
 

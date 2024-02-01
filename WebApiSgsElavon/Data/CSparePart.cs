@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CSparePart
 {
@@ -24,8 +24,6 @@ public partial class CSparePart
     public string Status { get; set; }
 
     public virtual ICollection<BdArSparePart> BdArSpareParts { get; set; } = new List<BdArSparePart>();
-
-    public virtual ICollection<BdSolicitudesAlmacenOld> BdSolicitudesAlmacenOlds { get; set; } = new List<BdSolicitudesAlmacenOld>();
 
     public virtual ICollection<BdSolicitudesAlmacen> BdSolicitudesAlmacens { get; set; } = new List<BdSolicitudesAlmacen>();
 

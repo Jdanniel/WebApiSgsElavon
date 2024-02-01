@@ -9,10 +9,9 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WebApiSgsElavon.DataTTOSD;
+using WebApiSgsElavon.Data;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Entities.Requests;
-
 using WebApiSgsElavon.Utils;
 //31/072020 SE AGREGA A LOS CIERRES TANTO PARA UNIDADES COMO SIMS REGISTRAR EL ID_PROVEEDOR EN EL CAMPO DE BD_UNIDADES.ID_SIM
 namespace WebApiSgsElavon.Services
@@ -725,6 +724,30 @@ namespace WebApiSgsElavon.Services
                         return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
                     }
                 }
+                //Se comentan para iniciar con nuevos cambios de la app 31/01/2024
+                //List<CAccesorio> accesorios = await _context.CAccesorios.Where(x => request.ACCESSORIES_ID.Contains(x.IdAccesorio)).ToListAsync();
+                //List<BdControlAccesorio> listcontrolAccesorios = new();
+                //List<string> msgsAccessories = new();
+
+                //foreach (CAccesorio accesorio in accesorios)
+                //{
+                //    BdControlAccesorio controlAccesorio = await _context
+                //        .BdControlAccesorios
+                //        .Where(x => x.IdTipoResponsable == 2 &&
+                //            x.IdResponsable == request.ID_TECNICO &&
+                //            x.IdAccesorio == accesorio.IdAccesorio)
+                //        .OrderBy(x => x.IdControlAccesorios)
+                //        .FirstOrDefaultAsync();
+
+                //    if (controlAccesorio is null || controlAccesorio.Total.GetValueOrDefault() <= 0)
+                //    {
+                //        await insertDataTable($"El accesorio {accesorio.DescAccesorio} no cuenta con stock", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                //        msgsAccessories.Add($"El accesorio {accesorio.DescAccesorio} no cuenta con stock");
+                //        continue;
+                //    }
+                //    listcontrolAccesorios.Add(controlAccesorio);
+                //}
+
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
                     try
@@ -1059,17 +1082,48 @@ namespace WebApiSgsElavon.Services
 
                         _context.BdArAccesorios.Add(accesoriosRetirados);
                         await _context.SaveChangesAsync();
-                        await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - RETIRO");
+
+                        //foreach (BdControlAccesorio controlAccesorio in listcontrolAccesorios)
+                        //{
+                        //    BdRetirosAccesorio bdRetiro = new()
+                        //    {
+                        //        IdAr = BdArs.IdAr,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        FechaAlta = DateTime.Now,
+                        //        IdUnidad = bdunidadRetirada.IdUnidad,
+                        //        IdUsuarioAlta = request.ID_TECNICO,
+                        //        Status = "ACTIVO"
+                        //    };
+                        //    await _context.BdRetirosAccesorios.AddAsync(bdRetiro);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesoriosEntradum accesoriosEntradum = new()
+                        //    {
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdTipoMovAccesorio = 2,
+                        //        Total = 1,
+                        //        IdTipoResponsable = 2
+                        //    };
+                        //    await _context.BdControlAccesoriosEntrada.AddAsync(accesoriosEntradum);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesorio bdControlAccesorio = new()
+                        //    {
+                        //        IdTipoResponsable = 2,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdStatusOrdenCompraAccesorio = 2,
+                        //        Salida = 1,
+                        //        Total = controlAccesorio.Total.GetValueOrDefault() + 1,
+                        //        IdControlAccesoriosEntradaSalida = accesoriosEntradum.IdControlAccesoriosEntrada
+                        //    };
+                        //    await _context.BdControlAccesorios.AddAsync(bdControlAccesorio);
+                        //    await _context.SaveChangesAsync();
+                        //}
                         #endregion
+                        await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - RETIRO");
                         transaction.Commit();
-
-
-                        var requestHttp = new HttpRequestMessage(HttpMethod.Post, "https://smc.microformas.com.mx/SgsSalesforce/api/SalesForce/SendCierre");
-                        requestHttp.Content = new StringContent(JsonConvert.SerializeObject(new { idAr = request.ID_AR, idUsuario = request.ID_TECNICO })
-                            , Encoding.UTF8
-                            , "application/json");
-                        var client = _client.CreateClient();
-                        await client.SendAsync(requestHttp);
 
                         return "OK";
                     }
@@ -1129,6 +1183,35 @@ namespace WebApiSgsElavon.Services
                         return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
                     }
                 }
+
+                //List<CAccesorio> accesorios = await _context.CAccesorios.Where(x => request.ACCESSORIES_ID.Contains(x.IdAccesorio)).ToListAsync();
+                //List<BdControlAccesorio> listcontrolAccesorios = new();
+                //List<string> msgsAccessories = new();
+
+                //foreach (CAccesorio accesorio in accesorios)
+                //{
+                //    BdControlAccesorio controlAccesorio = await _context
+                //        .BdControlAccesorios
+                //        .Where(x => x.IdTipoResponsable == 2 &&
+                //            x.IdResponsable == request.ID_TECNICO &&
+                //            x.IdAccesorio == accesorio.IdAccesorio)
+                //        .OrderBy(x => x.IdControlAccesorios)
+                //        .FirstOrDefaultAsync();
+
+                //    if (controlAccesorio is null || controlAccesorio.Total.GetValueOrDefault() <= 0)
+                //    {
+                //        await insertDataTable($"El accesorio {accesorio.DescAccesorio} no cuenta con stock", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                //        msgsAccessories.Add($"El accesorio {accesorio.DescAccesorio} no cuenta con stock");
+                //        continue;
+                //    }
+                //    listcontrolAccesorios.Add(controlAccesorio);
+                //}
+
+                //if(msgsAccessories.Count > 0)
+                //{
+                //    return String.Join(" - ", msgsAccessories);
+                //}
+
                 #endregion
 
                 using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -1426,6 +1509,46 @@ namespace WebApiSgsElavon.Services
 
                         _context.BdArAccesorios.Add(accesoriosInstalados);
                         await _context.SaveChangesAsync();
+
+                        //foreach(BdControlAccesorio controlAccesorio in listcontrolAccesorios)
+                        //{
+                        //    BdInstalacionesAccesorio bdInstalaciones = new()
+                        //    {
+                        //        IdAr = BdArs.IdAr,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        FechaAlta = DateTime.Now,
+                        //        IdUnidad = idunidadInstalar,
+                        //        IdUsuarioAlta = request.ID_TECNICO,
+                        //        Status = "ACTIVO"
+                        //    };
+                        //    await _context.BdInstalacionesAccesorios.AddAsync(bdInstalaciones);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesoriosSalidum accesoriosSalidum = new()
+                        //    {
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdTipoMovAccesorio = 3,
+                        //        Total = 1,
+                        //        IdTipoResponsable = 2
+                        //    };
+                        //    await _context.BdControlAccesoriosSalida.AddAsync(accesoriosSalidum);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesorio bdControlAccesorio = new()
+                        //    {
+                        //        IdTipoResponsable = 2,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdStatusOrdenCompraAccesorio = 3,
+                        //        Salida = 1,
+                        //        Total = controlAccesorio.Total.GetValueOrDefault() - 1,
+                        //        IdControlAccesoriosEntradaSalida = accesoriosSalidum.IdControlAccesoriosSalida
+                        //    };
+                        //    await _context.BdControlAccesorios.AddAsync(bdControlAccesorio);
+                        //    await _context.SaveChangesAsync();
+                        //}
+
                         #endregion
 
                         #region Si en la solicitud el campo IS_AMEX es verdadero se almacenara la informacion en BD_AR_TERMINAL_ASOCIADA_AMEX
@@ -1824,6 +1947,52 @@ namespace WebApiSgsElavon.Services
                         return $"El campo COMENTARIO debe contar con un minimo de 20 caracteres";
                     }
                 }
+
+                //List<CAccesorio> accesoriosInst = await _context.CAccesorios.Where(x => request.ACCESSORIES_INST.Contains(x.IdAccesorio)).ToListAsync();
+                //List<BdControlAccesorio> listcontrolAccesoriosInst = new();
+                //List<string> msgsAccessories = new();
+
+                //foreach (CAccesorio accesorio in accesoriosInst)
+                //{
+                //    BdControlAccesorio controlAccesorio = await _context
+                //        .BdControlAccesorios
+                //        .Where(x => x.IdTipoResponsable == 2 &&
+                //            x.IdResponsable == request.ID_TECNICO &&
+                //            x.IdAccesorio == accesorio.IdAccesorio)
+                //        .OrderBy(x => x.IdControlAccesorios)
+                //        .FirstOrDefaultAsync();
+
+                //    if (controlAccesorio is null || controlAccesorio.Total.GetValueOrDefault() <= 0)
+                //    {
+                //        await insertDataTable($"El accesorio {accesorio.DescAccesorio} no cuenta con stock", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                //        msgsAccessories.Add($"El accesorio {accesorio.DescAccesorio} no cuenta con stock");
+                //        continue;
+                //    }
+                //    listcontrolAccesoriosInst.Add(controlAccesorio);
+                //}
+
+                //List<CAccesorio> accesoriosRemo = await _context.CAccesorios.Where(x => request.ACCESSORIES_REMO.Contains(x.IdAccesorio)).ToListAsync();
+                //List<BdControlAccesorio> listcontrolAccesoriosRemo = new();
+
+                //foreach (CAccesorio accesorio in accesoriosRemo)
+                //{
+                //    BdControlAccesorio controlAccesorio = await _context
+                //        .BdControlAccesorios
+                //        .Where(x => x.IdTipoResponsable == 2 &&
+                //            x.IdResponsable == request.ID_TECNICO &&
+                //            x.IdAccesorio == accesorio.IdAccesorio)
+                //        .OrderBy(x => x.IdControlAccesorios)
+                //        .FirstOrDefaultAsync();
+
+                //    if (controlAccesorio is null || controlAccesorio.Total.GetValueOrDefault() <= 0)
+                //    {
+                //        await insertDataTable($"El accesorio {accesorio.DescAccesorio} no cuenta con stock", request.ID_TECNICO, request.ID_AR, "ERROR - INSTALACION");
+                //        msgsAccessories.Add($"El accesorio {accesorio.DescAccesorio} no cuenta con stock");
+                //        continue;
+                //    }
+                //    listcontrolAccesoriosRemo.Add(controlAccesorio);
+                //}
+
                 #endregion
 
                 using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -1877,10 +2046,10 @@ namespace WebApiSgsElavon.Services
                             + " VERSION: " + request.VERSION
                             + " CAJA: " + request.CAJA
                             + " ROLLOS INSTALADOS: " + request.ROLLOS
-                            + " BATERIA: " + (request.BATERIA ? "SI" : "NO")
-                            + " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
-                            + " TAPA: " + (request.TAPA ? "SI" : "NO")
-                            + " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
+                            //+ " BATERIA: " + (request.BATERIA ? "SI" : "NO")
+                            //+ " ELIMINADOR: " + (request.ELIMINADOR ? "SI" : "NO")
+                            //+ " TAPA: " + (request.TAPA ? "SI" : "NO")
+                            //+ " CABLE AC: " + (request.CABLE_AC ? "SI" : "NO")
                             + " AMEX: " + (request.IS_AMEX ? "SI" : "NO")
                             + " ID AMEX: " + request.ID_AMEX
                             + " AFILIACION AMEX: " + request.AFILIACION_AMEX
@@ -1908,36 +2077,7 @@ namespace WebApiSgsElavon.Services
                         _context.BdArMiComercios.Add(micomercio);
                         await _context.SaveChangesAsync();
                         #endregion
-                        #region Ingreso de informacion en BD_AR_ACCESORIOS de unidad Instalada
-                        BdArAccesorio accesoriosInstalados = new BdArAccesorio()
-                        {
-                            IdAr = ID_AR,
-                            Bateria = (request.BATERIA ? "SI" : "NO"),
-                            Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
-                            Base = (request.BASE ? "SI" : "NO"),
-                            Tapa = (request.TAPA ? "SI" : "NO"),
-                            CableAc = (request.CABLE_AC ? "SI" : "NO"),
-                            Movimiento = "INSTALACION"
-                        };
 
-                        _context.BdArAccesorios.Add(accesoriosInstalados);
-                        await _context.SaveChangesAsync();
-                        #endregion
-                        #region Ingreso de informacion en BD_AR_ACCESORIOS de unidad Retirad
-                        BdArAccesorio accesoriosRetirados = new BdArAccesorio()
-                        {
-                            IdAr = ID_AR,
-                            Bateria = (request.BATERIA_RETIRO ? "SI" : "NO"),
-                            Eliminador = (request.ELIMINADOR_RETIRO ? "SI" : "NO"),
-                            Base = (request.BASE_RETIRO ? "SI" : "NO"),
-                            Tapa = (request.TAPA_RETIRO ? "SI" : "NO"),
-                            CableAc = (request.CABLE_AC_RETIRO ? "SI" : "NO"),
-                            Movimiento = "RETIRO"
-                        };
-
-                        _context.BdArAccesorios.Add(accesoriosRetirados);
-                        await _context.SaveChangesAsync();
-                        #endregion
                         #region Si la solicitud viene con el campo IS_AMEX verdadero, se ingresaro un nuevo registro en BD_AR_TERMINAL_ASOCIADA_AMEX
                         if (request.IS_AMEX)
                         {
@@ -2473,6 +2613,119 @@ namespace WebApiSgsElavon.Services
                             }*/
                         }
                         #endregion
+
+                        #region Ingreso de informacion en BD_AR_ACCESORIOS de unidad Instalada
+                        BdArAccesorio accesoriosInstalados = new BdArAccesorio()
+                        {
+                            IdAr = ID_AR,
+                            Bateria = (request.BATERIA ? "SI" : "NO"),
+                            Eliminador = (request.ELIMINADOR ? "SI" : "NO"),
+                            Base = (request.BASE ? "SI" : "NO"),
+                            Tapa = (request.TAPA ? "SI" : "NO"),
+                            CableAc = (request.CABLE_AC ? "SI" : "NO"),
+                            Movimiento = "INSTALACION"
+                        };
+
+                        _context.BdArAccesorios.Add(accesoriosInstalados);
+                        await _context.SaveChangesAsync();
+
+                        //foreach (BdControlAccesorio controlAccesorio in listcontrolAccesoriosInst)
+                        //{
+                        //    BdInstalacionesAccesorio bdInstalaciones = new()
+                        //    {
+                        //        IdAr = BdArs.IdAr,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        FechaAlta = DateTime.Now,
+                        //        IdUnidad = bdunidad.IdUnidad,
+                        //        IdUsuarioAlta = request.ID_TECNICO,
+                        //        Status = "ACTIVO"
+                        //    };
+                        //    await _context.BdInstalacionesAccesorios.AddAsync(bdInstalaciones);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesoriosSalidum accesoriosSalidum = new()
+                        //    {
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdTipoMovAccesorio = 3,
+                        //        Total = 1,
+                        //        IdTipoResponsable = 2
+                        //    };
+                        //    await _context.BdControlAccesoriosSalida.AddAsync(accesoriosSalidum);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesorio bdControlAccesorio = new()
+                        //    {
+                        //        IdTipoResponsable = 2,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdStatusOrdenCompraAccesorio = 3,
+                        //        Salida = 1,
+                        //        Total = controlAccesorio.Total.GetValueOrDefault() - 1,
+                        //        IdControlAccesoriosEntradaSalida = accesoriosSalidum.IdControlAccesoriosSalida
+                        //    };
+                        //    await _context.BdControlAccesorios.AddAsync(bdControlAccesorio);
+                        //    await _context.SaveChangesAsync();
+                        //}
+
+                        #endregion
+                        #region Ingreso de informacion en BD_AR_ACCESORIOS de unidad Retirad
+                        BdArAccesorio accesoriosRetirados = new BdArAccesorio()
+                        {
+                            IdAr = ID_AR,
+                            Bateria = (request.BATERIA_RETIRO ? "SI" : "NO"),
+                            Eliminador = (request.ELIMINADOR_RETIRO ? "SI" : "NO"),
+                            Base = (request.BASE_RETIRO ? "SI" : "NO"),
+                            Tapa = (request.TAPA_RETIRO ? "SI" : "NO"),
+                            CableAc = (request.CABLE_AC_RETIRO ? "SI" : "NO"),
+                            Movimiento = "RETIRO"
+                        };
+
+                        _context.BdArAccesorios.Add(accesoriosRetirados);
+                        await _context.SaveChangesAsync();
+
+                        //foreach (BdControlAccesorio controlAccesorio in listcontrolAccesoriosRemo)
+                        //{
+                        //    BdRetirosAccesorio bdRetiro = new()
+                        //    {
+                        //        IdAr = BdArs.IdAr,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        FechaAlta = DateTime.Now,
+                        //        IdUnidad = bdunidadRetirada.IdUnidad,
+                        //        IdUsuarioAlta = request.ID_TECNICO,
+                        //        Status = "ACTIVO"
+                        //    };
+                        //    await _context.BdRetirosAccesorios.AddAsync(bdRetiro);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesoriosEntradum accesoriosEntradum = new()
+                        //    {
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdTipoMovAccesorio = 2,
+                        //        Total = 1,
+                        //        IdTipoResponsable = 2
+                        //    };
+                        //    await _context.BdControlAccesoriosEntrada.AddAsync(accesoriosEntradum);
+                        //    await _context.SaveChangesAsync();
+
+                        //    BdControlAccesorio bdControlAccesorio = new()
+                        //    {
+                        //        IdTipoResponsable = 2,
+                        //        IdResponsable = request.ID_TECNICO,
+                        //        IdAccesorio = controlAccesorio.IdAccesorio,
+                        //        IdStatusOrdenCompraAccesorio = 2,
+                        //        Salida = 1,
+                        //        Total = controlAccesorio.Total.GetValueOrDefault() + 1,
+                        //        IdControlAccesoriosEntradaSalida = accesoriosEntradum.IdControlAccesoriosEntrada
+                        //    };
+                        //    await _context.BdControlAccesorios.AddAsync(bdControlAccesorio);
+                        //    await _context.SaveChangesAsync();
+                        //}
+
+                        #endregion
+
+
                         await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SUSTITUCIONES");
                         transaction.Commit();
 
@@ -2810,6 +3063,7 @@ namespace WebApiSgsElavon.Services
                 }
                 bloqueo.TotalRollos += total;
                 //_context.BdBloqueos.Add(bloqueo);
+                _context.BdBloqueos.Update(bloqueo);
                 await _context.SaveChangesAsync();
                 return 1;
             }

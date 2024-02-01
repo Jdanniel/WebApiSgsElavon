@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdAuditoriaReporte
 {
@@ -30,8 +30,6 @@ public partial class BdAuditoriaReporte
     public virtual ICollection<BdUnidadesNoReportada> BdUnidadesNoReportada { get; set; } = new List<BdUnidadesNoReportada>();
 
     public virtual ICollection<BdUnidadesReportada> BdUnidadesReportada { get; set; } = new List<BdUnidadesReportada>();
-
-    public virtual BdAuditoria IdAuditoriaNavigation { get; set; }
 
     public virtual CTipoInventario IdTipoInventarioNavigation { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdTrackingLog
 {

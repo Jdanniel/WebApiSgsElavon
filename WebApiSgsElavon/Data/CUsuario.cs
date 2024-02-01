@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CUsuario
 {
@@ -187,8 +187,6 @@ public partial class CUsuario
 
     public DateTime? LockoutEnd { get; set; }
 
-    public virtual ICollection<BdAuditoria> BdAuditoria { get; set; } = new List<BdAuditoria>();
-
     public virtual ICollection<BdBitacoraModeloUnidad> BdBitacoraModeloUnidads { get; set; } = new List<BdBitacoraModeloUnidad>();
 
     public virtual ICollection<BdBitacoraSolicitudDevolucion> BdBitacoraSolicitudDevolucions { get; set; } = new List<BdBitacoraSolicitudDevolucion>();
@@ -202,18 +200,6 @@ public partial class CUsuario
     public virtual ICollection<BdInstalacione> BdInstalaciones { get; set; } = new List<BdInstalacione>();
 
     public virtual ICollection<BdRetiro> BdRetiros { get; set; } = new List<BdRetiro>();
-
-    public virtual ICollection<BdSolicitudesAlmacenOld> BdSolicitudesAlmacenOldIdResponsableDestinoNavigations { get; set; } = new List<BdSolicitudesAlmacenOld>();
-
-    public virtual ICollection<BdSolicitudesAlmacenOld> BdSolicitudesAlmacenOldIdUsuarioAltaNavigations { get; set; } = new List<BdSolicitudesAlmacenOld>();
-
-    public virtual ICollection<BdSolicitudesAlmacenOld> BdSolicitudesAlmacenOldIdUsuarioConfirmNavigations { get; set; } = new List<BdSolicitudesAlmacenOld>();
-
-    public virtual ICollection<BdSolicitudesDevolucionInsumo> BdSolicitudesDevolucionInsumos { get; set; } = new List<BdSolicitudesDevolucionInsumo>();
-
-    public virtual ICollection<BdSolicitudesDevolucionModelo> BdSolicitudesDevolucionModelos { get; set; } = new List<BdSolicitudesDevolucionModelo>();
-
-    public virtual ICollection<BdSolicitudesDevolucionUnidad> BdSolicitudesDevolucionUnidads { get; set; } = new List<BdSolicitudesDevolucionUnidad>();
 
     public virtual ICollection<BdSustitucione> BdSustituciones { get; set; } = new List<BdSustitucione>();
 

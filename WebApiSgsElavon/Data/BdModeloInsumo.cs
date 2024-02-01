@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdModeloInsumo
 {
@@ -14,8 +14,5 @@ public partial class BdModeloInsumo
     public int? IdUsuarioAlta { get; set; }
 
     public DateTime? FecAlta { get; set; }
-
-    public virtual CInsumosOld IdInsumoNavigation { get; set; }
-
     public virtual CModelo IdModeloNavigation { get; set; }
 }

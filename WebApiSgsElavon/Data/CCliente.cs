@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CCliente
 {
@@ -128,16 +128,4 @@ public partial class CCliente
     public virtual ICollection<BdModeloPrecio> BdModeloPrecios { get; set; } = new List<BdModeloPrecio>();
 
     public virtual ICollection<BdModeloSku> BdModeloSkus { get; set; } = new List<BdModeloSku>();
-
-    public virtual ICollection<BdNegocioHorasMe> BdNegocioHorasMes { get; set; } = new List<BdNegocioHorasMe>();
-
-    public virtual ICollection<BdNegociosAltum> BdNegociosAlta { get; set; } = new List<BdNegociosAltum>();
-
-    public virtual ICollection<BdReporteCierreAr> BdReporteCierreArs { get; set; } = new List<BdReporteCierreAr>();
-
-    public virtual ICollection<BdReporteCierre> BdReporteCierres { get; set; } = new List<BdReporteCierre>();
-
-    public virtual ICollection<BdSparePartPrecio> BdSparePartPrecios { get; set; } = new List<BdSparePartPrecio>();
-
-    public virtual CTipoCalculoUptime IdTipoCalculoUptimeNavigation { get; set; }
 }

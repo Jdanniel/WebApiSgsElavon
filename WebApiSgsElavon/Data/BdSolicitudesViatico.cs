@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdSolicitudesViatico
 {
@@ -36,16 +36,6 @@ public partial class BdSolicitudesViatico
     public DateTime FecAlta { get; set; }
 
     public int? FromAutomatizacion { get; set; }
-
-    public virtual ICollection<BdArchivoDispersionSolicitudViatico> BdArchivoDispersionSolicitudViaticos { get; set; } = new List<BdArchivoDispersionSolicitudViatico>();
-
     public virtual ICollection<BdBitacoraSolicitudesViatico> BdBitacoraSolicitudesViaticos { get; set; } = new List<BdBitacoraSolicitudesViatico>();
-
-    public virtual ICollection<BdConfirmacione> BdConfirmaciones { get; set; } = new List<BdConfirmacione>();
-
-    public virtual ICollection<BdConfirmacionesIntermedium> BdConfirmacionesIntermedia { get; set; } = new List<BdConfirmacionesIntermedium>();
-
-    public virtual ICollection<BdSolicitudesViaticosConcepto> BdSolicitudesViaticosConceptos { get; set; } = new List<BdSolicitudesViaticosConcepto>();
-
     public virtual CStatusSolicitudViatico IdStatusSolicitudViaticosNavigation { get; set; }
 }

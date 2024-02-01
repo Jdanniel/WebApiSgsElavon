@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CTipoResponsable
 {
@@ -24,8 +24,5 @@ public partial class CTipoResponsable
     public virtual ICollection<BdReingresoUnidad> BdReingresoUnidadIdTipoResponsableAnteriorNavigations { get; set; } = new List<BdReingresoUnidad>();
 
     public virtual ICollection<BdReingresoUnidad> BdReingresoUnidadIdTipoResponsableReingresoNavigations { get; set; } = new List<BdReingresoUnidad>();
-
-    public virtual ICollection<BdSolicitudesAlmacenOld> BdSolicitudesAlmacenOlds { get; set; } = new List<BdSolicitudesAlmacenOld>();
-
     public virtual ICollection<BdSolicitudesAlmacen> BdSolicitudesAlmacens { get; set; } = new List<BdSolicitudesAlmacen>();
 }

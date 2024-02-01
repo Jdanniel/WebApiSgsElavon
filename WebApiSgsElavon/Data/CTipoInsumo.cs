@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CTipoInsumo
 {
@@ -10,6 +10,4 @@ public partial class CTipoInsumo
     public string DescTipoInsumo { get; set; }
 
     public string Status { get; set; }
-
-    public virtual ICollection<CInsumosOld> CInsumosOlds { get; set; } = new List<CInsumosOld>();
 }

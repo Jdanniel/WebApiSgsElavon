@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Data;
-using WebApiSgsElavon.DataTTOSD;
 using WebApiSgsElavon.Dtos.BdModelosConectividades;
 using WebApiSgsElavon.Dtos.CambioStatusAr;
 using WebApiSgsElavon.Dtos.Causas;
@@ -66,6 +65,7 @@ namespace WebApiSgsElavon.Services
                     IdStatusArIni = x.IdStatusArIni.GetValueOrDefault(),
                     IdStatusArFin = x.IdStatusArFin.GetValueOrDefault()
                 })
+                .AsNoTracking()
                 .ToListAsync();
             return cambio;
         }
@@ -75,6 +75,7 @@ namespace WebApiSgsElavon.Services
             List<CevidenceType> evidences = await context
                 .CevidenceTypes
                 .Where(x => x.Status == 1)
+                .AsNoTracking()
                 .ToListAsync();
             return evidences;
         }
@@ -90,6 +91,7 @@ namespace WebApiSgsElavon.Services
                     DescCausa = x.DescCausa,
                     Descripcion = x.Descripcion
                 })
+                .AsNoTracking()
                 .ToListAsync();
             return causas;
         }
@@ -104,6 +106,7 @@ namespace WebApiSgsElavon.Services
                     IdConectividad = x.IdConectividad, 
                     DescConectividad = x.DescConectividad, 
                     IsGprs = x.IsGprs.GetValueOrDefault() })
+                .AsNoTracking()
                 .ToListAsync();
             return conectividades;
         }
@@ -113,6 +116,7 @@ namespace WebApiSgsElavon.Services
             List<FallasDtos> fallas = await context
                 .CFallas.Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new FallasDtos { IdFalla = x.IdFalla, DescFalla = x.DescFalla })
+                .AsNoTracking()
                 .ToListAsync();
             return fallas;
         }
@@ -122,6 +126,7 @@ namespace WebApiSgsElavon.Services
             List<MarcasDtos> marcas = await context
                 .CMarcas.Where(x => x.Status == "ACTIVO")
                 .Select(x => new MarcasDtos { IdMarca = x.IdMarca, DescMarca = x.DescMarca })
+                .AsNoTracking()
                 .ToListAsync();
             return marcas;
         }
@@ -131,7 +136,8 @@ namespace WebApiSgsElavon.Services
             List<ModelosDtos> modelos = await context
                 .CModelos
                 .Where(x => x.Status == "ACTIVO")
-                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca.GetValueOrDefault(), IdAccess = x.IdAccess })
+                .Select(x => new ModelosDtos { IdModelo = x.IdModelo, DescModelo = x.DescModelo, IdMarca = x.IdMarca.GetValueOrDefault(), IdAccess = x.IdAccess.GetValueOrDefault() })
+                .AsNoTracking()
                 .ToListAsync();
             return modelos;
         }
@@ -148,6 +154,7 @@ namespace WebApiSgsElavon.Services
                     IdFalla = x.IdFalla.GetValueOrDefault(), 
                     IdMovInventario = x.IdMovInventario.GetValueOrDefault(), 
                     Status = x.Status })
+                .AsNoTracking()
                 .ToListAsync();
             return movs;
         }
@@ -168,6 +175,7 @@ namespace WebApiSgsElavon.Services
                 .CSoftwares
                 .Where(x => x.Status == "ACTIVO" && x.IdCliente == 4)
                 .Select(x => new SoftwaresDtos { IdAplicativo = x.IdSoftware, DescAplicativo = x.DescSoftware })
+                .AsNoTracking()
                 .ToListAsync();
             return softwares;
         }
@@ -178,6 +186,7 @@ namespace WebApiSgsElavon.Services
                 .CStatusArs
                 .Where(x => x.Status == "ACTIVO")
                 .Select(x => new StatusArDtos { IdStatusAr = x.IdStatusAr, DescStatusAr = x.DescStatusAr })
+                .AsNoTracking()
                 .ToListAsync();
             return status;
         }
@@ -188,6 +197,7 @@ namespace WebApiSgsElavon.Services
                 .CSubrechazos
                 .Where(x => x.Status == "ACTIVO")
                 .Select(X => new SubrechazosDtos { IdSubrechazo = X.IdSubrechazo, Subrechazo = X.Subrechazo, Id = X.Id.GetValueOrDefault(), IsProgramado = X.IsProgramado.GetValueOrDefault() })
+                .AsNoTracking()
                 .ToListAsync();
             return subs;
         }
@@ -201,6 +211,7 @@ namespace WebApiSgsElavon.Services
                     IdCausaRechazo = x.IdCausaRechazo, 
                     DescCausaRechazo = x.DescCausaRechazo.Replace("\r\n", string.Empty), 
                     IdTrechazo = x.IdTrechazo.GetValueOrDefault() })
+                .AsNoTracking()
                 .ToListAsync();
             return causas;
         }
@@ -227,6 +238,7 @@ namespace WebApiSgsElavon.Services
                     IdTipoResponsable = x.IdTipoResponsable.GetValueOrDefault(),
                     IdResponsable = x.IdResponsable.GetValueOrDefault()
                 })
+                .AsNoTracking()
                 .ToListAsync();
             return unidades;
         }
@@ -242,6 +254,7 @@ namespace WebApiSgsElavon.Services
                     IdModelo = x.IdModelo.GetValueOrDefault(),
                     IdConectividad = x.IdConectividad.GetValueOrDefault()
                 })
+                .AsNoTracking()
                 .ToListAsync();
             return modelosConectividades;
         }
@@ -249,8 +262,22 @@ namespace WebApiSgsElavon.Services
         public async Task<IEnumerable<UnidadesDtos>> GetUnidadesNegocio(int idusuario)
         {
             List<int> idstatusar = new List<int> { 6, 7, 8 };
-            var PROVEEDOR = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
-            List<int> negocios = await context.BdArs.Where(x => !idstatusar.Contains(x.IdStatusAr.GetValueOrDefault()) && x.IdTecnico == idusuario).Select(x => x.IdNegocio.GetValueOrDefault()).ToListAsync();
+
+            var PROVEEDOR = context
+                .CUsuarios
+                .Select(x => new CUsuario()
+                {
+                    IdProveedor = x.IdProveedor,
+                    IdUsuario = x.IdUsuario
+                })
+                .Where(x => x.IdUsuario == idusuario).FirstOrDefault();
+
+            List<int> negocios = await context
+                .BdArs
+                .Where(x => !idstatusar
+                .Contains(x.IdStatusAr.GetValueOrDefault()) && x.IdTecnico == idusuario)
+                .Select(x => x.IdNegocio.GetValueOrDefault())
+                .ToListAsync();
             //var negocios = await context.BdAr.Where(x => x.IdTecnico == idusuario && !idstatusar.Contains(x.IdStatusAr)).Select(x => x.IdNegocio == null ? 0 : x.IdNegocio).ToListAsync();
             List<UnidadesDtos> unidadesNegocio = await context.BdUnidades
                 .Where(x => x.IdStatusUnidad == 17 && x.IdSim == PROVEEDOR.IdProveedor && x.IdResponsable != null
@@ -267,7 +294,9 @@ namespace WebApiSgsElavon.Services
                 DescStatusUnidad = (context.CStatusUnidads.Where(s => s.IdStatusUnidad == x.IdStatusUnidad && s.Status == "ACTIVO").Select(s => s.DescStatusUnidad).FirstOrDefault()),
                 IdTipoResponsable = x.IdTipoResponsable.GetValueOrDefault(),
                 IdResponsable = x.IdResponsable.GetValueOrDefault()
-            }).ToListAsync();
+            })
+                .AsNoTracking()
+                .ToListAsync();
             return unidadesNegocio;
         }
         public async Task<IEnumerable<ReglasModelosDtos>> GetReglasModelos()
@@ -284,7 +313,9 @@ namespace WebApiSgsElavon.Services
                     NumeroMax = x.NumeroMax.GetValueOrDefault(),
                     LongMin = x.LongMin.GetValueOrDefault(),
                     LongMax = x.LongMax.GetValueOrDefault()
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
             return reglas;
         }
         public async Task<IEnumerable<CausasCancelacionDtos>> GetCausasCancelacion()
@@ -295,7 +326,9 @@ namespace WebApiSgsElavon.Services
                     DescCausa = x.DescCausaCancelacion,
                     IdCausaCancelacion = x.IdCausaCancelacion,
                     IdTipoCancelado = x.IdTipoCancelado.GetValueOrDefault()
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<SolucionesDtos>> GetSoluciones()
@@ -306,7 +339,9 @@ namespace WebApiSgsElavon.Services
                    IdSolucion = x.IdSolucion,
                    DescSolucion = x.DescSolucion,
                    
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

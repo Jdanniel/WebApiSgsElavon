@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CStatusAr
 {
@@ -80,8 +80,4 @@ public partial class CStatusAr
     public virtual ICollection<BdProductoStatusAr> BdProductoStatusArs { get; set; } = new List<BdProductoStatusAr>();
 
     public virtual ICollection<CStatusArEq> CStatusArEqs { get; set; } = new List<CStatusArEq>();
-
-    public virtual ICollection<CWincorEquivalenciasSg> CWincorEquivalenciasSgs { get; set; } = new List<CWincorEquivalenciasSg>();
-
-    public virtual CTipoDowntimeTrigger IdTipoDowntimeTriggerNavigation { get; set; }
 }

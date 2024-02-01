@@ -7,9 +7,10 @@ using Microsoft.OpenApi.Models;
 using System.IO;
 using System;
 using System.Reflection;
-using WebApiSgsElavon.DataTTOSD;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using WebApiSgsElavon.Services;
+using WebApiSgsElavon.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,14 @@ builder.Services.AddCors(o => {
         .AllowCredentials());
 });
 
-builder.Services.AddDbContext<GetnetContext>(o => o.UseSqlServer(configuration.GetConnectionString("Db")));
+builder.Services.AddDbContext<GetnetContext>(o => o.UseSqlServer(configuration.GetConnectionString("Db"), i=>i.UseCompatibilityLevel(100)));
 builder.Services.AddControllers();
+builder.Services.AddScoped<ICatalogosServices, CatalogosServices>();
+builder.Services.AddScoped<INegocioService, NegocioService>();
+builder.Services.AddScoped<IOdtService, OdtServices>();
+builder.Services.AddScoped<IUnidadService, UnidadService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(doc =>
 {
     doc.SwaggerDoc("v1", new OpenApiInfo

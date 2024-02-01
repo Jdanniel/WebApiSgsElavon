@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CTipoCobro
 {
@@ -12,8 +12,6 @@ public partial class CTipoCobro
     public int? IsCobrable { get; set; }
 
     public string Status { get; set; }
-
-    public virtual ICollection<BdArVisita> BdArVisita { get; set; } = new List<BdArVisita>();
 
     public virtual ICollection<BdTipoServicioProducto> BdTipoServicioProductos { get; set; } = new List<BdTipoServicioProducto>();
 }

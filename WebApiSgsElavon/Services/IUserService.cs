@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using WebApiSgsElavon.DataTTOSD;
+using WebApiSgsElavon.Data;
 using WebApiSgsElavon.Entities;
 using WebApiSgsElavon.Helpers;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class CAlmacene
 {
@@ -26,8 +26,6 @@ public partial class CAlmacene
     public int? EnvioEmail { get; set; }
 
     public int? IdProveedor { get; set; }
-
-    public virtual ICollection<BdSolicitudesAlmacenOld> BdSolicitudesAlmacenOlds { get; set; } = new List<BdSolicitudesAlmacenOld>();
 
     public virtual ICollection<CSubAlmacene> CSubAlmacenes { get; set; } = new List<CSubAlmacene>();
 }

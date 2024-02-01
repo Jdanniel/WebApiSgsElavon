@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdSolicitudesViaticosConcepto
 {
@@ -32,6 +32,4 @@ public partial class BdSolicitudesViaticosConcepto
     public string CantidadSolicitadaReal { get; set; }
 
     public virtual BdSolicitudesViatico IdSolicitudViaticosNavigation { get; set; }
-
-    public virtual CViatico IdViaticoNavigation { get; set; }
 }

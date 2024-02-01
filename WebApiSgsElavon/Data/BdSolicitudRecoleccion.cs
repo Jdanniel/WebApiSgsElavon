@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdSolicitudRecoleccion
 {
@@ -63,9 +63,5 @@ public partial class BdSolicitudRecoleccion
 
     public virtual ICollection<BdSolicitudRecoleccionModelo> BdSolicitudRecoleccionModelos { get; set; } = new List<BdSolicitudRecoleccionModelo>();
 
-    public virtual CChofere IdChoferNavigation { get; set; }
-
     public virtual CStatusSolicitudRecoleccion IdStatusSolicitudRecoleccionNavigation { get; set; }
-
-    public virtual CUnidadMensajerium IdUnidadMensajeriaNavigation { get; set; }
 }

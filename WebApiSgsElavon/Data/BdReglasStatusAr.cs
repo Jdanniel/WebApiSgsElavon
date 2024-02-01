@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdReglasStatusAr
 {
@@ -26,10 +26,4 @@ public partial class BdReglasStatusAr
     public int IdUsuarioAlta { get; set; }
 
     public virtual BdClienteProductoStatusAr IdClienteProductoStatusArNavigation { get; set; }
-
-    public virtual COperadore IdOperadorNavigation { get; set; }
-
-    public virtual CTiempoMedicion IdTiempoMedicionNavigation { get; set; }
-
-    public virtual CTiempoReferencium IdTiempoReferenciaNavigation { get; set; }
 }

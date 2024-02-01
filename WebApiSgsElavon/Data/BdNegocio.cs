@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApiSgsElavon.DataTTOSD;
+namespace WebApiSgsElavon.Data;
 
 public partial class BdNegocio
 {
@@ -91,7 +91,6 @@ public partial class BdNegocio
 
     public virtual ICollection<BdInstalacione> BdInstalaciones { get; set; } = new List<BdInstalacione>();
 
-    public virtual ICollection<BdNegocioHorasMe> BdNegocioHorasMes { get; set; } = new List<BdNegocioHorasMe>();
 
     public virtual ICollection<BdRetiro> BdRetiros { get; set; } = new List<BdRetiro>();
 

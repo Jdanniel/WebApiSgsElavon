@@ -30,6 +30,8 @@ namespace WebApiSgsElavon.Entities.Requests
 
         [JsonProperty("VERSION")]
         public string VERSION { get; set; }
+        //[JsonProperty("ACCESORIES_ID")]
+        //public List<int> ACCESSORIES_ID {  get; set; }
 
         [JsonProperty("BATERIA")]
         public bool BATERIA { get; set; }

@@ -24,6 +24,9 @@ namespace WebApiSgsElavon.Entities.Requests
         [JsonProperty("VERSION")]
         public string VERSION { get; set; }
 
+        //[JsonProperty("ACCESSORIES_INST")]
+        //public List<int> ACCESSORIES_INST {  get; set; }
+
         [JsonProperty("BATERIA")]
         public bool BATERIA { get; set; }
 
@@ -71,6 +74,9 @@ namespace WebApiSgsElavon.Entities.Requests
 
         [JsonProperty("VERSION_RETIRO")]
         public string VERSION_RETIRO { get; set; }
+
+        //[JsonProperty("ACCESSORIES_REMO")]
+        //public List<int> ACCESSORIES_REMO { get; set; }
 
         [JsonProperty("BATERIA_RETIRO")]
         public bool BATERIA_RETIRO { get; set; }
