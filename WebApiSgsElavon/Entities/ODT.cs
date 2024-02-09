@@ -58,6 +58,10 @@ namespace WebApiSgsElavon.Entities
         public string DESC_STATUS_AR { get; set; }
         [JsonProperty(PropertyName = "ARCHIVOS")]
         public int ARCHIVOS { get; set; }
+        [JsonProperty(PropertyName = "AuthInst")]
+        public int AuthInst { get; set; }
+        [JsonProperty(PropertyName = "AuthRet")]
+        public int AuthRet { get; set; }
         [JsonProperty(PropertyName = "BITACORA")]
         public string BITACORA { get; set; }
         [JsonProperty(PropertyName = "TELEFONO")]

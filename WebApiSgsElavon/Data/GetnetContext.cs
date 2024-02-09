@@ -1583,6 +1583,7 @@ public partial class GetnetContext : DbContext
 
     public virtual DbSet<ODT> Odts { get; set; }
     public virtual DbSet<SpGetPassword> SpGetPasswords { get; set; }
+    public virtual DbSet<BdArReasonInventoried> BdArReasonInventorieds { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28014,5 +28015,13 @@ public partial class GetnetContext : DbContext
         });
         modelBuilder.Entity<ODT>(entity => entity.HasNoKey());
         modelBuilder.Entity<SpGetPassword>(entity => entity.HasNoKey());
+        modelBuilder.Entity<BdArReasonInventoried>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__BdArReas__3214EC079C37BE1D");
+
+            entity.ToTable("BdArReasonInventoried");
+
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+        });
     }
 }

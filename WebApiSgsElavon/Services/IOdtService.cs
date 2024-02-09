@@ -90,6 +90,8 @@ namespace WebApiSgsElavon.Services
                 "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
                 " REPLACE(BD_AR.BITACORA, '''','') AS BITACORA, " +
                 " BD_AR.TELEFONO " +
+                " (SELECT isnull(Authorized,0) FROM BdArReasonInventoried WHERE TypeMov=1 AND IdAr=BD_AR.ID_AR) AS AuthInst, " +
+                " (SELECT isnull(Authorized,0) FROM BdArReasonInventoried WHERE TypeMov=1 AND IdAr=BD_AR.ID_AR) AS AuthRet " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35) AND BD_AR.STATUS='PROCESADO' " +
