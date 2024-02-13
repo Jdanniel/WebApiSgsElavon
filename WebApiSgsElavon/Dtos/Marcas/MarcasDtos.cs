@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Dtos.Marcas
 {
     public class MarcasDtos
     {
-        [JsonProperty("ID_MARCA")]
+        [JsonPropertyName("ID_MARCA")]
         public int IdMarca { get; set; }
-        [JsonProperty("DESC_MARCA")]
+        [JsonPropertyName("DESC_MARCA")]
         public string DescMarca { get; set; }
     }
 }

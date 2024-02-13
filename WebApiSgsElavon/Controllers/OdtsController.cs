@@ -20,11 +20,11 @@ namespace WebApiSgsElavon.Controllers
         {
             this._odtService = service;
         }
-        [HttpGet("getTotalOdts/{idusuario}")]
-        public ActionResult<totalODT> getTotalOdts(int idusuario)
-        {
-            return _odtService.totalODTS(idusuario);
-        }
+        //[HttpGet("getTotalOdts/{idusuario}")]
+        //public ActionResult<totalODT> getTotalOdts(int idusuario)
+        //{
+        //    return _odtService.totalODTS(idusuario);
+        //}
         [HttpGet("getOdtsTecnico/{idusuario}")]
         public async Task<ActionResult<IEnumerable<ODT>>> getOdts(int idusuario)
         {
@@ -38,18 +38,18 @@ namespace WebApiSgsElavon.Controllers
             }
 
         }
-        [HttpGet("getNewOdts/{idusuario}")]
-        public async Task<ActionResult<string>> getNewOdts(int idusuario)
-        {
-            try
-            {
-                return Ok(await _odtService.GetNewOdts(idusuario));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
-        }
+        //[HttpGet("getNewOdts/{idusuario}")]
+        //public async Task<ActionResult<string>> getNewOdts(int idusuario)
+        //{
+        //    try
+        //    {
+        //        return Ok(await _odtService.GetNewOdts(idusuario));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.ToString());
+        //    }
+        //}
         [HttpPut("UpdateStatusAr")]
         public async Task<ActionResult<int>> UpdateStatusAr(UpdateStatusBdArRequest model)
         {
@@ -240,10 +240,10 @@ namespace WebApiSgsElavon.Controllers
             return Ok(odt);
 
         }
-        [HttpGet("PRUEBA")]
-        public async Task<ActionResult<IEnumerable<OdtEvent>>> Prueba()
-        {
-            return Ok(await _odtService.prueba2());
-        }
+        //[HttpGet("PRUEBA")]
+        //public async Task<ActionResult<IEnumerable<OdtEvent>>> Prueba()
+        //{
+        //    return Ok(await _odtService.prueba2());
+        //}
     }
 }

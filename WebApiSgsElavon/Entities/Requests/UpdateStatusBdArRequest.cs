@@ -2,19 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities.Requests
 {
     public class UpdateStatusBdArRequest
     {
-        [JsonProperty(PropertyName = "ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
-        [JsonProperty(PropertyName = "ID_USUARIO")]
+        [JsonPropertyName("ID_USUARIO")]
         public int ID_USUARIO { get; set; }
-        [JsonProperty(PropertyName = "ID_STATUS_AR_A")]
+        [JsonPropertyName("ID_STATUS_AR_A")]
         public int ID_STATUS_AR_A { get; set; }
-        [JsonProperty(PropertyName = "ID_STATUS_AR_P")]
+        [JsonPropertyName("ID_STATUS_AR_P")]
         public int ID_STATUS_AR_P { get; set; }
     }
 }

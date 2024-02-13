@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace WebApiSgsElavon.Dtos.CausasRechazos
 {
     public class CausasRechazosDtos
     {
-        [JsonProperty("ID_CAUSA_RECHAZO")]
+        [JsonPropertyName("ID_CAUSA_RECHAZO")]
         public int IdCausaRechazo { get; set; }
-        [JsonProperty("DESC_CAUSA_RECHAZO")]
+        [JsonPropertyName("DESC_CAUSA_RECHAZO")]
         public string DescCausaRechazo { get; set; }
-        [JsonProperty("ID_TRECHAZO")]
+        [JsonPropertyName("ID_TRECHAZO")]
         public int IdTrechazo { get; set; }
     }
 }

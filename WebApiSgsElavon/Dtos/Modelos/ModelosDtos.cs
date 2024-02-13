@@ -1,16 +1,17 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace WebApiSgsElavon.Dtos.Modelos
 {
     public class ModelosDtos
     {
-        [JsonProperty("ID_MODELO")]
+        [JsonPropertyName("ID_MODELO")]
         public int IdModelo { get; set; }
-        [JsonProperty("DESC_MODELO")]
+        [JsonPropertyName("DESC_MODELO")]
         public string DescModelo { get; set; }
-        [JsonProperty("ID_MARCA")]
+        [JsonPropertyName("ID_MARCA")]
         public int IdMarca { get; set; }
-        [JsonProperty("ID_ACCESS")]
+        [JsonPropertyName("ID_ACCESS")]
         public int? IdAccess { get; set; }
     }
 }

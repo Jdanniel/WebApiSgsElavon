@@ -4,78 +4,79 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities.Requests
 {
     public partial class CierresRetiroRequest
     {
-        [JsonProperty("NO_SERIE")]
+        [JsonPropertyName("NO_SERIE")]
         public string NO_SERIE { get; set; }
 
-        [JsonProperty("NO_SIM")]
+        [JsonPropertyName("NO_SIM")]
         public string NO_SIM { get; set; }
 
-        [JsonProperty("MARCA")]
+        [JsonPropertyName("MARCA")]
         public string MARCA { get; set; }
 
-        [JsonProperty("MODELO")]
+        [JsonPropertyName("MODELO")]
         public string MODELO { get; set; }
 
-        [JsonProperty("CONECTIVIDAD")]
+        [JsonPropertyName("CONECTIVIDAD")]
         public string CONECTIVIDAD { get; set; }
 
-        [JsonProperty("APLICATIVO")]
+        [JsonPropertyName("APLICATIVO")]
         public string APLICATIVO { get; set; }
 
-        [JsonProperty("VERSION")]
+        [JsonPropertyName("VERSION")]
         public string VERSION { get; set; }
-        //[JsonProperty("ACCESORIES_ID")]
+        //[JsonPropertyName("ACCESORIES_ID")]
         //public List<int> ACCESSORIES_ID {  get; set; }
 
-        [JsonProperty("BATERIA")]
+        [JsonPropertyName("BATERIA")]
         public bool BATERIA { get; set; }
 
-        [JsonProperty("ELIMINADOR")]
+        [JsonPropertyName("ELIMINADOR")]
         public bool ELIMINADOR { get; set; }
 
-        [JsonProperty("TAPA")]
+        [JsonPropertyName("TAPA")]
         public bool TAPA { get; set; }
 
-        [JsonProperty("CABLE_AC")]
+        [JsonPropertyName("CABLE_AC")]
         public bool CABLE_AC { get; set; }
 
-        [JsonProperty("BASE")]
+        [JsonPropertyName("BASE")]
         public bool BASE { get; set; }
 
-        [JsonProperty("FECHA_CIERRE")]
+        [JsonPropertyName("FECHA_CIERRE")]
         public string FECHA_CIERRE { get; set; }
 
-        [JsonProperty("ATIENDE")]
+        [JsonPropertyName("ATIENDE")]
         public string ATIENDE { get; set; }
 
-        [JsonProperty("OTORGANTE_VOBO")]
+        [JsonPropertyName("OTORGANTE_VOBO")]
         public string OTORGANTE_VOBO { get; set; }
 
-        [JsonProperty("TIPO_ATENCION")]
+        [JsonPropertyName("TIPO_ATENCION")]
         public string TIPO_ATENCION { get; set; }
 
-        [JsonProperty("ROLLOS")]
-        public string ROLLOS { get; set; }
+        [JsonPropertyName("ROLLOS")]
+        public int ROLLOS { get; set; }
 
-        [JsonProperty("GETNET")]
+        [JsonPropertyName("GETNET")]
         public int GETNET { get; set; }
 
-        [JsonProperty("CAJA")]
-        public string CAJA { get; set; }
+        [JsonPropertyName("CAJA")]
+        public int CAJA { get; set; }
 
-        [JsonProperty("COMENTARIO")]
+        [JsonPropertyName("COMENTARIO")]
         public string COMENTARIO { get; set; }
 
-        [JsonProperty("ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
 
-        [JsonProperty("ID_TECNICO")]
+        [JsonPropertyName("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
     }
 

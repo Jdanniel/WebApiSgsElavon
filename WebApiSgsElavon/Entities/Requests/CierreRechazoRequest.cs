@@ -4,36 +4,37 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities.Requests
 {
     public partial class CierreRechazoRequest
     {
-        [JsonProperty("FEC_CIERRE")]
+        [JsonPropertyName("FEC_CIERRE")]
         public string FEC_CIERRE { get; set; }
-        [JsonProperty("FEC_PROGRAMADO")]
+        [JsonPropertyName("FEC_PROGRAMADO")]
         public string FEC_PROGRAMADO { get; set; }
 
-        [JsonProperty("CAUSA_RECHAZO")]
+        [JsonPropertyName("CAUSA_RECHAZO")]
         public string CAUSA_RECHAZO { get; set; }
 
-        [JsonProperty("SUBRECHAZO")]
+        [JsonPropertyName("SUBRECHAZO")]
         public string SUBRECHAZO { get; set; }
 
-        [JsonProperty("TIPO_ATENCION")]
+        [JsonPropertyName("TIPO_ATENCION")]
         public string TIPO_ATENCION { get; set; }
 
-        [JsonProperty("ATIENDE")]
+        [JsonPropertyName("ATIENDE")]
         public string ATIENDE { get; set; }
 
-        [JsonProperty("CONCLUSIONES")]
+        [JsonPropertyName("CONCLUSIONES")]
         public string CONCLUSIONES { get; set; }
 
-        [JsonProperty("ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
 
-        [JsonProperty("ID_TECNICO")]
+        [JsonPropertyName("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
     }
     public partial class CierreRechazoRequest

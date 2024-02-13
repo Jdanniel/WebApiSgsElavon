@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Dtos.CambioStatusAr
 {
     public class CambioStatusArDtos
     {
-        [JsonProperty("ID_CAMBIO_STATUS_AR")]
+        [JsonPropertyName("ID_CAMBIO_STATUS_AR")]
         public int IdCambioStatusAr { get; set; }
-        [JsonProperty("ID_STATUS_AR_INI")]
+        [JsonPropertyName("ID_STATUS_AR_INI")]
         public int IdStatusArIni { get; set; }
-        [JsonProperty("ID_STATUS_AR_FIN")]
+        [JsonPropertyName("ID_STATUS_AR_FIN")]
         public int IdStatusArFin { get; set; }
     }
 }

@@ -2,21 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities.Requests
 {
     public class UpdateCoordenadasRequest
     {
-        [JsonProperty(PropertyName = "ID_NEGOCIO")]
+        [JsonPropertyName("ID_NEGOCIO")]
         public int ID_NEGOCIO { get; set; }
-        [JsonProperty(PropertyName = "ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
-        [JsonProperty(PropertyName = "ID_USUARIO")]
+        [JsonPropertyName("ID_USUARIO")]
         public int ID_USUARIO { get; set; }
-        [JsonProperty(PropertyName = "LATITUD")]
+        [JsonPropertyName("LATITUD")]
         public decimal LATITUD { get; set; }
-        [JsonProperty(PropertyName = "LONGITUD")]
+        [JsonPropertyName("LONGITUD")]
         public decimal LONGITUD { get; set; }
     }
 }

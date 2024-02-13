@@ -2,58 +2,59 @@
 using System.Collections.Generic;
 
 using System.Globalization;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 namespace WebApiSgsElavon.Entities.Requests
 {
     public partial class CierreInstalacionSimRequest
     {
-        [JsonProperty("NO_SIM")]
+        [JsonPropertyName("NO_SIM")]
         public string NO_SIM { get; set; }
 
-        [JsonProperty("NOTIFICADO")]
+        [JsonPropertyName("NOTIFICADO")]
         public bool NOTIFICADO { get; set; }
 
-        [JsonProperty("PROMOCIONES")]
+        [JsonPropertyName("PROMOCIONES")]
         public bool PROMOCIONES { get; set; }
 
-        [JsonProperty("DESCARGA_APP")]
+        [JsonPropertyName("DESCARGA_APP")]
         public bool DESCARGA_APP { get; set; }
 
-        [JsonProperty("TELEFONO_1")]
+        [JsonPropertyName("TELEFONO_1")]
         public string TELEFONO_1 { get; set; }
 
-        [JsonProperty("TELEFONO_2")]
+        [JsonPropertyName("TELEFONO_2")]
         public string TELEFONO_2 { get; set; }
 
-        [JsonProperty("FECHA_CIERRE")]
+        [JsonPropertyName("FECHA_CIERRE")]
         public string FECHA_CIERRE { get; set; }
 
-        [JsonProperty("ATIENDE")]
+        [JsonPropertyName("ATIENDE")]
         public string ATIENDE { get; set; }
 
-        [JsonProperty("OTORGANTE_VOBO")]
+        [JsonPropertyName("OTORGANTE_VOBO")]
         public string OTORGANTE_VOBO { get; set; }
 
-        [JsonProperty("TIPO_ATENCION")]
+        [JsonPropertyName("TIPO_ATENCION")]
         public string TIPO_ATENCION { get; set; }
 
-        [JsonProperty("ROLLOS")]
-        public string ROLLOS { get; set; }
+        [JsonPropertyName("ROLLOS")]
+        public int ROLLOS { get; set; }
 
-        [JsonProperty("GETNET")]
+        [JsonPropertyName("GETNET")]
         public int GETNET { get; set; }
 
-        [JsonProperty("CAJA")]
-        public string CAJA { get; set; }
+        [JsonPropertyName("CAJA")]
+        public int CAJA { get; set; }
 
-        [JsonProperty("COMENTARIO")]
+        [JsonPropertyName("COMENTARIO")]
         public string COMENTARIO { get; set; }
 
-        [JsonProperty("ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
 
-        [JsonProperty("ID_TECNICO")]
+        [JsonPropertyName("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
     }
 

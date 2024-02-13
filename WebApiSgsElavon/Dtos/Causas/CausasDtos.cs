@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Dtos.Causas
 {
     public class CausasDtos
     {
-        [JsonProperty("ID_CAUSA")]
+        [JsonPropertyName("ID_CAUSA")]
         public int IdCausa { get; set; }
-        [JsonProperty("DESC_CAUSA")]
+        [JsonPropertyName("DESC_CAUSA")]
         public string DescCausa { get; set; }
-        [JsonProperty("DESCRIPCION")]
+        [JsonPropertyName("DESCRIPCION")]
         public string Descripcion { get; set; }
     }
 }

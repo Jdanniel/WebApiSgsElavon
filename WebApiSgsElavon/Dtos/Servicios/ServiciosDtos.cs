@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace WebApiSgsElavon.Dtos.Servicios
 {
     public class ServiciosDtos
     {
-        [JsonProperty("ID_SERVICIO")]
+        [JsonPropertyName("ID_SERVICIO")]
         public int IdServicio { get; set; }
-        [JsonProperty("DESC_SERVICIO")]
+        [JsonPropertyName("DESC_SERVICIO")]
         public string DescServicio { get; set; }
-        [JsonProperty("IdARNeedNOcheckup")]
+        [JsonPropertyName("IdARNeedNOcheckup")]
         public int IdARNeedNOcheckup { get; set; }
     }
 }

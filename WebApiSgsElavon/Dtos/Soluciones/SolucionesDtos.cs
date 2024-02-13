@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Dtos.Soluciones
 {
     public class SolucionesDtos
     {
-        [JsonProperty("ID_SOLUCION")]
+        [JsonPropertyName("ID_SOLUCION")]
         public int IdSolucion { get; set; }
-        [JsonProperty("DESC_SOLUCION")]
+        [JsonPropertyName("DESC_SOLUCION")]
         public string DescSolucion { get; set; }
     }
 }

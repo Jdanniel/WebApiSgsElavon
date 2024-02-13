@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Dtos.CausasCancelacion
 {
     public class CausasCancelacionDtos
     {
-        [JsonProperty("DESC_CAUSA")]
+        [JsonPropertyName("DESC_CAUSA")]
         public string DescCausa { get; set; }
-        [JsonProperty("ID_CAUSA_CANCELACION")]
+        [JsonPropertyName("ID_CAUSA_CANCELACION")]
         public int IdCausaCancelacion { get; set; }
-        [JsonProperty("ID_TIPO_CANCELADO")]
+        [JsonPropertyName("ID_TIPO_CANCELADO")]
         public int IdTipoCancelado { get; set; }
     }
 }

@@ -2,69 +2,70 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Entities
 {
     public class ODT
     {
-        [JsonProperty(PropertyName = "ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
-        [JsonProperty(PropertyName = "ID_NEGOCIO")]
+        [JsonPropertyName("ID_NEGOCIO")]
         public int ID_NEGOCIO { get; set; }
-        [JsonProperty(PropertyName = "NO_AR")]
+        [JsonPropertyName("NO_AR")]
         public string NO_ODT { get; set; }
-        [JsonProperty(PropertyName = "DESC_NEGOCIO")]        
+        [JsonPropertyName("DESC_NEGOCIO")]        
         public string DESC_NEGOCIO { get; set; }
-        [JsonProperty(PropertyName = "NO_AFILIACION")]
+        [JsonPropertyName("NO_AFILIACION")]
         public string NO_AFILIACION { get; set; }
-        [JsonProperty(PropertyName = "ESTADO")]
+        [JsonPropertyName("ESTADO")]
         public string ESTADO { get; set; }
-        [JsonProperty(PropertyName = "COLONIA")]
+        [JsonPropertyName("COLONIA")]
         public string COLONIA { get; set; }
-        [JsonProperty(PropertyName = "POBLACION")]
+        [JsonPropertyName("POBLACION")]
         public string POBLACION { get; set; }
-        [JsonProperty(PropertyName = "DIRECCION")]
+        [JsonPropertyName("DIRECCION")]
         public string DIRECCION { get; set; }
-        [JsonProperty(PropertyName = "FEC_GARANTIA")]
+        [JsonPropertyName("FEC_GARANTIA")]
         public string FEC_GARANTIA { get; set; }
-        [JsonProperty(PropertyName = "FEC_ATENCION")]
+        [JsonPropertyName("FEC_ATENCION")]
         public string FEC_ATENCION { get; set; }
-        [JsonProperty(PropertyName = "FEC_CIERRE")]
+        [JsonPropertyName("FEC_CIERRE")]
         public string FEC_CIERRE { get; set; }
-        [JsonProperty(PropertyName = "FEC_ALTA")]
+        [JsonPropertyName("FEC_ALTA")]
         public string FEC_ALTA { get; set; }
-        [JsonProperty(PropertyName = "LATITUD")]
+        [JsonPropertyName("LATITUD")]
         public decimal? LATITUD { get; set; }
-        [JsonProperty(PropertyName = "LONGITUD")]
+        [JsonPropertyName("LONGITUD")]
         public decimal? LONGITUD { get; set; }
-        [JsonProperty(PropertyName = "DAYS")]
+        [JsonPropertyName("DAYS")]
         public int DAYS { get; set; }
-        [JsonProperty(PropertyName = "MONTHS")]
+        [JsonPropertyName("MONTHS")]
         public int MONTHS { get; set; }
-        [JsonProperty(PropertyName = "YEARS")]
+        [JsonPropertyName("YEARS")]
         public int YEARS { get; set; }
-        [JsonProperty(PropertyName = "ID_TIPO_SERVICIO")]
+        [JsonPropertyName("ID_TIPO_SERVICIO")]
         public int? ID_TIPO_SERVICIO { get; set; }
-        [JsonProperty(PropertyName = "NUMBER")]
+        [JsonPropertyName("NUMBER")]
         public long? NUMBER { get; set; }
-        [JsonProperty(PropertyName = "ID_STATUS_AR")]
+        [JsonPropertyName("ID_STATUS_AR")]
         public int ID_STATUS_AR { get; set; }
-        [JsonProperty(PropertyName = "ID_SERVICIO")]
+        [JsonPropertyName("ID_SERVICIO")]
         public int ID_SERVICIO { get; set; }
-        [JsonProperty(PropertyName = "ID_FALLA")]
+        [JsonPropertyName("ID_FALLA")]
         public int ID_FALLA { get; set; }
-        [JsonProperty(PropertyName = "DESC_STATUS_AR")]
+        [JsonPropertyName("DESC_STATUS_AR")]
         public string DESC_STATUS_AR { get; set; }
-        [JsonProperty(PropertyName = "ARCHIVOS")]
+        [JsonPropertyName("ARCHIVOS")]
         public int ARCHIVOS { get; set; }
-        [JsonProperty(PropertyName = "AuthInst")]
+        [JsonPropertyName("AuthInst")]
         public int AuthInst { get; set; }
-        [JsonProperty(PropertyName = "AuthRet")]
+        [JsonPropertyName("AuthRet")]
         public int AuthRet { get; set; }
-        [JsonProperty(PropertyName = "BITACORA")]
+        [JsonPropertyName("BITACORA")]
         public string BITACORA { get; set; }
-        [JsonProperty(PropertyName = "TELEFONO")]
+        [JsonPropertyName("TELEFONO")]
         public string TELEFONO { get; set; }
     }
 }

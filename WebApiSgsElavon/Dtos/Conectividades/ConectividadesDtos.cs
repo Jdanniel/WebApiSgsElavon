@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiSgsElavon.Dtos.Conectividades
 {
     public class ConectividadesDtos
     {
-        [JsonProperty("ID_CONECTIVIDAD")]
+        [JsonPropertyName("ID_CONECTIVIDAD")]
         public int IdConectividad { get; set; }
-        [JsonProperty("DESC_CONECTIVIDAD")]
+        [JsonPropertyName("DESC_CONECTIVIDAD")]
         public string DescConectividad { get; set; }
-        [JsonProperty("IS_GPRS")]
+        [JsonPropertyName("IS_GPRS")]
         public int IsGprs { get; set; }
     }
 }

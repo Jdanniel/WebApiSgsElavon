@@ -1,20 +1,21 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace WebApiSgsElavon.Entities.Requests
 {
     public partial class CancelacionRequest
     {
-        [JsonProperty(PropertyName = "ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int IdAr { get; set; }
-        [JsonProperty(PropertyName = "ID_USUARIO")]
+        [JsonPropertyName("ID_USUARIO")]
         public int IdUsuario { get; set; }
-        [JsonProperty(PropertyName = "COMENTARIO")]
+        [JsonPropertyName("COMENTARIO")]
         public string Comentario { get; set; }
-        [JsonProperty(PropertyName = "DESC_CAUSA")]
+        [JsonPropertyName("DESC_CAUSA")]
         public string DescCausa { get; set; }
-        [JsonProperty(PropertyName = "FECHA")]
+        [JsonPropertyName("FECHA")]
         public string Fecha { get; set; }
     }
     public partial class CancelacionRequest

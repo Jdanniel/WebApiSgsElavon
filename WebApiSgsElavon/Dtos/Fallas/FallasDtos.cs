@@ -1,12 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace WebApiSgsElavon.Dtos.Fallas
 {
     public class FallasDtos
     {
-        [JsonProperty("ID_FALLA")]
+        [JsonPropertyName("ID_FALLA")]
         public int IdFalla { get; set; }
-        [JsonProperty("DESC_FALLA")]
+        [JsonPropertyName("DESC_FALLA")]
         public string DescFalla { get; set; }
     }
 }

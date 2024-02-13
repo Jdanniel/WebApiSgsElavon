@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using System.Globalization;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -9,147 +10,147 @@ namespace WebApiSgsElavon.Entities.Requests
 {
     public partial class SustitucionesRequest
     {
-        [JsonProperty("NO_SERIE")]
+        [JsonPropertyName("NO_SERIE")]
         public string NO_SERIE { get; set; }
 
-        [JsonProperty("NO_SIM")]
+        [JsonPropertyName("NO_SIM")]
         public string NO_SIM { get; set; }
 
-        [JsonProperty("CONECTIVIDAD")]
+        [JsonPropertyName("CONECTIVIDAD")]
         public string CONECTIVIDAD { get; set; }
 
-        [JsonProperty("APLICATIVO")]
+        [JsonPropertyName("APLICATIVO")]
         public string APLICATIVO { get; set; }
 
-        [JsonProperty("VERSION")]
+        [JsonPropertyName("VERSION")]
         public string VERSION { get; set; }
 
-        //[JsonProperty("ACCESSORIES_INST")]
+        //[JsonPropertyName("ACCESSORIES_INST")]
         //public List<int> ACCESSORIES_INST {  get; set; }
 
-        [JsonProperty("BATERIA")]
+        [JsonPropertyName("BATERIA")]
         public bool BATERIA { get; set; }
 
-        [JsonProperty("ELIMINADOR")]
+        [JsonPropertyName("ELIMINADOR")]
         public bool ELIMINADOR { get; set; }
 
-        [JsonProperty("TAPA")]
+        [JsonPropertyName("TAPA")]
         public bool TAPA { get; set; }
 
-        [JsonProperty("CABLE_AC")]
+        [JsonPropertyName("CABLE_AC")]
         public bool CABLE_AC { get; set; }
 
-        [JsonProperty("BASE")]
+        [JsonPropertyName("BASE")]
         public bool BASE { get; set; }
 
-        [JsonProperty("IS_AMEX")]
+        [JsonPropertyName("IS_AMEX")]
         public bool IS_AMEX { get; set; }
 
-        [JsonProperty("ID_AMEX")]
+        [JsonPropertyName("ID_AMEX")]
         public string ID_AMEX { get; set; }
 
-        [JsonProperty("AFILIACION_AMEX")]
+        [JsonPropertyName("AFILIACION_AMEX")]
         public string AFILIACION_AMEX { get; set; }
 
-        [JsonProperty("CONCLUSIONES_AMEX")]
+        [JsonPropertyName("CONCLUSIONES_AMEX")]
         public string CONCLUSIONES_AMEX { get; set; }
 
-        [JsonProperty("NO_SERIE_RETIRO")]
+        [JsonPropertyName("NO_SERIE_RETIRO")]
         public string NO_SERIE_RETIRO { get; set; }
 
-        [JsonProperty("NO_SIM_RETIRO")]
+        [JsonPropertyName("NO_SIM_RETIRO")]
         public string NO_SIM_RETIRO { get; set; }
 
-        [JsonProperty("MARCA_RETIRO")]
+        [JsonPropertyName("MARCA_RETIRO")]
         public string MARCA_RETIRO { get; set; }
 
-        [JsonProperty("MODELO_RETIRO")]
+        [JsonPropertyName("MODELO_RETIRO")]
         public string MODELO_RETIRO { get; set; }
 
-        [JsonProperty("CONECTIVIDAD_RETIRO")]
+        [JsonPropertyName("CONECTIVIDAD_RETIRO")]
         public string CONECTIVIDAD_RETIRO { get; set; }
 
-        [JsonProperty("APLICATIVO_RETIRO")]
+        [JsonPropertyName("APLICATIVO_RETIRO")]
         public string APLICATIVO_RETIRO { get; set; }
 
-        [JsonProperty("VERSION_RETIRO")]
+        [JsonPropertyName("VERSION_RETIRO")]
         public string VERSION_RETIRO { get; set; }
 
-        //[JsonProperty("ACCESSORIES_REMO")]
+        //[JsonPropertyName("ACCESSORIES_REMO")]
         //public List<int> ACCESSORIES_REMO { get; set; }
 
-        [JsonProperty("BATERIA_RETIRO")]
+        [JsonPropertyName("BATERIA_RETIRO")]
         public bool BATERIA_RETIRO { get; set; }
 
-        [JsonProperty("ELIMINADOR_RETIRO")]
+        [JsonPropertyName("ELIMINADOR_RETIRO")]
         public bool ELIMINADOR_RETIRO { get; set; }
 
-        [JsonProperty("TAPA_RETIRO")]
+        [JsonPropertyName("TAPA_RETIRO")]
         public bool TAPA_RETIRO { get; set; }
 
-        [JsonProperty("CABLE_AC_RETIRO")]
+        [JsonPropertyName("CABLE_AC_RETIRO")]
         public bool CABLE_AC_RETIRO { get; set; }
 
-        [JsonProperty("BASE_RETIRO")]
+        [JsonPropertyName("BASE_RETIRO")]
         public bool BASE_RETIRO { get; set; }
 
-        [JsonProperty("NOTIFICADO")]
+        [JsonPropertyName("NOTIFICADO")]
         public bool NOTIFICADO { get; set; }
 
-        [JsonProperty("PROMOCIONES")]
+        [JsonPropertyName("PROMOCIONES")]
         public bool PROMOCIONES { get; set; }
 
-        [JsonProperty("DESCARGA_APP")]
+        [JsonPropertyName("DESCARGA_APP")]
         public bool DESCARGA_APP { get; set; }
 
-        [JsonProperty("TELEFONO_1")]
+        [JsonPropertyName("TELEFONO_1")]
         public string TELEFONO_1 { get; set; }
 
-        [JsonProperty("TELEFONO_2")]
+        [JsonPropertyName("TELEFONO_2")]
         public string TELEFONO_2 { get; set; }
 
-        [JsonProperty("FECHA_CIERRE")]
+        [JsonPropertyName("FECHA_CIERRE")]
         public string FECHA_CIERRE { get; set; }
 
-        [JsonProperty("ATIENDE")]
+        [JsonPropertyName("ATIENDE")]
         public string ATIENDE { get; set; }
 
-        [JsonProperty("OTORGANTE_VOBO")]
+        [JsonPropertyName("OTORGANTE_VOBO")]
         public string OTORGANTE_VOBO { get; set; }
 
-        [JsonProperty("TIPO_ATENCION")]
+        [JsonPropertyName("TIPO_ATENCION")]
         public string TIPO_ATENCION { get; set; }
 
-        [JsonProperty("ROLLOS")]
-        public string ROLLOS { get; set; }
+        [JsonPropertyName("ROLLOS")]
+        public int ROLLOS { get; set; }
 
-        [JsonProperty("GETNET")]
+        [JsonPropertyName("GETNET")]
         public int GETNET { get; set; }
 
-        [JsonProperty("CAJA")]
+        [JsonPropertyName("CAJA")]
         public string CAJA { get; set; }
 
-        [JsonProperty("COMENTARIO")]
+        [JsonPropertyName("COMENTARIO")]
         public string COMENTARIO { get; set; }
 
-        [JsonProperty("ID_AR")]
+        [JsonPropertyName("ID_AR")]
         public int ID_AR { get; set; }
 
-        [JsonProperty("ID_TECNICO")]
+        [JsonPropertyName("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
 
-        [JsonProperty("DESC_CAUSA")]
+        [JsonPropertyName("DESC_CAUSA")]
         public string DESC_CAUSA { get; set; }
 
-        [JsonProperty("IS_RETIRO_SIM")]
+        [JsonPropertyName("IS_RETIRO_SIM")]
         public bool IS_RETIRO_SIM { get; set; }
 
-        [JsonProperty("IS_INSTALACION_SIM")]
+        [JsonPropertyName("IS_INSTALACION_SIM")]
         public bool IS_INSTALACION_SIM { get; set; }
         //AGREGAR LISTA DE ACCESORIOS
-        [JsonProperty("ACCESSORIES_INST")]
+        [JsonPropertyName("ACCESSORIES_INST")]
         public List<int> AccessoriesInst {  get; set; }
-        [JsonProperty("ACCESSORIES_REMO")]
+        [JsonPropertyName("ACCESSORIES_REMO")]
         public List<int> AccessoriesRemo { get; set; }
     }
 

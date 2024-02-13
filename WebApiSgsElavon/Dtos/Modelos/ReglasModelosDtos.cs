@@ -1,24 +1,25 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace WebApiSgsElavon.Dtos.Modelos
 {
     public class ReglasModelosDtos
     {
-        [JsonProperty("ID_REGLAS")]
+        [JsonPropertyName("ID_REGLAS")]
         public int IdRegla { get; set; }
-        [JsonProperty("ID_MODELO")]
+        [JsonPropertyName("ID_MODELO")]
         public int IdModelo { get; set; }
-        [JsonProperty("LETRAS_MIN")]
+        [JsonPropertyName("LETRAS_MIN")]
         public int LetrasMin { get; set; }
-        [JsonProperty("LETRAS_MAX")]
+        [JsonPropertyName("LETRAS_MAX")]
         public int LetrasMax { get; set; }
-        [JsonProperty("NUMERO_MIN")]
+        [JsonPropertyName("NUMERO_MIN")]
         public int NumeroMin { get; set; }
-        [JsonProperty("NUMERO_MAX")]
+        [JsonPropertyName("NUMERO_MAX")]
         public int NumeroMax { get; set; }
-        [JsonProperty("LONG_MIN")]
+        [JsonPropertyName("LONG_MIN")]
         public int LongMin { get; set; }
-        [JsonProperty("LONG_MAX")]
+        [JsonPropertyName("LONG_MAX")]
         public int LongMax { get; set; }
     }
 }
