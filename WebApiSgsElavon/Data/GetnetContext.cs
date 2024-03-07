@@ -26164,7 +26164,6 @@ public partial class GetnetContext : DbContext
             entity.Property(e => e.IsStatusCambioAbiertas).HasColumnName("is_status_cambio_abiertas");
             entity.Property(e => e.IsStolenUnit).HasColumnName("IS_STOLEN_UNIT");
             entity.Property(e => e.IsUpdatePosicionInventario).HasColumnName("IS_UPDATE_POSICION_INVENTARIO");
-            entity.Property(e => e.LockoutEnd).HasColumnType("datetime");
             entity.Property(e => e.Materno)
                 .HasMaxLength(50)
                 .IsUnicode(false)

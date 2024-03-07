@@ -128,7 +128,7 @@ namespace WebApiSgsElavon.Entities.Requests
         public int GETNET { get; set; }
 
         [JsonPropertyName("CAJA")]
-        public string CAJA { get; set; }
+        public int CAJA { get; set; }
 
         [JsonPropertyName("COMENTARIO")]
         public string COMENTARIO { get; set; }

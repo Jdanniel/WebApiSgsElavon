@@ -185,8 +185,6 @@ public partial class CUsuario
 
     public int? IsAltaMasivaNegociosOtrosClientes { get; set; }
 
-    public DateTime? LockoutEnd { get; set; }
-
     public virtual ICollection<BdBitacoraModeloUnidad> BdBitacoraModeloUnidads { get; set; } = new List<BdBitacoraModeloUnidad>();
 
     public virtual ICollection<BdBitacoraSolicitudDevolucion> BdBitacoraSolicitudDevolucions { get; set; } = new List<BdBitacoraSolicitudDevolucion>();

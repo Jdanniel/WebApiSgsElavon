@@ -390,7 +390,9 @@ namespace WebApiSgsElavon.Services
                     "AS DESC_STATUS_AR, " +
                     "(SELECT COUNT(*) FROM BD_AR_ARCHIVOS_VARIOS WHERE BD_AR_ARCHIVOS_VARIOS.ID_AR = BD_AR.ID_AR) AS ARCHIVOS, " +
                     "REPLACE(BD_AR.BITACORA, '''','') AS BITACORA, " +
-                    "BD_AR.TELEFONO " +
+                    "BD_AR.TELEFONO, " +
+                    " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=1 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthInst, " +
+                    " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet " +
                     "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                     "WHERE ID_TECNICO = @p0 " +
@@ -1569,6 +1571,7 @@ namespace WebApiSgsElavon.Services
                         }
                         #endregion
                         await insertDataTable(request.ToJson(), request.ID_TECNICO, request.ID_AR, "INSTALACION CORRECTA");
+                        await transaction.CommitAsync();
                         return "OK";
                     }
                     catch (SqlException ex)
