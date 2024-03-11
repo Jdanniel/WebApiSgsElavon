@@ -41,6 +41,8 @@ namespace WebApiSgsElavon.Entities.Requests
         public int ID_AR { get; set; }
         [JsonPropertyName("ID_TECNICO")]
         public int ID_TECNICO { get; set; }
+        [JsonPropertyName("NoSerie")]
+        public string NoSerie { get; set; }
     }
     public partial class CierreSinMovInventarioRequest
     {

@@ -63,6 +63,8 @@ namespace WebApiSgsElavon.Entities
         public int AuthInst { get; set; }
         [JsonPropertyName("AuthRet")]
         public int AuthRet { get; set; }
+        [JsonPropertyName("AuthSinMoInv")]
+        public int AuthSinMoInv { get; set; }
         [JsonPropertyName("BITACORA")]
         public string BITACORA { get; set; }
         [JsonPropertyName("TELEFONO")]

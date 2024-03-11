@@ -1584,9 +1584,28 @@ public partial class GetnetContext : DbContext
     public virtual DbSet<ODT> Odts { get; set; }
     public virtual DbSet<SpGetPassword> SpGetPasswords { get; set; }
     public virtual DbSet<BdArReasonInventoried> BdArReasonInventorieds { get; set; }
+    public virtual DbSet<BdArUnits> BdArUnits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BdArUnits>(entity =>
+        {
+            entity.ToTable("BdArUnits");
+            entity.HasKey(e => e.ArUnitId);
+            entity.Property(e => e.ArUnitId)
+                .HasColumnName("ArUnitId");
+            entity.Property(e => e.ArId)
+                .HasColumnName("ArId");
+            entity.Property(e => e.UserId)
+                .HasColumnName("UserId");
+            entity.Property(e => e.NoSerie)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("NoSerie");
+            entity.Property(e => e.CreateDate)
+                .HasColumnName("CreateDate")
+                .HasColumnType("datetime");
+        });
         modelBuilder.Entity<BdAbreviaturaCp>(entity =>
         {
             entity

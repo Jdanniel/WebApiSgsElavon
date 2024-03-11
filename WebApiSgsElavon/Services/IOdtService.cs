@@ -1,12 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Identity.Client;
+using NuGet.Protocol.Plugins;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Data;
@@ -91,7 +90,8 @@ namespace WebApiSgsElavon.Services
                 " REPLACE(BD_AR.BITACORA, '''','') AS BITACORA, " +
                 " BD_AR.TELEFONO, " +
                 " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=1 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthInst, " +
-                " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet " +
+                " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet, " +
+                " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=0 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthSinMoInv " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_TECNICO = @p0 AND ID_STATUS_AR IN(3,4,5,6,7,13,35,41) AND BD_AR.STATUS='PROCESADO' " +
@@ -392,7 +392,8 @@ namespace WebApiSgsElavon.Services
                     "REPLACE(BD_AR.BITACORA, '''','') AS BITACORA, " +
                     "BD_AR.TELEFONO, " +
                     " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=1 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthInst, " +
-                    " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet " +
+                    " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet, " +
+                    " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=0 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthSinMoInv " +
                     "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                     "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                     "WHERE ID_TECNICO = @p0 " +
@@ -1863,6 +1864,17 @@ namespace WebApiSgsElavon.Services
                         BdArs.IdStatusAr = 6;
                         await _context.SaveChangesAsync();
                         #endregion
+
+                        BdArUnits arUnits = new()
+                        {
+                            ArId = BdArs.IdAr,
+                            NoSerie = request.NoSerie,
+                            CreateDate = DateTime.Now,
+                            UserId = request.ID_TECNICO
+                        };
+                        await _context.BdArUnits.AddAsync(arUnits);
+                        await _context.SaveChangesAsync();
+                        
 
                         await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
