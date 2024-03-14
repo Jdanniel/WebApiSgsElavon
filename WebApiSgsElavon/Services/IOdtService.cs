@@ -3180,7 +3180,8 @@ namespace WebApiSgsElavon.Services
                 "BD_AR.BITACORA, " +
                 "BD_AR.TELEFONO, " +
                 " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=1 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthInst, " +
-                " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet " +
+                " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=2 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthRet, " +
+                " ISNULL((SELECT TOP 1 Authorized FROM BdArReasonInventoried WHERE TypeMov=0 AND IdAr=BD_AR.ID_AR ORDER BY CreateDate DESC),0) AS AuthSinMoInv " +
                 "FROM BD_AR INNER JOIN BD_NEGOCIOS " +
                 "ON BD_AR.ID_NEGOCIO = BD_NEGOCIOS.ID_NEGOCIO " +
                 "WHERE ID_AR = @p0 " +
