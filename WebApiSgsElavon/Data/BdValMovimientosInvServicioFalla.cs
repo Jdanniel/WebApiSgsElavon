@@ -13,6 +13,8 @@ public partial class BdValMovimientosInvServicioFalla
 
     public int? IdMovInventario { get; set; }
 
+    public int? NeedScanSeries { get; set; }
+
     public int? IdUsuarioAlta { get; set; }
 
     public DateTime? FechaAlta { get; set; }

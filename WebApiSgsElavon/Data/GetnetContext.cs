@@ -1585,6 +1585,7 @@ public partial class GetnetContext : DbContext
     public virtual DbSet<SpGetPassword> SpGetPasswords { get; set; }
     public virtual DbSet<BdArReasonInventoried> BdArReasonInventorieds { get; set; }
     public virtual DbSet<BdArUnits> BdArUnits { get; set; }
+    public virtual DbSet<BdUnidadesSubstatus> BdUnidadesSubstatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20707,6 +20708,7 @@ public partial class GetnetContext : DbContext
                 .HasColumnName("FECHA_ALTA");
             entity.Property(e => e.IdFalla).HasColumnName("ID_FALLA");
             entity.Property(e => e.IdMovInventario).HasColumnName("ID_MOV_INVENTARIO");
+            entity.Property(e => e.NeedScanSeries).HasColumnName("NeedScanSeries");
             entity.Property(e => e.IdServicio).HasColumnName("ID_SERVICIO");
             entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
             entity.Property(e => e.Status)
@@ -28040,6 +28042,30 @@ public partial class GetnetContext : DbContext
             entity.ToTable("BdArReasonInventoried");
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+        });
+        modelBuilder.Entity<BdUnidadesSubstatus>(entity =>
+        {
+            entity.HasKey(e => e.IdUnidadesSubstatus).HasName("PK__BD_UNIDA__B61F43152A457219");
+
+            entity.ToTable("BD_UNIDADES_SUBSTATUS");
+
+            entity.Property(e => e.IdUnidadesSubstatus).HasColumnName("ID_UNIDADES_SUBSTATUS");
+            entity.Property(e => e.FechaAlta)
+                .HasColumnType("datetime")
+                .HasColumnName("FECHA_ALTA");
+            entity.Property(e => e.FechaInicio)
+                .HasColumnType("datetime")
+                .HasColumnName("FECHA_INICIO");
+            entity.Property(e => e.IdStatusUnidad).HasColumnName("ID_STATUS_UNIDAD");
+            entity.Property(e => e.IdSubstatusUnidad).HasColumnName("ID_SUBSTATUS_UNIDAD");
+            entity.Property(e => e.IdUnidad).HasColumnName("ID_UNIDAD");
+            entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
+            entity.Property(e => e.NoAfiliacion)
+                .IsUnicode(false)
+                .HasColumnName("NO_AFILIACION");
+            entity.Property(e => e.Status)
+                .IsUnicode(false)
+                .HasColumnName("STATUS");
         });
     }
 }

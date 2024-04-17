@@ -764,9 +764,14 @@ namespace WebApiSgsElavon.Services
                         int ID_TECNICO = request.ID_TECNICO;
 
 
-                        var bdunidadRetirada = await _context.BdUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO").FirstOrDefaultAsync();
+                        var bdunidadRetirada = await _context
+                            .BdUnidades
+                            .Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO")
+                            .FirstOrDefaultAsync();
 
-                        if (bdunidadRetirada != null && bdunidadRetirada.IdStatusUnidad != 17)
+                        int[] allowedStatus = { 17, 46, 53 };
+
+                        if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
                         {
                             transaction.Rollback();
                             await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
@@ -799,6 +804,22 @@ namespace WebApiSgsElavon.Services
                             await insertDataTable($"El aplicativo no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                             return $"El aplicativo no esta relacionada con el modelo";
                         }*/
+                        if(bdunidadRetirada != null)
+                        {
+                            int? unidadsubstatus = await _context
+                                .BdUnidadesSubstatuses
+                                .Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad)
+                                .OrderByDescending(x => x.FechaAlta)
+                                .Select(x => x.IdSubstatusUnidad)
+                                .FirstOrDefaultAsync();
+                            if(unidadsubstatus.GetValueOrDefault() == 1)
+                            {
+                                transaction.Rollback();
+                                await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                            }
+                        }
+
 
                         #region Actualizacion o creacion de unidad
                         if (bdunidadRetirada == null || request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
@@ -866,7 +887,7 @@ namespace WebApiSgsElavon.Services
                             bdunidadRetirada.IdAplicativo = idaplicativoretirada;
                             bdunidadRetirada.IdMarca = idmarcaretiro;
                             bdunidadRetirada.IdModelo = idmodeloretiro;
-                            bdunidadRetirada.IdStatusUnidad = 30;
+                            bdunidadRetirada.IdStatusUnidad = idstatusunidadiniretirar == 53 ? 53 : 30;
                             bdunidadRetirada.IdTipoResponsable = 2;
                             bdunidadRetirada.IdResponsable = request.ID_TECNICO;
                             bdunidadRetirada.IdSim = BdArs.IdProveedor;
@@ -910,18 +931,52 @@ namespace WebApiSgsElavon.Services
                         }
                         else
                         {
-                            BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                            if(idstatusunidadiniretirar == 53)
                             {
-                                IdStatusUnidadIni = idstatusunidadiniretirar,
-                                IdStatusUnidadFin = 30,
-                                IdUnidad = idunidadretirar,
-                                IdTipoResponsable = 2,
-                                IdResponsable = ID_TECNICO,
-                                IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now
-                            };
-                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
-                            await _context.SaveChangesAsync();
+                                BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = 53,
+                                    IdStatusUnidadFin = 30,
+                                    IdUnidad = idunidadretirar,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                    Comentario = "Cambio de estatus automático"
+
+                                };
+                                _context.BdBitacoraUnidads.Add(bitacoraUnidad);
+                                await _context.SaveChangesAsync();
+
+                                BdBitacoraUnidad bitacoraUnidad2 = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = 30,
+                                    IdStatusUnidadFin = 53,
+                                    IdUnidad = idunidadretirar,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                    Comentario = "Cambio de estatus automático"
+                                };
+                                _context.BdBitacoraUnidads.Add(bitacoraUnidad2);
+                                await _context.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = idstatusunidadiniretirar,
+                                    IdStatusUnidadFin = 30,
+                                    IdUnidad = idunidadretirar,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                };
+                                _context.BdBitacoraUnidads.Add(bitacoraUnidad);
+                                await _context.SaveChangesAsync();
+                            }
                         }
                         #endregion
 
@@ -1865,16 +1920,43 @@ namespace WebApiSgsElavon.Services
                         await _context.SaveChangesAsync();
                         #endregion
 
-                        BdArUnits arUnits = new()
+                        int needScan = await _context
+                            .BdValMovimientosInvServicioFallas
+                            .Where(x => x.IdServicio == BdArs.IdServicio &&
+                            x.IdFalla == BdArs.IdFalla)
+                            .Select(x => x.NeedScanSeries.GetValueOrDefault())
+                            .FirstOrDefaultAsync();
+
+                        if(needScan == 1)
                         {
-                            ArId = BdArs.IdAr,
-                            NoSerie = request.NoSerie,
-                            CreateDate = DateTime.Now,
-                            UserId = request.ID_TECNICO
-                        };
-                        await _context.BdArUnits.AddAsync(arUnits);
-                        await _context.SaveChangesAsync();
-                        
+                            BdUnidade unidade = await _context.BdUnidades
+                                .Where(x => x.NoSerie.ToUpper() == request.NoSerie.ToUpper() && x.Status == "ACTIVO")
+                                .FirstOrDefaultAsync();
+
+                            if(unidade == null)
+                            {
+                                BdUniversoUnidade Universounidade = await _context.BdUniversoUnidades
+                                    .Where(x => x.NoSerie.ToUpper() == request.NoSerie.ToUpper() && x.Status == "ACTIVO")
+                                    .FirstOrDefaultAsync();
+                                
+                                if(Universounidade == null)
+                                {
+                                    transaction.Rollback();
+                                    await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SIN MOVIMIENTO");
+                                    return $"El numero de serie {request.NoSerie} no existe en la base de Getnet";
+                                }
+                            }
+
+                            BdArUnits arUnits = new()
+                            {
+                                ArId = BdArs.IdAr,
+                                NoSerie = request.NoSerie,
+                                CreateDate = DateTime.Now,
+                                UserId = request.ID_TECNICO
+                            };
+                            await _context.BdArUnits.AddAsync(arUnits);
+                            await _context.SaveChangesAsync();
+                        }
 
                         await UpdateSpecialProjects(BdArs.NoAfiliacion.Trim(), BdArs.IdServicio.GetValueOrDefault(), BdArs.IdFalla.GetValueOrDefault());
 
@@ -2327,12 +2409,31 @@ namespace WebApiSgsElavon.Services
                             .BdUnidades
                             .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim() && x.Status == "ACTIVO")
                             .FirstOrDefaultAsync();
-                        
-                        if (bdunidadRetirada != null && bdunidadRetirada.IdStatusUnidad != 17)
+
+                        int[] allowedStatus = { 17, 46, 53 };
+
+
+                        if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
                         {
                             transaction.Rollback();
                             await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                             return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                        }
+
+                        if (bdunidadRetirada != null)
+                        {
+                            int? unidadsubstatus = await _context
+                                .BdUnidadesSubstatuses
+                                .Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad)
+                                .OrderByDescending(x => x.FechaAlta)
+                                .Select(x => x.IdSubstatusUnidad)
+                                .FirstOrDefaultAsync();
+                            if (unidadsubstatus.GetValueOrDefault() == 1)
+                            {
+                                transaction.Rollback();
+                                await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                            }
                         }
 
                         int idconectividadretirada = await _context
@@ -2449,7 +2550,7 @@ namespace WebApiSgsElavon.Services
                             bdunidadRetirada.IdModelo = idmodeloretiro;*/
                             bdunidadRetirada.IdTipoResponsable = 2;
                             bdunidadRetirada.IdResponsable = request.ID_TECNICO;
-                            bdunidadRetirada.IdStatusUnidad = 30;
+                            bdunidadRetirada.IdStatusUnidad = idstatusunidadretirada == 53 ? 53 : 30;
                             bdunidadRetirada.IdSim = BdArs.IdProveedor;
                             await _context.SaveChangesAsync();
                         }
@@ -2478,18 +2579,52 @@ namespace WebApiSgsElavon.Services
                         }
                         else
                         {
-                            BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                            if (idstatusunidadretirada == 53)
                             {
-                                IdStatusUnidadIni = idstatusunidadretirada,
-                                IdStatusUnidadFin = 30,
-                                IdUnidad = idunidadRetirada,
-                                IdTipoResponsable = 2,
-                                IdResponsable = ID_TECNICO,
-                                IdUsuarioAlta = ID_TECNICO,
-                                FecAlta = DateTime.Now
-                            };
-                            _context.BdBitacoraUnidads.Add(bitacoraUnidad);
-                            await _context.SaveChangesAsync();
+                                BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = 53,
+                                    IdStatusUnidadFin = 30,
+                                    IdUnidad = idunidadRetirada,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                    Comentario = "Cambio de estatus automático"
+
+                                };
+                                _context.BdBitacoraUnidads.Add(bitacoraUnidad);
+                                await _context.SaveChangesAsync();
+
+                                BdBitacoraUnidad bitacoraUnidad2 = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = 30,
+                                    IdStatusUnidadFin = 53,
+                                    IdUnidad = idunidadRetirada,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                    Comentario = "Cambio de estatus automático"
+                                };
+                                _context.BdBitacoraUnidads.Add(bitacoraUnidad2);
+                                await _context.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                BdBitacoraUnidad bitacoraUnidad = new BdBitacoraUnidad()
+                                {
+                                    IdStatusUnidadIni = idstatusunidadretirada,
+                                    IdStatusUnidadFin = 30,
+                                    IdUnidad = idunidadRetirada,
+                                    IdTipoResponsable = 2,
+                                    IdResponsable = ID_TECNICO,
+                                    IdUsuarioAlta = ID_TECNICO,
+                                    FecAlta = DateTime.Now,
+                                };
+                                _context.BdBitacoraUnidads.Add(bitacoraUnidad);
+                                await _context.SaveChangesAsync();
+                            }
                         }
                         #endregion
 
