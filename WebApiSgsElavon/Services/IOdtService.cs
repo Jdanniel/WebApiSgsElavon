@@ -854,7 +854,7 @@ namespace WebApiSgsElavon.Services
                                 {
                                     BdUnidade unidadNueva = new BdUnidade()
                                     {
-                                        NoSerie = Randoms.AlphaNumeric(9) + "-" + Randoms.AlphaNumeric(1),
+                                        NoSerie = Randoms.AlphaNumeric(9) + Randoms.AlphaNumeric(1),
                                         IdCliente = 4,
                                         IdProducto = 1,
                                         IdSim = BdArs.IdProveedor,
@@ -2514,7 +2514,7 @@ namespace WebApiSgsElavon.Services
                                 {
                                     BdUnidade unidadNueva = new BdUnidade()
                                     {
-                                        NoSerie = Randoms.AlphaNumeric(9) + "-" + Randoms.AlphaNumeric(1),
+                                        NoSerie = Randoms.AlphaNumeric(9) + Randoms.AlphaNumeric(1),
                                         IdCliente = 4,
                                         IdProducto = 1,
                                         IdSim = BdArs.IdProveedor,
