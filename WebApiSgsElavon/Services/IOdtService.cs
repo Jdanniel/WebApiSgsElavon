@@ -1893,6 +1893,13 @@ namespace WebApiSgsElavon.Services
                         string descargarApp = request.DESCARGA_APP ? "SI" : "NO";
                         string getnet = request.GETNET == 1 ? "SI" : "NO";
 
+                        if(BdArs.IdServicio.GetValueOrDefault() == 22 && BdArs.IdFalla.GetValueOrDefault() == 64 && request.ROLLOS < 20)
+                        {
+                            transaction.Rollback();
+                            await insertDataTable(request.ToJson().ToString(), request.ID_TECNICO, request.ID_AR, "CORRECTO - SIN MOVIMIENTO");
+                            return $"El campo de rollos debe ser mayor o igual a 20.";
+                        }
+
                         BdArs.Atiende = request.ATIENDE;
                         BdArs.IdSolucion = 9;
                         BdArs.IsInstalacion = 0;
