@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApiSgsElavon.Data;
@@ -771,6 +772,13 @@ namespace WebApiSgsElavon.Services
 
                         int[] allowedStatus = { 17, 46, 53 };
 
+                        if (await _context.BdUnidadesSubstatuses.Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad && x.IdStatusUnidad == 1).AnyAsync())
+                        {
+                            transaction.Rollback();
+                            await insertDataTable($"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                            return $"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.";
+                        }
+
                         if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
                         {
                             transaction.Rollback();
@@ -1229,6 +1237,11 @@ namespace WebApiSgsElavon.Services
                 {
                     await insertDataTable($"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto", request.ID_TECNICO, request.ID_AR, "ERROR - Instalacion");
                     return $"La SERIE a Instalar '{request.NO_SERIE}' se encuentra en un estatus incorrecto";
+                }
+                if(!await ValidateInstalledSeries53(request.NO_SERIE))
+                {
+                    await insertDataTable($"Esta serie no puede ser instalada ya que cuenta con un estatus previo de baja de inventario, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - Instalacion");
+                    return $"Esta serie no puede ser instalada ya que cuenta con un estatus previo de baja de inventario, Favor de contactar a su supervisor de zona.";
                 }
                 if (string.IsNullOrEmpty(request.COMENTARIO))
                 {
@@ -2419,13 +2432,21 @@ namespace WebApiSgsElavon.Services
 
                         int[] allowedStatus = { 17, 46, 53 };
 
+                        if (await _context.BdUnidadesSubstatuses.Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad && x.IdStatusUnidad == 1).AnyAsync())
+                        {
+                            transaction.Rollback();
+                            await insertDataTable($"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION-RETIRO");
+                            return $"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.";
+                        }
 
                         if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
                         {
                             transaction.Rollback();
-                            await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                            await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION-RETIRO");
                             return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
                         }
+
+
 
                         if (bdunidadRetirada != null)
                         {
@@ -3378,8 +3399,17 @@ namespace WebApiSgsElavon.Services
         }
         public async Task<bool> ValidateInstalledSeries(string serie)
         {
-            BdUnidade unidad = await _context.BdUnidades.FirstOrDefaultAsync(x => x.NoSerie == serie.Trim());
+            BdUnidade unidad = await _context.BdUnidades.AsNoTracking().FirstOrDefaultAsync(x => x.NoSerie == serie.Trim());
             if(unidad.IdStatusUnidad == 17)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<bool> ValidateInstalledSeries53(string serie)
+        {
+            BdUnidade unidad = await _context.BdUnidades.AsNoTracking().FirstOrDefaultAsync(x => x.NoSerie == serie.Trim());
+            if (unidad.IdStatusUnidad == 53)
             {
                 return false;
             }
