@@ -218,9 +218,7 @@ namespace WebApiSgsElavon.Services
 
         public async Task<IEnumerable<UnidadesDtos>> GetUnidades(int idusuario)
         {
-            List<int> status = new List<int>();
-            status.Add(46);
-            status.Add(15);
+            List<int> status = new() { 15,46,53};
             var usuario = context.CUsuarios.Where(x => x.IdUsuario == idusuario).FirstOrDefault();
             List<UnidadesDtos> unidades = await context
                 .BdUnidades

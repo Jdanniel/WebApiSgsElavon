@@ -764,26 +764,47 @@ namespace WebApiSgsElavon.Services
                         int ID_AR = request.ID_AR;
                         int ID_TECNICO = request.ID_TECNICO;
 
-
                         var bdunidadRetirada = await _context
-                            .BdUnidades
-                            .Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO")
-                            .FirstOrDefaultAsync();
+                        .BdUnidades
+                        .Where(x => x.NoSerie == request.NO_SERIE.Trim() && x.Status == "ACTIVO")
+                        .FirstOrDefaultAsync();
 
-                        int[] allowedStatus = { 17, 46, 53 };
-
-                        if (await _context.BdUnidadesSubstatuses.Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad && x.IdStatusUnidad == 1).AnyAsync())
+                        if (request.NO_SERIE.Trim().ToUpper() != "ILEGIBLE")
                         {
-                            transaction.Rollback();
-                            await insertDataTable($"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
-                            return $"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.";
-                        }
 
-                        if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
-                        {
-                            transaction.Rollback();
-                            await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
-                            return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                            if(bdunidadRetirada != null)
+                            {
+                                int[] allowedStatus = { 17, 46, 53 };
+
+                                if (await _context.BdUnidadesSubstatuses.Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad && x.IdSubstatusUnidad == 1).AnyAsync())
+                                {
+                                    transaction.Rollback();
+                                    await insertDataTable($"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                    return $"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.";
+                                }
+
+                                if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
+                                {
+                                    transaction.Rollback();
+                                    await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                    return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                                }
+                            }
+                            else
+                            {
+                                BdUniversoUnidade universoUnidade = await _context.BdUniversoUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
+
+                                BdHistoricoRetirement bdHistoricoRetirement = await _context.BdHistoricoRetirements.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
+
+                                if (universoUnidade is null && bdHistoricoRetirement is null)
+                                {
+                                    return "Serie no está en SGS/Pertenece a otro banco";
+                                }
+                                else if(bdHistoricoRetirement is not null)
+                                {
+                                    return "Serie no se encuentra en el estatus correcto";
+                                }
+                            }
                         }
 
                         int? idstatusini = BdArs.IdStatusAr;
@@ -812,22 +833,6 @@ namespace WebApiSgsElavon.Services
                             await insertDataTable($"El aplicativo no esta relacionada con el modelo", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
                             return $"El aplicativo no esta relacionada con el modelo";
                         }*/
-                        if(bdunidadRetirada != null)
-                        {
-                            int? unidadsubstatus = await _context
-                                .BdUnidadesSubstatuses
-                                .Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad)
-                                .OrderByDescending(x => x.FechaAlta)
-                                .Select(x => x.IdSubstatusUnidad)
-                                .FirstOrDefaultAsync();
-                            if(unidadsubstatus.GetValueOrDefault() == 1)
-                            {
-                                transaction.Rollback();
-                                await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
-                                return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
-                            }
-                        }
-
 
                         #region Actualizacion o creacion de unidad
                         if (bdunidadRetirada == null || request.NO_SERIE.ToUpper().Trim() == "ILEGIBLE")
@@ -882,7 +887,8 @@ namespace WebApiSgsElavon.Services
                                 }
                                 else
                                 {
-                                    return "El número de serie no existe en el sistema";
+                                    //return "El número de serie no existe en el sistema";
+                                    return "Favor de actualizar la app";
                                 }
                             }
                         }
@@ -2430,23 +2436,43 @@ namespace WebApiSgsElavon.Services
                             .Where(x => x.NoSerie == request.NO_SERIE_RETIRO.Trim() && x.Status == "ACTIVO")
                             .FirstOrDefaultAsync();
 
-                        int[] allowedStatus = { 17, 46, 53 };
-
-                        if (await _context.BdUnidadesSubstatuses.Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad && x.IdStatusUnidad == 1).AnyAsync())
+                        if (request.NO_SERIE.Trim().ToUpper() != "ILEGIBLE")
                         {
-                            transaction.Rollback();
-                            await insertDataTable($"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION-RETIRO");
-                            return $"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.";
+
+                            if (bdunidadRetirada != null)
+                            {
+                                int[] allowedStatus = { 17, 46, 53 };
+
+                                if (await _context.BdUnidadesSubstatuses.Where(x => x.IdUnidad == bdunidadRetirada.IdUnidad && x.IdSubstatusUnidad == 1).AnyAsync())
+                                {
+                                    transaction.Rollback();
+                                    await insertDataTable($"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                    return $"Esta serie no puede ser retirada del comercio ya que cuenta con un estatus de venta al cliente, Favor de contactar a su supervisor de zona.";
+                                }
+
+                                if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
+                                {
+                                    transaction.Rollback();
+                                    await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - RETIRO");
+                                    return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
+                                }
+                            }
+                            else
+                            {
+                                BdUniversoUnidade universoUnidade = await _context.BdUniversoUnidades.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
+
+                                BdHistoricoRetirement bdHistoricoRetirement = await _context.BdHistoricoRetirements.Where(x => x.NoSerie == request.NO_SERIE.Trim()).FirstOrDefaultAsync();
+
+                                if (universoUnidade is null && bdHistoricoRetirement is null)
+                                {
+                                    return "Serie no está en SGS/Pertenece a otro banco";
+                                }
+                                else if (bdHistoricoRetirement is not null)
+                                {
+                                    return "Serie no se encuentra en el estatus correcto";
+                                }
+                            }
                         }
-
-                        if (bdunidadRetirada != null && !allowedStatus.Contains(bdunidadRetirada.IdStatusUnidad))
-                        {
-                            transaction.Rollback();
-                            await insertDataTable($"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar", request.ID_TECNICO, request.ID_AR, "ERROR - SUSTITUCION-RETIRO");
-                            return $"El numero de serie `{bdunidadRetirada.NoSerie}` no se encuentra en estatus correcto para retirar";
-                        }
-
-
 
                         if (bdunidadRetirada != null)
                         {
@@ -2563,7 +2589,8 @@ namespace WebApiSgsElavon.Services
                                 }
                                 else
                                 {
-                                    return "El numero de serie retirado no existe en el sistema";
+                                    //return "El numero de serie retirado no existe en el sistema";
+                                    return "Favor de actualizar la app";
                                 }
                             }
                         }

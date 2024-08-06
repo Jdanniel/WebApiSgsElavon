@@ -1586,7 +1586,7 @@ public partial class GetnetContext : DbContext
     public virtual DbSet<BdArReasonInventoried> BdArReasonInventorieds { get; set; }
     public virtual DbSet<BdArUnits> BdArUnits { get; set; }
     public virtual DbSet<BdUnidadesSubstatus> BdUnidadesSubstatuses { get; set; }
-
+    public virtual DbSet<BdHistoricoRetirement> BdHistoricoRetirements { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BdArUnits>(entity =>
@@ -28066,6 +28066,27 @@ public partial class GetnetContext : DbContext
             entity.Property(e => e.Status)
                 .IsUnicode(false)
                 .HasColumnName("STATUS");
+        });
+        modelBuilder.Entity<BdHistoricoRetirement>(entity =>
+        {
+            entity.HasKey(e => e.IdHistoricoRetiremen).HasName("PK__BD_HISTO__EC67C8A6B03AD11C");
+
+            entity.ToTable("BD_HISTORICO_RETIREMENT");
+
+            entity.Property(e => e.IdHistoricoRetiremen).HasColumnName("ID_HISTORICO_RETIREMEN");
+            entity.Property(e => e.FecAlta)
+                .HasColumnType("datetime")
+                .HasColumnName("FEC_ALTA");
+            entity.Property(e => e.IdAplicativo).HasColumnName("ID_APLICATIVO");
+            entity.Property(e => e.IdConectividad).HasColumnName("ID_CONECTIVIDAD");
+            entity.Property(e => e.IdModelo).HasColumnName("ID_MODELO");
+            entity.Property(e => e.IdRetiro).HasColumnName("ID_RETIRO");
+            entity.Property(e => e.IdStatusUnidad).HasColumnName("ID_STATUS_UNIDAD");
+            entity.Property(e => e.IdUsuarioAlta).HasColumnName("ID_USUARIO_ALTA");
+            entity.Property(e => e.NoSerie)
+                .HasMaxLength(300)
+                .IsUnicode(false)
+                .HasColumnName("NO_SERIE");
         });
     }
 }
